@@ -1,0 +1,18 @@
+#version {
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  font-size: 0.7em;
+}
+@media screen and (max-width: 1199px) {
+  wcs-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+  }
+  #version {
+    display: none;
+  }
+}

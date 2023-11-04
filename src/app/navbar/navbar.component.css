@@ -1,0 +1,10 @@
+#navbar-action {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+@media screen and (max-width: 700px) {
+  #form-rechercher {
+    display: none;
+  }
+}
