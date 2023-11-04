@@ -1,0 +1,37 @@
+<div class="page-content">
+  <h3>Livrets de dépannages - {{enginService.actual_engin}}</h3>
+
+  <!--Card pour les filtres-->
+  <wcs-card mode="raised">
+    <wcs-card-body>
+      <div id="filtres-container">
+        <wcs-form-field id="field-type-engin">
+          <wcs-label>Type d'engin</wcs-label>
+          <wcs-select #typeEngin placeholder="Choisir un type">
+            <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
+          </wcs-select>
+        </wcs-form-field>
+        <wcs-form-field id="field-string-search">
+          <wcs-label>Recherche</wcs-label>
+          <wcs-input placeholder="ex: LD 5 200 ..."></wcs-input>
+        </wcs-form-field>
+        <wcs-form-field>
+          <wcs-button class="wcs-warning" mode="stroked" size="m"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎Supprimer les filtres</wcs-button>
+        </wcs-form-field>
+      </div>
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Card pour la grid-->
+  <wcs-card mode="raised">
+    <wcs-card-body>
+      <wcs-grid id="grid-simple-1" row-id-path="id">
+        <wcs-grid-column name="Désignation" path="designation" sort="" id="column-designation"></wcs-grid-column>
+        <wcs-grid-column name="Reference" path="ref" sort="" id="column-ref"></wcs-grid-column>
+        <wcs-grid-column name="Ouvrir" custom-cells="" id="column-links"></wcs-grid-column>
+        <wcs-grid-pagination id="grid-pagination"></wcs-grid-pagination>
+      </wcs-grid>
+    </wcs-card-body>
+  </wcs-card>
+
+</div>

@@ -1,0 +1,22 @@
+<wcs-nav>
+  <wcs-nav-item text="Livrets de Dépannage" routerLink="/ld" routerLinkActive="active">
+    <wcs-mat-icon icon="description"></wcs-mat-icon>
+  </wcs-nav-item>
+  <wcs-nav-item text="Documentation par fonction" routerLink="/doc-fct" routerLinkActive="active">
+    <wcs-mat-icon icon="folder" family="filled"></wcs-mat-icon>
+  </wcs-nav-item>
+  <wcs-nav-item text="Modules de formation" routerLink="/mod-form" routerLinkActive="active">
+    <wcs-mat-icon icon="school" family="filled"></wcs-mat-icon>
+  </wcs-nav-item>
+  <wcs-nav-item text="Localisation Organes" routerLink="/loc-orga" routerLinkActive="active">
+    <wcs-mat-icon icon="travel_explore" family="filled"></wcs-mat-icon>
+  </wcs-nav-item>
+  <p slot="bottom" id="version">{{versionParams.app_version}} {{versionParams.app_build}}<br>{{versionParams.date_maj_applicatif}}</p>
+</wcs-nav>
+
+<!--Pour ajouter une nouvelle page :
+- Ajouter bouton dans navbar
+- Ajouter un component genre XXX-page avec "ng generate component XXXX-page"
+- Ajouter ce component dans app.routing.ts dans le router
+- FINI
+-->
