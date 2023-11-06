@@ -15,16 +15,15 @@ wcs-accordion-content {
   justify-items: start;
 }
 
-#field-type-engin {
+#type-engin-field {
   width: 15em;
-}
-
-#grid-pagination {
-  padding-top: 10px;
 }
 #filtres-container {
   display: flex;
   flex-direction: row;
   gap: var(--wcs-base-margin);
-  align-items: flex-start;
+  align-items: flex-end;
+}
+#raccourcis-select {
+  min-width: 12em;
 }

@@ -8,10 +8,10 @@ import {ModulesFormationPageComponent} from "./pages/modules-formation-page/modu
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
-  {path: 'ld', component: LDPageComponent},
-  {path: 'loc-orga', component: LocOrgaPageComponent},
-  {path: 'doc-fct', component: DocFctPageComponent},
-  {path: 'mod-form', component: ModulesFormationPageComponent},
+  {path: 'livretDepannage', component: LDPageComponent},
+  {path: 'documentationParFonction', component: DocFctPageComponent},
+  {path: 'modulesDeFormation', component: ModulesFormationPageComponent},
+  {path: 'localisationDesOrganes', component: LocOrgaPageComponent},
   {path: '**', redirectTo: ""}
 ];
 

@@ -11,6 +11,9 @@ import { DocFctPageComponent } from './pages/doc-fct-page/doc-fct-page.component
 import { ModulesFormationPageComponent } from './pages/modules-formation-page/modules-formation-page.component';
 import { LocOrgaPageComponent } from './pages/loc-orga-page/loc-orga-page.component';
 import {appRoutingModule} from "./app.routing";
+import { ModalsComponent } from './components/modals/modals.component';
+import {CookieService} from "ngx-cookie-service";
+import { GridComponent } from './pages/ld-page/grid/grid.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -22,13 +25,17 @@ import {appRoutingModule} from "./app.routing";
     LDPageComponent,
     DocFctPageComponent,
     ModulesFormationPageComponent,
-    LocOrgaPageComponent
+    LocOrgaPageComponent,
+    ModalsComponent,
+    GridComponent
   ],
   imports: [
     BrowserModule,
     WcsAngularModule,
     appRoutingModule
   ],
-  providers: []
+  providers: [
+    CookieService
+  ]
 })
 export class AppModule { }
