@@ -1,0 +1,9 @@
+.modal-content {
+  min-height: 20vh;
+}
+.slot-action {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--wcs-margin-s);
+}

@@ -3,7 +3,7 @@
   <div slot="title" id="navbar-title">
     <h1>LD Interactif v2</h1>
     <wcs-select #enginSelect [value]="actual_engin" size="m" id="enginSelect" (wcsChange)="changeEngin(enginSelect.value)" >
-      <wcs-select-option *ngFor="let engin of engins" [value]="engin" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin}}</wcs-select-option>
+      <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.key}}</wcs-select-option>
     </wcs-select>
   </div>
   <div slot="actions" id="navbar-action">
@@ -15,9 +15,8 @@
     </wcs-form-field>
     <wcs-dropdown mode="plain" shape="normal" placement="bottom-end" no-arrow="true">
       <span slot="placeholder"><wcs-mat-icon icon="menu"></wcs-mat-icon> </span>
-      <wcs-dropdown-item>Définir votre engin par défaut</wcs-dropdown-item>
-      <wcs-dropdown-divider></wcs-dropdown-divider>
-      <wcs-dropdown-item>Contact</wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('defaultEnginModal', true)">Définir votre engin par défaut</wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('debugModal', true)">Debug</wcs-dropdown-item>
     </wcs-dropdown>
   </div>
 </wcs-header>

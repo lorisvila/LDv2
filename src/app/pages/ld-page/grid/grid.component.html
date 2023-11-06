@@ -1,0 +1,13 @@
+<wcs-grid id="grid-simple-1" row-id-path="id" [data]="ldService.data" [loading]="ldService.loading">
+  <wcs-grid-column name="Désignation" path="des" sort="" id="column-designation"></wcs-grid-column>
+  <wcs-grid-column name="Reference" path="ref" sort="" id="column-ref"></wcs-grid-column>
+  <wcs-grid-column name="Ouvrir" custom-cells="" id="column-links"></wcs-grid-column>
+
+  <wcs-grid-custom-cell columnId="column-links" [rowId]="i+1" *ngFor="let item of ldService.data | keyvalue; index as i">
+    <wcs-button mode="clear" size="s">
+      Ouvrir le document
+    </wcs-button>
+  </wcs-grid-custom-cell>
+
+  <wcs-grid-pagination id="grid-pagination"></wcs-grid-pagination>
+</wcs-grid>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { EnginService } from "../../services/engin.service";
+import {LdService} from "../../services/ld.service";
 
 @Component({
   selector: 'app-ld-page',
@@ -9,9 +10,8 @@ import { EnginService } from "../../services/engin.service";
 export class LDPageComponent {
 
   constructor(
-    public enginService: EnginService
+    public enginService: EnginService,
+    public ldService: LdService
   ) {}
-
-  types_engin: [] = this.enginService.type_engin[this.enginService.actual_engin as keyof typeof this.enginService.type_engin]
 
 }

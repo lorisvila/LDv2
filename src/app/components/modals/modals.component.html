@@ -1,0 +1,28 @@
+<!--Modal default engin-->
+<wcs-modal [show]="generalService.showDefaultEnginModal" id="modal-default-engin">
+  <div slot="header">Choix de l'engin par défaut</div>
+  <div class="modal-content">
+    <wcs-select #enginSelect [value]="actual_engin" size="m">
+      <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.key}}</wcs-select-option>
+    </wcs-select>
+    <p>
+      Celui-ci sera sélectionné par défaut lors des prochaines ouvertures du site
+      <br><i>Il est stocké dans les cookies</i>
+    </p>
+  </div>
+  <div slot="actions" class="slot-action">
+    <wcs-button mode="stroked" (click)="generalService.toggleModal('defaultEnginModal', false)">Annuler</wcs-button>
+    <wcs-button (click)="setDefaultEngin(enginSelect.value)">OK</wcs-button>
+  </div>
+</wcs-modal>
+
+<!--Modal debug-->
+<wcs-modal [show]="generalService.showDebugModal" id="modal-debug" size="l">
+  <div slot="header">Fenêtre de debug</div>
+  <div class="modal-content">
+
+  </div>
+  <div slot="actions" class="slot-action">
+    <wcs-button (click)="generalService.toggleModal('debugModal', false)">OK</wcs-button>
+  </div>
+</wcs-modal>
