@@ -48,16 +48,23 @@ export class LdService {
   }
 
   // Grid values
-  loading: boolean = false
+  loading: boolean = false;
+  availablePageSizes: number[] = [10, 20, 40, 60]
+  pageSize: number = 40
   data: {[Name: string]: string}[] = [
     {
+      "id": "1",
+      "des": "Schémas de principe",
       "ref": "LD 5 200 201",
-      "des": "Livret n°1",
-      "url": "https://test.url"
+      "ind": "N",
+      //"url": "https://docmat.sncf.fr/#/search/053709431",
+      "url": "https://docmat.sncf.fr/#/viewer/2323086/pdf/053709431"
     }, {
-      "ref": "LD 5 200 202",
-      "des": "Livret n°2",
-      "url": "https://test.url"
+      "id": "2",
+      "des": "Schémas de câblage motrice ZAC - à partir Z27513",
+      "ref": "05 3 721 348",
+      "ind": "A",
+      "url": "https://docmat.sncf.fr/#/viewer/2321210/pdf/053712348"
     }
   ]
 
