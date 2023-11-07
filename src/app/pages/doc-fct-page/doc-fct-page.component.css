@@ -1,0 +1,9 @@
+.page-content {
+  padding: 1em 1em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcs-margin-l);
+}
+#title-engin-field {
+  font-size: 0.8em;
+}
