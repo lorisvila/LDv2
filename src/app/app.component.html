@@ -5,4 +5,16 @@
     <router-outlet></router-outlet>
   </div>
   <app-modals></app-modals>
+  <wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">
+    <wcs-card-body id="warning-version-card-body">
+      ⚠️ Les documents ne sont pas tenus à la dernière version en mode hors-ligne...
+      <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.showOfflineCard = false"></wcs-mat-icon>
+    </wcs-card-body>
+  </wcs-card>
 </div>
+
+<!--Generate angular app from direct execute-->
+<!--ng build --prod --base-href ./-->
+<!--Then delete all "type="module" from the generated html file"-->
+<!--https://www.appsloveworld.com/angular/100/17/run-angular-7-project-locally-on-file-without-server-->
+<!--https://stackoverflow.com/questions/40024147/run-angular2-as-static-app-in-browser-without-a-server/61220058#61220058-->

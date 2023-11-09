@@ -20,6 +20,11 @@
 <wcs-modal [show]="generalService.showDebugModal" id="modal-debug" size="l">
   <div slot="header">Fenêtre de debug</div>
   <div class="modal-content">
+    <wcs-grid id="grid-simple-1" row-id-path="id" [data]="generalService.debugDataDict">
+      <!--Colonnes de la grid-->
+      <wcs-grid-column name="Variable" path="var" sort="" id="column-var"></wcs-grid-column>
+      <wcs-grid-column name="Valeur" path="val" sort="" id="column-val"></wcs-grid-column>
+    </wcs-grid>
 
   </div>
   <div slot="actions" class="slot-action">

@@ -1,3 +1,4 @@
+/*Style de la navbar*/
 #navbar-action {
   display: flex;
   flex-direction: row;
@@ -9,24 +10,39 @@
   gap: 1em;
   align-items: center;
 }
-#state-connection-icon * {
-  color: white;
-  background-color: white;
-  accent-color: white;
-}
+
 h1 {
   font-weight: 500;
   font-size: 1.5em;
   color: white;
 }
-@media screen and (max-width: 800px) {
+
+/*Enlever la barre de recherche si écran < 900px*/
+@media screen and (max-width: 900px) {
   #form-rechercher {
     display: none;
   }
 }
+
+/*Rendre le logo sncf "clickable" pour l'utilisateur en lui mettant le cursor en pointer*/
 img {
   cursor: pointer;
 }
+
+/*Forcer le width du select d'engin
+(pour afficher les noms les plus longs)*/
 #enginSelect {
   width: 10em;
+}
+
+.disabled-option-dropdown {
+  cursor: not-allowed;
+  color: var(--wcs-text-disabled);
+}
+
+#state-offline {
+  display: flex;
+}
+#state-offline-icon {
+  color: var(--wcs-light);
 }
