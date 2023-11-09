@@ -11,7 +11,8 @@
   #page-wrapper {
     grid-template-areas:
     "navbar navbar"
-    "sidebar content";
+    "sidebar content"
+    "modals modals";
   }
 }
 @media screen and (max-width: 1199px) {
@@ -19,7 +20,8 @@
     grid-template-areas:
     "navbar navbar"
     "content content"
-    "sidebar sidebar";
+    "sidebar sidebar"
+    "modals modals";
   }
 }
 
@@ -56,4 +58,7 @@ page-content-wrapper {
 }
 #button-close-card {
   cursor: pointer;
+}
+#modals-wrapper {
+  grid-area: modals;
 }
