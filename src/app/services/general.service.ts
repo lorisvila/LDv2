@@ -8,24 +8,16 @@ import { map } from 'rxjs/operators';
 export class GeneralService {
 
   // Variables pour les modals
-  showDebugModal: boolean = false
-  showDefaultEnginModal: boolean = false
+  showDebugModal: boolean = false;
+  showDefaultEnginModal: boolean = false;
+
+  // Variables pour les cards
+  showOfflineCard: boolean = false;
 
   // Variables pour le statut de connexion
-  networkStatus: boolean = false;
-  networkStatus$: Subscription = Subscription.EMPTY;
   offlineMode: boolean = false;
 
   constructor() {
-
-  }
-
-  ngOnInit() {
-    this.checkNetworkStatus()
-  }
-
-  ngOnDestroy() {
-    this.networkStatus$.unsubscribe()
   }
 
   // Function to toggle modals of the app
@@ -43,19 +35,13 @@ export class GeneralService {
     }
   }
 
-  // Function to subscribe to connected or disconnected event
-  checkNetworkStatus() {
-    this.networkStatus = navigator.onLine;
-    this.networkStatus$ = merge(
-      of(null),
-      fromEvent(window, 'online'),
-      fromEvent(window, 'offline')
-    )
-      .pipe(map(() => navigator.onLine))
-      .subscribe(status => {
-        console.log('status', status);
-        this.networkStatus = status;
-      });
+  toggleNetworkStatus() {
+    this.offlineMode = !this.offlineMode;
+    if (this.offlineMode) {this.showOfflineCard = true;}
+    else {this.showOfflineCard = false;}
+    console.log(this.offlineMode)
   }
+
+  debugDataDict = [ ]
 
 }

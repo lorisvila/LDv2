@@ -51,10 +51,11 @@ export class LdService {
   loading: boolean = false;
   availablePageSizes: number[] = [10, 20, 40, 60]
   pageSize: number = 40
-  data: {[Name: string]: string}[] = [
+  data:({id: string, des: string, type: string[], ref: string, ind: string, url: string})[] = [
     {
       "id": "1",
       "des": "Schémas de principe",
+      "type": ["XGC", "BGC", "ZGC"],
       "ref": "LD 5 200 201",
       "ind": "N",
       //"url": "https://docmat.sncf.fr/#/search/053709431",
@@ -62,6 +63,7 @@ export class LdService {
     }, {
       "id": "2",
       "des": "Schémas de câblage motrice ZAC - à partir Z27513",
+      "type": ["XGC", "BGC"],
       "ref": "05 3 721 348",
       "ind": "A",
       "url": "https://docmat.sncf.fr/#/viewer/2321210/pdf/053712348"

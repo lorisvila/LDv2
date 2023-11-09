@@ -12,13 +12,15 @@ export class EnginService {
     "TER 2N NG": ["2C", "3C", "4C", "5C"]
   };
   actual_types_engin: string[] = [];
+  hasDefaultEngin: boolean = false;
 
   changeActualEngin(engin: string){
     this.actual_engin = engin
     this.actual_types_engin = this.types_engin[this.actual_engin]
   }
   changeDefaultEngin(engin: string) {
-    this.cookieService.set("defaultEngin", engin) // Change the cookie value of default engin
+    let expiry_date = new Date()
+    this.cookieService.set("defaultEngin", engin, 365) // Change the cookie value of default engin
   }
 
   constructor(
@@ -26,8 +28,9 @@ export class EnginService {
   ) {
     // Set the basic engin to use when reload
     if (cookieService.check("defaultEngin") === true) {
-      this.changeActualEngin(cookieService.get("defaultEngin"))
-      console.log("Engin par défaut : " + cookieService.get("defaultEngin")) // Set the actual engin to the cookie value
+      this.changeActualEngin(cookieService.get("defaultEngin")); // Set the actual engin to the cookie value
+      this.hasDefaultEngin = true;
+      console.log("Engin par défaut : " + cookieService.get("defaultEngin"))
     } else {
       this.changeActualEngin("AGC") // Set to AGC if not in cookies
     }

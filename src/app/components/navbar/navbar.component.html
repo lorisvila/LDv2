@@ -7,6 +7,9 @@
     <wcs-select #enginSelect [value]="actual_engin" size="m" id="enginSelect" (wcsChange)="changeEngin(enginSelect.value)" >
       <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.key}}</wcs-select-option>
     </wcs-select>
+    <wcs-tooltip for="enginSelect" position="right" *ngIf="!enginService.hasDefaultEngin">
+      Si vous souhaitez sélectionner un engin par défaut, veuillez vous rendre dans les paramètres
+    </wcs-tooltip>
   </div>
 
   <!--Zone droite-->
@@ -19,20 +22,26 @@
       </wcs-button>
     </wcs-form-field>
 
-    <!--Statut connecté ou non-->
-    <wcs-badge [class]="generalService.networkStatus ? 'wcs-success' : 'wcs-danger'" shape="normal" color="initial">
-      <wcs-mat-icon [icon]="generalService.networkStatus ? 'wifi' : 'wifi_off'" family="rounded" id="state-connection"></wcs-mat-icon>
-      <wcs-tooltip for="state-connection">
-        Etat de la connexion : {{generalService.networkStatus ? 'Connecté' : 'Non connecté'}}<br>
-        Mode hors-ligne : {{generalService.networkStatus ? 'Désactivé' : 'Activé'}}
+    <!--Statut du mode Offline-->
+    <wcs-badge [class]="generalService.offlineMode ? 'wcs-warning' : 'wcs-success'" shape="normal" color="initial" id="state-offline">
+      <wcs-mat-icon [icon]="generalService.offlineMode ? 'cloud_off' : 'cloud'" family="filled" id="state-offline-icon"></wcs-mat-icon>
+      <wcs-tooltip for="state-offline">
+        Etat du mode mode hors-ligne
       </wcs-tooltip>
     </wcs-badge>
 
     <!--Menu déroulant-->
     <wcs-dropdown mode="plain" shape="normal" placement="bottom-end" no-arrow="true">
       <span slot="placeholder"><wcs-mat-icon icon="menu"></wcs-mat-icon> </span>
+
+      <wcs-dropdown-header>Paramètres</wcs-dropdown-header>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('defaultEnginModal', true)">Définir votre engin par défaut</wcs-dropdown-item>
-      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('debugModal', true)"><i>Debug</i></wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleNetworkStatus()">
+          {{generalService.offlineMode ? 'Désactiver' : 'Activer'}} le mode hors-ligne
+      </wcs-dropdown-item>
+
+      <wcs-dropdown-header>Debug</wcs-dropdown-header>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('debugModal', true)"><i>Fenêtre de debug</i></wcs-dropdown-item>
     </wcs-dropdown>
   </div>
 </wcs-header>
