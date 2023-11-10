@@ -1,29 +1,33 @@
 <!--Grid pour l'affichage des données des LD-->
-<wcs-grid id="grid-simple-1" row-id-path="id" [data]="ldService.data" [loading]="ldService.loading" [loading]="generalService.offlineMode ? false : true">
+<wcs-grid id="grid-simple-1" row-id-path="id" [data]="ldService.filteredData" [loading]="ldService.loading">
   <!--Colonnes de la grid-->
   <wcs-grid-column name="Désignation" path="des" sort="" id="column-designation" width="40vw"></wcs-grid-column>
-  <wcs-grid-column name="Type engin" id="type" customCells="true" width="10vw"></wcs-grid-column>
+  <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Reference" path="ref" sort="" id="column-ref" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Indice" path="ind" sort="" id="column-ind"></wcs-grid-column>
   <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
 
   <!--Cases personalisés pour la colonne "Type Engin"-->
-  <wcs-grid-custom-cell column-Id="type" [rowId]="i+1" *ngFor="let item of ldService.data; index as i">
+  <wcs-grid-custom-cell column-Id="enginType" [rowId]="i+1" *ngFor="let item of ldService.data; index as i">
     <!--Affichage de "Tous" si tous les types sont concernés-->
-    <span *ngIf="item.type.length === enginService.types_engin[enginService.actual_engin].length; else elseBlock">
+    <span *ngIf="item.enginType.length == enginService.types_engin[enginService.actual_engin].length; else elseBlock">
       Tous les {{enginService.actual_engin}}
     </span>
     <!--Affichage des types concernés si pas tous les types-->
     <ng-template #elseBlock>
-      {{item['type'].join(" ; ")}}
+      {{item['enginType'].join(" ; ")}}
     </ng-template>
 
   </wcs-grid-custom-cell>
 
   <!--Cases personalisés pour la colonne "Ouvrir"-->
   <wcs-grid-custom-cell column-Id="url" [rowId]="i+1" *ngFor="let item of ldService.data; index as i">
-    <wcs-button mode="clear" size="s" [href]="item.url" target="_blank">
-      Ouvrir le document
+    <!--Bouton ouvrir document qui met soit l'url Locale ou Docmat selon le mode et qui rougit la case si l'url du document est vide-->
+    <wcs-button mode="clear" size="s" target="_blank"
+                [href]="generalService.offlineMode ? item.url_File : item.url_DocMat"
+                [class]="(item.url_File == '' && generalService.offlineMode) ||
+                (item.url_DocMat == '' && !generalService.offlineMode) ? 'wcs-danger' : 'wcs-primary'">
+      Ouvrir le document {{generalService.offlineMode ? "📥" : ""}}
     </wcs-button>
   </wcs-grid-custom-cell>
 
