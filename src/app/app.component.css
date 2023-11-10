@@ -34,7 +34,7 @@
   grid-area: sidebar;
 }
 
-page-content-wrapper {
+#page-content-wrapper {
   grid-area: content;
 }
 #warning-version-card {

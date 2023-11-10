@@ -10,10 +10,15 @@ let appWindow
 function createWindow() {
   appWindow = new BrowserWindow({
     width: 1200,
-    height: 800
+    height: 800,
+    icon: `dist/ldV2_Angular/assets/sncf-logo.png`,
+    autoHideMenuBar: true,
   })
 
-  appWindow.webContents.openDevTools()
+  // For the moment
+  //appWindow.webContents.openDevTools()
+
+  appWindow.maximize()
 
   appWindow.loadFile('dist/ldV2_Angular/index.html');
 
