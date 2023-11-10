@@ -4,7 +4,7 @@
   <div id="page-content-wrapper">
     <router-outlet></router-outlet>
   </div>
-  <app-modals></app-modals>
+  <app-modals id="modals-wrapper"></app-modals>
   <wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">
     <wcs-card-body id="warning-version-card-body">
       ⚠️ Les documents ne sont pas tenus à la dernière version en mode hors-ligne...
