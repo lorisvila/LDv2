@@ -23,11 +23,17 @@
     </wcs-form-field>
 
     <!--Statut du mode Offline-->
-    <wcs-badge [class]="generalService.offlineMode ? 'wcs-warning' : 'wcs-success'" shape="normal" color="initial" id="state-offline">
+    <wcs-badge [class]="generalService.offlineMode ? 'wcs-warning' : 'wcs-success'" shape="normal" color="initial" id="state-offline-card">
       <wcs-mat-icon [icon]="generalService.offlineMode ? 'cloud_off' : 'cloud'" family="filled" id="state-offline-icon"></wcs-mat-icon>
-      <wcs-tooltip for="state-offline">
-        Etat du mode mode hors-ligne
+      <wcs-tooltip for="state-offline-card">
+        Etat du mode mode en ligne
       </wcs-tooltip>
+
+      <!--Switch de toggle du mode hos-ligne-->
+      <div id="div-button-change-state-offline"> <!--TODO : Mieux animer l'effet de show quand hover (dans le css)-->
+        <wcs-switch #switchChangeStatus [checked]="generalService.offlineMode" [disabled]="generalService.restrictOfflineMode" (wcsChange)="generalService.toggleNetworkStatus()">
+        </wcs-switch>
+      </div>
     </wcs-badge>
 
     <!--Menu déroulant-->

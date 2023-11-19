@@ -11,12 +11,12 @@ export class EnginService {
     "AGC": ["XGC", "BGC", "ZGC"],
     "TER 2N NG": ["2C", "3C", "4C", "5C"]
   };
-  actual_types_engin: string[] = [];
+  actual_type_engin: string[] = [];
   hasDefaultEngin: boolean = false;
 
   changeActualEngin(engin: string){
     this.actual_engin = engin
-    this.actual_types_engin = this.types_engin[this.actual_engin]
+    this.actual_type_engin = this.types_engin[this.actual_engin]
   }
   changeDefaultEngin(engin: string) {
     let expiry_date = new Date()

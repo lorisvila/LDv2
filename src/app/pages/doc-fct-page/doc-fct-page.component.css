@@ -7,3 +7,17 @@
 #title-engin-field {
   font-size: 0.8em;
 }
+#filtres-container {
+  display: flex;
+  flex-direction: row;
+  gap: var(--wcs-base-margin);
+  align-items: flex-end;
+}
+#raccourcis-select {
+  min-width: 12em;
+}
+#tableListItem {
+  padding: 1em;
+  border: transparent;
+  border-radius: 20px;
+}

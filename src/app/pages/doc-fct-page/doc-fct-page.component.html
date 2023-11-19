@@ -4,14 +4,50 @@
   <!--Card pour les filtres-->
   <wcs-card mode="raised">
     <wcs-card-body>
-      Header
+      <div id="filtres-container">
+
+        <!--Input de recherche-->
+        <wcs-form-field id="string-search-field">
+          <wcs-label>Recherche</wcs-label>
+          <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="docFctService.search_value" (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
+        </wcs-form-field>
+
+        <!--Select pour les raccourcis possibles : schémas electriques, codes défauts-->
+        <wcs-form-field id="raccourcis-select">
+          <wcs-label>Raccourcis</wcs-label>
+          <wcs-select #selectShortcut [value]="docFctService.shortcut" (wcsChange)="docFctService.changeValueFilter('shortcut', selectShortcut.value)">
+            <wcs-select-option *ngFor="let shortcut of docFctService.shortcuts | keyvalue" [value]="shortcut.key">{{shortcut.value}}</wcs-select-option>
+          </wcs-select>
+        </wcs-form-field>
+
+        <!--Bouton pour reinitialiser / supprimer les filtres-->
+        <wcs-form-field>
+          <wcs-button class="wcs-warning" mode="clear" size="m" (click)="docFctService.reinitFormValues()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
+        </wcs-form-field>
+      </div>
     </wcs-card-body>
   </wcs-card>
 
   <!--Card pour la grid-->
   <wcs-card mode="raised">
     <wcs-card-body>
-      Body
+      <div id="tableListItem">
+        <wcs-list-item>
+          <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
+          <div slot="title">Doc shéma puissance</div>
+          <div slot="actions">
+            <wcs-button shape="square" mode="stroked" class="wcs-secondary">
+              <wcs-mat-icon icon="open_in_new" size="1" family="filled"></wcs-mat-icon>
+            </wcs-button>
+          </div>
+          <wcs-list-item-properties>
+            <wcs-list-item-property>Moteur diesel / Générateur</wcs-list-item-property>
+          </wcs-list-item-properties>
+          <div slot="description">
+            Description du document de fonction
+          </div>
+        </wcs-list-item>
+      </div>
     </wcs-card-body>
   </wcs-card>
 

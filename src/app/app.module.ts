@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import {WcsAngularModule} from "wcs-angular";
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -13,7 +12,7 @@ import { LocOrgaPageComponent } from './pages/loc-orga-page/loc-orga-page.compon
 import {appRoutingModule} from "./app.routing";
 import { ModalsComponent } from './components/modals/modals.component';
 import {CookieService} from "ngx-cookie-service";
-import { GridComponent } from './pages/ld-page/grid/grid.component';
+import { GridComponent } from './pages/ld-page/grid/grid.component'
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -27,7 +26,7 @@ import { GridComponent } from './pages/ld-page/grid/grid.component';
     ModulesFormationPageComponent,
     LocOrgaPageComponent,
     ModalsComponent,
-    GridComponent
+    GridComponent,
   ],
   imports: [
     BrowserModule,

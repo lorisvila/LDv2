@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {VersionParamsService} from "../../services/version-params.service";
+import {GeneralService} from "../../services/general.service";
 
 @Component({
   selector: 'app-home-page',
@@ -8,7 +8,7 @@ import {VersionParamsService} from "../../services/version-params.service";
 })
 export class HomePageComponent {
 
-  constructor(public versionParams: VersionParamsService) {
+  constructor(public generalService: GeneralService) {
   }
 
 }

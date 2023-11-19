@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {EnginService} from "../../services/engin.service";
+import {DocFctServiceService} from "../../services/doc-fct-service.service";
 
 @Component({
   selector: 'app-doc-fct-page',
@@ -9,7 +10,8 @@ import {EnginService} from "../../services/engin.service";
 export class DocFctPageComponent {
 
   constructor(
-    public enginService: EnginService
+    public enginService: EnginService,
+    public docFctService: DocFctServiceService
   ) {
   }
 

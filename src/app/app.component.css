@@ -36,6 +36,7 @@
 
 #page-content-wrapper {
   grid-area: content;
+  overflow-y: auto;
 }
 #warning-version-card {
   position: absolute;

@@ -40,8 +40,16 @@ img {
   color: var(--wcs-text-disabled);
 }
 
-#state-offline {
+#state-offline-card {
   display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#div-button-change-state-offline {
+  display: none;
+}
+#state-offline-card:hover > #div-button-change-state-offline {
+  display: inherit;
 }
 #state-offline-icon {
   color: var(--wcs-light);

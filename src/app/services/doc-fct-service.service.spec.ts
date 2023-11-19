@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { VersionParamsService } from './version-params.service';
+import { DocFctServiceService } from './doc-fct-service.service';
 
-describe('VersionParamsService', () => {
-  let service: VersionParamsService;
+describe('DocFctServiceService', () => {
+  let service: DocFctServiceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(VersionParamsService);
+    service = TestBed.inject(DocFctServiceService);
   });
 
   it('should be created', () => {
