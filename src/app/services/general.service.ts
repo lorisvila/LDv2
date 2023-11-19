@@ -7,6 +7,18 @@ export class GeneralService {
 
   @Output() $offlineMode: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  //Variables des versions et dates de mise à jour
+  app_version: string = "V 2.1.0";
+  app_build: string = "dev";
+
+  date_maj_applicatif: Date = new Date("04/11/2023");
+  date_maj_data_AGC: Date = new Date("04/11/2023");
+  date_maj_data_TER2NNG: Date = new Date("04/11/2023");
+
+  date_maj_applicatif_string: string = this.date_maj_applicatif.toLocaleDateString('fr-FR');
+  date_maj_data_AGC_string: string = this.date_maj_data_AGC.toLocaleDateString('fr-FR');
+  date_maj_data_TER2NNG_string: string = this.date_maj_data_TER2NNG.toLocaleDateString('fr-FR');
+
   // Variables pour les modals
   showDebugModal: boolean = false;
   showDefaultEnginModal: boolean = false;
@@ -16,6 +28,7 @@ export class GeneralService {
 
   // Variables pour le statut de connexion
   offlineMode: boolean = false;
+  restrictOfflineMode: boolean = false; // A modifier si utilisation sur serveur
 
   constructor() { }
 
@@ -43,19 +56,4 @@ export class GeneralService {
     this.$offlineMode.emit(this.offlineMode)
   }
 
-  // Debug variables to be used in the debug modal
-  debugDataDict = [ ]
-
-}
-
-// Type for data in LD Dict
-export type LDdata = {
-  id: number,
-  des: string,
-  enginType: string[],
-  ref: string,
-  ind: string,
-  url_DocMat: string,
-  url_File: string,
-  type: string
 }

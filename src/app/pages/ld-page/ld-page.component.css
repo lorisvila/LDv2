@@ -17,14 +17,15 @@ wcs-accordion-content {
   justify-items: start;
 }
 
-#type-engin-field {
-  width: 15em;
-}
 #filtres-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: var(--wcs-base-margin);
   align-items: flex-end;
+}
+#systeme-select {
+  min-width: 12em;
 }
 #raccourcis-select {
   min-width: 12em;

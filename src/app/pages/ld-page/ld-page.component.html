@@ -12,20 +12,38 @@
         <wcs-form-field id="type-engin-field">
           <wcs-label>Type d'engin</wcs-label>
           <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type" (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
-            <wcs-select-option *ngFor="let type of enginService.actual_types_engin" [value]="type">{{type}}</wcs-select-option>
+            <wcs-select-option value="tous" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
+            <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
           </wcs-select>
         </wcs-form-field>
 
         <!--Input de recherche-->
-        <wcs-form-field id="string-search-field">
-          <wcs-label>Recherche</wcs-label>
+        <wcs-form-field>
+          <wcs-label>Recherche textuelle</wcs-label>
           <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="ldService.search_value" (wcsChange)="ldService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
+        </wcs-form-field>
+
+        <!--Dans le LD 5 200 1 01 se situent les tableaux de correspondance schémas / engins-->
+        <!--Input de numéro d'engin-->
+        <wcs-form-field>
+          <wcs-label>Numéro de rame</wcs-label>
+          <wcs-input #inputEnginNum placeholder="ex: X 76 533" [value]="ldService.enginNum_value" (wcsChange)="ldService.changeValueFilter('engin_num_value', inputEnginNum.value)"></wcs-input>
+        </wcs-form-field>
+
+        <!--Select pour les Système / Fonction possibles : motrice, remorque, groupe électrogène, etc.-->
+        <wcs-form-field id="systeme-select">
+          <wcs-label>Système / Fonction</wcs-label>
+          <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme" (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
+            <wcs-select-option value="tous" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
+            <wcs-select-option *ngFor="let systeme of ldService.systemes | keyvalue" [value]="systeme.key">{{systeme.value}}</wcs-select-option>
+          </wcs-select>
         </wcs-form-field>
 
         <!--Select pour les raccourcis possibles : schémas electriques, codes défauts-->
         <wcs-form-field id="raccourcis-select">
             <wcs-label>Raccourcis</wcs-label>
-            <wcs-select #selectShortcut [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
+            <wcs-select #selectShortcut placeholder="Choisir un raccourci" [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
+              <wcs-select-option value="tous" *ngIf="ldService.shortcut"><b>Tous</b></wcs-select-option>
               <wcs-select-option *ngFor="let shortcut of ldService.shortcuts | keyvalue" [value]="shortcut.key">{{shortcut.value}}</wcs-select-option>
             </wcs-select>
         </wcs-form-field>

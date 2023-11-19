@@ -44,3 +44,6 @@ Thumbs.db
 
 #Electron executabes
 /electronLDv2_Angular-win32-x64
+
+# Documents folder in the assets --> Sensible + big files
+/src/assets/documents

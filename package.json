@@ -26,6 +26,7 @@
     "electron": "^27.0.4",
     "electron-packager": "^17.1.2",
     "ngx-cookie-service": "^16.0.2",
+    "orama": "^2.0.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "wcs-angular": "^4.1.0",

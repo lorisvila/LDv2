@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {VersionParamsService} from "../../services/version-params.service";
+import {GeneralService} from "../../services/general.service";
 @Component({
   selector: 'app-sidemenu',
   templateUrl: './sidemenu.component.html',
@@ -7,7 +7,7 @@ import {VersionParamsService} from "../../services/version-params.service";
 })
 export class SidemenuComponent {
 
-  constructor(public versionParams: VersionParamsService) {
+  constructor(public generalService: GeneralService) {
   }
 
 }

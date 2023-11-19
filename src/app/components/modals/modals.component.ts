@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {GeneralService} from "../../services/general.service";
 import {EnginService} from "../../services/engin.service";
+import {LdService} from "../../services/ld.service";
+import {DebugDataType} from "../../app.types";
 
 @Component({
   selector: 'app-modals',
@@ -10,7 +12,8 @@ import {EnginService} from "../../services/engin.service";
 export class ModalsComponent {
   constructor(
     public generalService: GeneralService,
-    public enginService: EnginService
+    public enginService: EnginService,
+    public ldService: LdService
   ) { }
 
   // Modal Default Engin
@@ -20,6 +23,17 @@ export class ModalsComponent {
     this.generalService.toggleModal("defaultEnginModal", false)
     this.enginService.changeDefaultEngin(engin)
   }
+
+  // Modal Debug
+  dataDebug: DebugDataType[] = [
+    {
+      "var": "showOfflineCard",
+      "val": this.generalService.showOfflineCard
+    },{
+      "var": "showDefaultEnginModal",
+      "val": this.generalService.showDefaultEnginModal
+    },
+  ]
 
 
 }
