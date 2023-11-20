@@ -31,3 +31,11 @@
     <wcs-button (click)="generalService.toggleModal('debugModal', false)">OK</wcs-button>
   </div>
 </wcs-modal>
+
+<!--Card pour avertir que les données ne sont pas forcément tenues à jour-->
+<wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">
+  <wcs-card-body id="warning-version-card-body">
+    ⚠️ Les documents ne sont pas tenus à la dernière version en mode hors-ligne...
+    <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.showOfflineCard = false"></wcs-mat-icon>
+  </wcs-card-body>
+</wcs-card>

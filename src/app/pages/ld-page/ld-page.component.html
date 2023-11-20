@@ -3,6 +3,17 @@
 </wcs-action-bar>
 
 <div class="page-content">
+
+  <!--Card pour les filtres-->
+  <wcs-card mode="flat" id="card-connect-services" *ngIf="!generalService.offlineMode && connectMessageStatus">
+    <wcs-card-body id="body-card-connect-services">
+      <span>Pour ouvrir les schémas électrique sur DsMat ou DocMat, il est nécessaire de s'authentifier auparavant</span>
+      <wcs-button mode="stroked" size="s" href="https://dsmat.sncf.fr/Login.aspx" target="_blank">Se connecter à DsMat</wcs-button>
+      <wcs-button mode="stroked" size="s" href="https://docmat.sncf.fr/#/" target="_blank">Se connecter à DocMat</wcs-button>
+      <wcs-mat-icon icon="close" id="button-close-card" (click)="hideConnectMessage()"></wcs-mat-icon>
+    </wcs-card-body>
+  </wcs-card>
+
   <!--Card pour les filtres-->
   <wcs-card mode="raised">
     <wcs-card-body>
@@ -31,7 +42,7 @@
         </wcs-form-field>
 
         <!--Select pour les Système / Fonction possibles : motrice, remorque, groupe électrogène, etc.-->
-        <wcs-form-field id="systeme-select">
+        <wcs-form-field>
           <wcs-label>Système / Fonction</wcs-label>
           <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme" (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
             <wcs-select-option value="tous" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
@@ -40,7 +51,7 @@
         </wcs-form-field>
 
         <!--Select pour les raccourcis possibles : schémas electriques, codes défauts-->
-        <wcs-form-field id="raccourcis-select">
+        <wcs-form-field>
             <wcs-label>Raccourcis</wcs-label>
             <wcs-select #selectShortcut placeholder="Choisir un raccourci" [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
               <wcs-select-option value="tous" *ngIf="ldService.shortcut"><b>Tous</b></wcs-select-option>

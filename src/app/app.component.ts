@@ -10,9 +10,7 @@ import {GeneralService} from "./services/general.service";
 export class AppComponent {
   title = 'ld-main';
 
-  constructor(
-    public generalService: GeneralService
-  ) {
+  constructor( ) {
   }
 
 }

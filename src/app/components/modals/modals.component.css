@@ -7,3 +7,25 @@
   align-items: flex-end;
   gap: var(--wcs-margin-s);
 }
+#warning-version-card {
+  position: absolute;
+  bottom: 2vh;
+  right: 2vw;
+  max-width: 27vw;
+  background-color: rgb(251, 241, 244);
+  border-color: rgba(205,0,55,1);
+  color: rgba(205,0,55,1);
+}
+#warning-version-card-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  justify-content: center;
+  gap: 1em;
+  text-align: center;
+}
+#button-close-card {
+  cursor: pointer;
+}

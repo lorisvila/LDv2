@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {EnginService} from "../../services/engin.service";
-import {DocFctServiceService} from "../../services/doc-fct-service.service";
+import {DocFctService} from "../../services/doc-fct.service";
+import {GeneralService} from "../../services/general.service";
 
 @Component({
   selector: 'app-doc-fct-page',
@@ -10,9 +11,12 @@ import {DocFctServiceService} from "../../services/doc-fct-service.service";
 export class DocFctPageComponent {
 
   constructor(
+    public generalService: GeneralService,
     public enginService: EnginService,
-    public docFctService: DocFctServiceService
+    public docFctService: DocFctService
   ) {
   }
 
+  protected readonly getSelection = getSelection;
+  protected readonly Component = Component;
 }

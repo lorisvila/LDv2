@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable, Output} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnginService {
+
+  @Output() $actual_engin: EventEmitter<string> = new EventEmitter<string>();
 
   actual_engin: string = "";
   types_engin: {[Name: string]: string[]} = {
@@ -17,6 +19,7 @@ export class EnginService {
   changeActualEngin(engin: string){
     this.actual_engin = engin
     this.actual_type_engin = this.types_engin[this.actual_engin]
+    this.$actual_engin.emit(engin)
   }
   changeDefaultEngin(engin: string) {
     let expiry_date = new Date()

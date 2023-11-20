@@ -24,9 +24,17 @@ wcs-accordion-content {
   gap: var(--wcs-base-margin);
   align-items: flex-end;
 }
-#systeme-select {
-  min-width: 12em;
+#card-connect-services {
+  background-color: rgb(253, 236, 189);
+  border-color: rgb(253, 181, 18);
+  color: var(--wcs-orange);
 }
-#raccourcis-select {
-  min-width: 12em;
+#body-card-connect-services {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+}
+#button-close-card {
+  cursor: pointer;
 }

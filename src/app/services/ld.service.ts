@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {EnginService} from "./engin.service";
 import {GeneralService} from "./general.service";
-import {LDdataType} from "../app.types";
+import {ItemDataType} from "../app.types";
 import {create, insert, insertMultiple, Orama, Results, search, SearchParams, TypedDocument} from "@orama/orama";
 
 @Injectable({
@@ -18,7 +18,10 @@ export class LdService {
     this.generalService.$offlineMode.subscribe((value) => {
       this.updateFilteredData()
     })
-    console.log(this.systemes)
+    // Subscribe to a change in the actual engin selected
+    this.enginService.$actual_engin.subscribe((value) => {
+      this.updateFilteredData()
+    })
   };
 
   // Filters and selection
@@ -28,30 +31,30 @@ export class LdService {
   enginNum_value: string = "";
   systeme: string = "";
   systemes = { // TODO : Chercher à ne pas faire se trier les valeurs lors de la déclaration dans TS => Valeurs triées A->Z dans le select
-    "motrice": "Motrice",
-    "remorque": "Remorque",
-    "generalites": "Généralités",
-    "pneumatique": "Pneumatique",
-    "train_digi": "Train Digital",
-    "chaine_trac": "Chaîne de traction",
-    "groupe_electro": "Groupe électrogène",
-    "clim": "Climatisation",
+    "motrice":          "Motrice",
+    "remorque":         "Remorque",
+    "generalites":      "Généralités",
+    "pneumatique":      "Pneumatique",
+    "chaine_trac":      "Chaîne de traction",
+    "groupe_electro":   "Groupe électrogène",
+    "clim":             "Climatisation",
     "frein_ae_prod_air": "Frein AE Prod. air",
-    "portes": "Portes",
-    "sie_siv": "SIE / SIV",
-    "retro_visio": "Rétro. & Vidéosurv."
+    "portes":           "Portes",
+    "sie_siv":          "SIE / SIV",
+    "retro_visio":      "Rétro. & Vidéosurv."
   }
   shortcut: string = "";
   shortcuts = { // TODO : Chercher à ne pas faire se trier les valeurs lors de la déclaration dans TS => Valeurs triées A->Z dans le select
-    "schemas": "Schémas",
-    "code_defauts": "Codes défauts",
-    "logiciel": "Logiciel"
+    "schemas":        "Schémas",
+    "code_defauts":   "Codes défauts",
+    "logiciel":       "Logiciel"
   };
 
   // Function to reset all the filter elements
   reinitFormValues() {
     console.log(this.shortcut, this.engin_type);
     this.changeValueFilter("shortcut", "");
+    this.changeValueFilter("systeme", "");
     this.changeValueFilter("engin_type", "");
     this.changeValueFilter("search_value", "");
     this.changeValueFilter("enginNum_value", "");
@@ -99,7 +102,7 @@ export class LdService {
   updateFilteredData() {
 
     // Add data in the var
-    let data: LDdataType[] = []
+    let data: ItemDataType[] = []
     if (this.generalService.offlineMode) {
       data = this.LDdata // Add local data
       this.loading = false
@@ -107,8 +110,13 @@ export class LdService {
       data = this.LDdata // TODO : Ajouter les données du serveur SQL
       this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite
     }
+    // use only data for the engin
+    data = data.filter((item) => item.engin == this.enginService.actual_engin)
 
     // Filter the data
+    if (this.systeme != "") {
+      data = data.filter((item) => item.systeme == this.systeme)
+    }
     if (this.shortcut != "") {
       data = data.filter((item) => item.type == this.shortcut)
     }
@@ -119,7 +127,7 @@ export class LdService {
     if (this.enginNum_value != "") {}
 
     // Add the data to the filtered values
-    this.filteredData = data
+    this.filteredLDdata = data
 
   }
 
@@ -131,7 +139,9 @@ export class LdService {
   // to convert Excel to JSON : https://tableconvert.com/excel-to-json
   // to convert XML to JSON : https://codebeautify.org/xmltojson
 
-  LDdata: LDdataType[] = [
+  filteredLDdata: ItemDataType[] = []
+
+  LDdata: ItemDataType[] = [
     {
       "id": 1,
       "engin": "AGC",
@@ -139,7 +149,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 01",
       "des": "Livret de Dépannage : Définition, Structure",
       "systeme": "generalites",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200101_D-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200101_D-.pdf",
       "url_main_file": "assets/documents/LD/LD5200101_D-.pdf"
     },
     {
@@ -151,7 +161,7 @@ export class LdService {
       "des": "Schémas de câblage motrice 1 B81500 jusqu’à la rame B81545 (XAB)",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200202E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 829",
       "url_main_file": "assets/documents/LD/LD5200202E01_A-.pdf"
     },
@@ -164,7 +174,7 @@ export class LdService {
       "des": "Schémas de câblage motrice 1 B81500 à partir de la rame B81547 et B82500 (XAB)",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200202E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 830",
       "url_main_file": "assets/documents/LD/LD5200202E02_A-.pdf"
     },
@@ -177,7 +187,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) jusqu’à la rame X76563",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200203E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 835",
       "url_main_file": "assets/documents/LD/LD5200203E01_A-.pdf"
     },
@@ -190,7 +200,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) à partir de la rame X76575",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200203E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 836",
       "url_main_file": "assets/documents/LD/LD5200203E02_A-.pdf"
     },
@@ -203,7 +213,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 1 standard (XAS) jusqu’à la rame X76561",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200204E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 839",
       "url_main_file": "assets/documents/LD/LD5200204E01_A-.pdf"
     },
@@ -216,7 +226,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 1 standard (XAS) à partir de la rame X76565",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200204E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 840",
       "url_main_file": "assets/documents/LD/LD5200204E02_A-.pdf"
     },
@@ -229,7 +239,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) rame Z27503",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200205E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
       "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
     },
@@ -242,7 +252,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) à partir de la rame Z27507",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200205E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 348",
       "url_main_file": "assets/documents/LD/LD4200205E02_A-.pdf"
     },
@@ -255,7 +265,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) rames Z27501 et Z27505",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200206E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 349",
       "url_main_file": "assets/documents/LD/\tLD4200206E01_A-.pdf"
     },
@@ -268,7 +278,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) à partir de la rame Z27511",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200206E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 350",
       "url_main_file": "assets/documents/LD/\tLD4200206E02_A-.pdf"
     },
@@ -281,7 +291,7 @@ export class LdService {
       "des": "Schémas de câblage motrice 2 B81500 jusqu’à la rame B81545 (XBB)",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200208E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200208E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 831",
       "url_main_file": "assets/documents/LD/LD5200208E01_A-.pdf"
     },
@@ -294,7 +304,7 @@ export class LdService {
       "des": "Schémas de câblage motrice 2 B81500 à partir de la rame B81547 et B82500 (XBB)",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD5200208E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD5200208E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 832",
       "url_main_file": "assets/documents/LD/\tLD5200208E02_A-.pdf"
     },
@@ -307,7 +317,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 2 couplable (XBC) jusqu’à la rame X76563",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD5200209E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD5200209E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 837",
       "url_main_file": "assets/documents/LD/\tLD5200209E01_A-.pdf"
     },
@@ -320,7 +330,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 2 couplable (XBC) à partir de la rame X76575",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200209E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200209E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 838",
       "url_main_file": "assets/documents/LD/LD5200209E02_A-.pdf"
     },
@@ -333,7 +343,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 2 standard (XBS) jusqu’à la rame X76561",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD5200210E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD5200210E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 841",
       "url_main_file": "assets/documents/LD/\tLD5200210E01_A-.pdf"
     },
@@ -346,7 +356,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 motrice 2 standard (XBS) à partir de la rame X76565",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD5200210E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD5200210E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 842",
       "url_main_file": "assets/documents/LD/\tLD5200210E02_A-.pdf"
     },
@@ -359,7 +369,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 2 couplable (ZBC) rame Z27503",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200211E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200211E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 351",
       "url_main_file": "assets/documents/LD/\tLD4200211E01_A-.pdf"
     },
@@ -372,7 +382,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 2 couplable (ZBC) à partir de la rame Z27507",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200211E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200211E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 352",
       "url_main_file": "assets/documents/LD/\tLD4200211E02_A-.pdf"
     },
@@ -385,7 +395,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 2 standard (ZBS) rames Z27501 et Z27505",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200212E01_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200212E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 353",
       "url_main_file": "assets/documents/LD/\tLD4200212E01_A-.pdf"
     },
@@ -398,7 +408,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 motrice 2 standard (ZBS) à partir de la rame Z27511",
       "type": "schemas",
       "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/\tLD4200212E02_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200212E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 354",
       "url_main_file": "assets/documents/LD/\tLD4200212E02_A-.pdf"
     },
@@ -411,7 +421,7 @@ export class LdService {
       "des": "Schémas de câblage B81500 remorque 1 (XRB)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200214_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200214_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 833",
       "url_main_file": "assets/documents/LD/LD5200214_A-.pdf"
     },
@@ -424,7 +434,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 remorque 1 (XRS)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200215_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200215_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 843",
       "url_main_file": "assets/documents/LD/LD5200215_A-.pdf"
     },
@@ -437,7 +447,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 remorque 1 (ZRS)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200216_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200216_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 355",
       "url_main_file": "assets/documents/LD/LD4200216_A-.pdf"
     },
@@ -450,7 +460,7 @@ export class LdService {
       "des": "Schémas de câblage B82500 remorque 1 (XRZ)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200217_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200217_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 000",
       "url_main_file": "assets/documents/LD/LD5200217_A-.pdf"
     },
@@ -463,7 +473,7 @@ export class LdService {
       "des": "Schémas de câblage B81500 remorque 2 (XSB)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200218_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200218_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 834",
       "url_main_file": "assets/documents/LD/LD5200218_A-.pdf"
     },
@@ -476,7 +486,7 @@ export class LdService {
       "des": "Schémas de câblage X76500 remorque 1 (XSS)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200219_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200219_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 844",
       "url_main_file": "assets/documents/LD/LD5200219_A-.pdf"
     },
@@ -489,7 +499,7 @@ export class LdService {
       "des": "Schémas de câblage Z27500 remorque 2 (ZSS)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200220_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200220_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 356",
       "url_main_file": "assets/documents/LD/LD4200220_A-.pdf"
     },
@@ -502,7 +512,7 @@ export class LdService {
       "des": "Schémas de câblage B82500 remorque 2 (XSZ)",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200221_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200221_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 001",
       "url_main_file": "assets/documents/LD/LD5200221_A-.pdf"
     },
@@ -514,7 +524,7 @@ export class LdService {
       "des": "Schémas de câblage aménagement",
       "type": "schemas",
       "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200222_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200222_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200222_A-.pdf"
     },
     {
@@ -525,7 +535,7 @@ export class LdService {
       "des": "Schémas de câblage pneumatique",
       "type": "schemas",
       "systeme": "pneumatique",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200223_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200223_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200223_A-.pdf"
     },
     {
@@ -536,7 +546,7 @@ export class LdService {
       "des": "Logiciel « DCU Term »",
       "type": "logiciel",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200102_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200102_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200102_A-.pdf"
     },
     {
@@ -547,7 +557,7 @@ export class LdService {
       "des": "Logiciel « MAVIS »",
       "type": "logiciel",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200103_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200103_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200103_A-.pdf"
     },
     {
@@ -558,7 +568,7 @@ export class LdService {
       "des": "Logiciel « TDS Uploader »",
       "type": "logiciel",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200104_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200104_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200104_A-.pdf"
     },
     {
@@ -569,7 +579,7 @@ export class LdService {
       "des": "Logiciel « EMCO Logiplus »",
       "type": "logiciel",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200105_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200105_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200105_A-.pdf"
     },
     {
@@ -580,7 +590,7 @@ export class LdService {
       "des": "Logiciel « EMCO Faiveley »",
       "type": "logiciel",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200106_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200106_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200106_A-.pdf"
     },
     {
@@ -590,7 +600,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 07",
       "des": "Utilisation des enregistreurs PCU / DCU",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200107_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200107_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200107_A-.pdf"
     },
     {
@@ -600,7 +610,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 08",
       "des": "Configuration Fiche MOBAD avec « Map Tools »",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200108_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200108_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200108_A-.pdf"
     },
     {
@@ -610,7 +620,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 09",
       "des": "Chargement Base Line, Carte DCU, Carte PCU avec « DCU Term »",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200109_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200109_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200109_A-.pdf"
     },
     {
@@ -620,7 +630,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 10",
       "des": "Chargement Carte GDU avec programmateur XILINX",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200110_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200110_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200110_A-.pdf"
     },
     {
@@ -631,7 +641,7 @@ export class LdService {
       "des": "Codes défaut et procédure de recherche de pannes XGC (X Std)",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200111_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200111_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200111_A-.pdf"
     },
     {
@@ -642,7 +652,7 @@ export class LdService {
       "des": "Codes défaut et procédure de recherche de pannes BGC (X Bim)",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200112_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200112_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200112_A-.pdf"
     },
     {
@@ -653,7 +663,7 @@ export class LdService {
       "des": "Codes défaut et procédure de recherche de pannes ZGC (Z Std)",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200113_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200113_A-.pdf",
       "url_main_file": "assets/documents/LD/LD4200113_A-.pdf"
     },
     {
@@ -664,7 +674,7 @@ export class LdService {
       "des": "Codes défaut et procédure de recherche de pannes BiBi (X Bibi)",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200114_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200114_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200114_A-.pdf"
     },
     {
@@ -675,7 +685,7 @@ export class LdService {
       "des": "Haute tension : Fonctionnement - Génération des codes défaut type H",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200116_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200116_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200116_A-.pdf"
     },
     {
@@ -686,7 +696,7 @@ export class LdService {
       "des": "Communications: Fonctionnement – Génération des codes défaut type C",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200117_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200117_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200117_A-.pdf"
     },
     {
@@ -697,7 +707,7 @@ export class LdService {
       "des": "Propulsion: Fonctionnement – Génération des codes défaut type P",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200118_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200118_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200118_A-.pdf"
     },
     {
@@ -708,7 +718,7 @@ export class LdService {
       "des": "Freinage conjugé: Fonctionnement – Génération des codes défaut type B",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200119_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200119_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200119_A-.pdf"
     },
     {
@@ -719,7 +729,7 @@ export class LdService {
       "des": "Fonctionnement du train : Fonctionnement – Génération des codes défaut type M",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200120_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200120_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200120_A-.pdf"
     },
     {
@@ -730,7 +740,7 @@ export class LdService {
       "des": "Emetteur de consigne FAIVELEY : Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200121_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200121_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200121_A-.pdf"
     },
     {
@@ -741,7 +751,7 @@ export class LdService {
       "des": "Emetteur de consigne LOGIPLUS: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200122_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200122_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200122_A-.pdf"
     },
     {
@@ -752,7 +762,7 @@ export class LdService {
       "des": "Module convertisseur moteur (MCM) : Fonctionnement – Génération des codes défaut type DCUM",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200123_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200123_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200123_A-.pdf"
     },
     {
@@ -763,7 +773,7 @@ export class LdService {
       "des": "Module convertisseur Générateur (GCM) : Fonctionnement – Génération des codes défaut type DCUG",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200124_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200124_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200124_A-.pdf"
     },
     {
@@ -774,7 +784,7 @@ export class LdService {
       "des": "Module convertisseur Auxiliaire (ACM) : Fonctionnement – Génération des codes défaut type DCUA",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200125_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200125_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200125_A-.pdf"
     },
     {
@@ -785,7 +795,7 @@ export class LdService {
       "des": "Module convertisseur de ligne (LCM) : Fonctionnement – Génération des codes défaut type DCUL",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD4200126_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200126_A-.pdf",
       "url_main_file": "assets/documents/LD/LD4200126_A-.pdf"
     },
     {
@@ -796,7 +806,7 @@ export class LdService {
       "des": "Module convertisseur de ligne/générateur (LGCM) : Fonctionnement – Génération des codes défaut type DCULG",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200127_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200127_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200127_A-.pdf"
     },
     {
@@ -807,7 +817,7 @@ export class LdService {
       "des": "Codes défauts diesel et procédure de recherche de panne – X – Xbim – BIBI.",
       "type": "code_defauts",
       "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200128_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200128_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200128_A-.pdf"
     },
     {
@@ -818,7 +828,7 @@ export class LdService {
       "des": "Logiciel « OLAM 2 » pour MD euro 2",
       "type": "logiciel",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200135_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200135_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200135_A-.pdf"
     },
     {
@@ -829,7 +839,7 @@ export class LdService {
       "des": "Logiciel « Man Cats II » pour MD Euro 3 et 3a",
       "type": "logiciel",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200136_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200136_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200136_A-.pdf"
     },
     {
@@ -840,7 +850,7 @@ export class LdService {
       "des": "Contrôle/commande MD Euro 2: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200137_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200137_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200137_A-.pdf"
     },
     {
@@ -850,7 +860,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 38",
       "des": "Courbes de références DcuTerm - MD Euro 2",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200138_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200138_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200138_A-.pdf"
     },
     {
@@ -861,7 +871,7 @@ export class LdService {
       "des": "Contrôle/commande MD Euro 3 et 3A: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200139_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200139_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200139_A-.pdf"
     },
     {
@@ -871,7 +881,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 40",
       "des": "Courbes de références DcuTerm - MD Euro 3 et 3 A",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200140_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200140_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200140_A-.pdf"
     },
     {
@@ -881,7 +891,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 41",
       "des": "Procédure de vérification du circuit gasoil en cas de pollution - MD Euro 3 et 3 A",
       "systeme": "groupe_electro",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200141_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200141_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200141_A-.pdf"
     },
     {
@@ -892,7 +902,7 @@ export class LdService {
       "des": "Logiciel « MONA »",
       "type": "logiciel",
       "systeme": "clim",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200145_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200145_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200145_A-.pdf"
     },
     {
@@ -903,7 +913,7 @@ export class LdService {
       "des": "Climatisation voyageurs / Climatisation cabine: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "clim",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200146_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200146_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200146_A-.pdf"
     },
     {
@@ -914,7 +924,7 @@ export class LdService {
       "des": "Logiciel « ST03 »",
       "type": "logiciel",
       "systeme": "frein_ae_prod_air",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200150_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200150_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200150_A-.pdf"
     },
     {
@@ -925,7 +935,7 @@ export class LdService {
       "des": "Anti-enrayage - Freinage conjugé: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "frein_ae_prod_air",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200152_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200152_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200152_A-.pdf"
     },
     {
@@ -935,7 +945,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 53",
       "des": "Gestion production d’air: Fonctionnement",
       "systeme": "frein_ae_prod_air",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200153_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200153_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200153_A-.pdf"
     },
     {
@@ -946,7 +956,7 @@ export class LdService {
       "des": "Logiciel « HARDI » - Comble lacune",
       "type": "logiciel",
       "systeme": "portes",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200160_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200160_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200160_A-.pdf"
     },
     {
@@ -957,7 +967,7 @@ export class LdService {
       "des": "Logiciel « WinMonext / WinVisual » - Portes d’accès",
       "type": "logiciel",
       "systeme": "portes",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200161_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200161_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200161_A-.pdf"
     },
     {
@@ -968,7 +978,7 @@ export class LdService {
       "des": "Comble lacune: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "portes",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200162_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200162_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200162_A-.pdf"
     },
     {
@@ -979,7 +989,7 @@ export class LdService {
       "des": "Portes d’accès voyageurs: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "portes",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200163_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200163_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200163_A-.pdf"
     },
     {
@@ -990,7 +1000,7 @@ export class LdService {
       "des": "Portes d’intercirculation: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "portes",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200164_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200164_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200164_A-.pdf"
     },
     {
@@ -1001,7 +1011,7 @@ export class LdService {
       "des": "Logiciel « DownLoad Software »",
       "type": "logiciel",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200170_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200170_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200170_A-.pdf"
     },
     {
@@ -1012,7 +1022,7 @@ export class LdService {
       "des": "Logiciel « Utilitaire carnet de bord »",
       "type": "logiciel",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200171_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200171_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200171_A-.pdf"
     },
     {
@@ -1022,7 +1032,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 74",
       "des": "Chargement applicatif tiroirs SIE - Echange tiroir SIE",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200174_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200174_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200174_A-.pdf"
     },
     {
@@ -1032,7 +1042,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 75",
       "des": "Chargement bases SIV",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200175_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200175_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200175_A-.pdf"
     },
     {
@@ -1043,7 +1053,7 @@ export class LdService {
       "des": "Système Informatique Embarqué: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200176_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200176_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200176_A-.pdf"
     },
     {
@@ -1054,7 +1064,7 @@ export class LdService {
       "des": "Système d’Information Voyageurs: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200177_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200177_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200177_A-.pdf"
     },
     {
@@ -1065,7 +1075,7 @@ export class LdService {
       "des": "Réseaux LON, MVB, WTB: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200178_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200178_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200178_A-.pdf"
     },
     {
@@ -1075,7 +1085,7 @@ export class LdService {
       "ref_main": "LD 5 200 1 79",
       "des": "Mise en service liaison Bord/Sol",
       "systeme": "sie_siv",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200179_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200179_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200179_A-.pdf"
     },
     {
@@ -1086,7 +1096,7 @@ export class LdService {
       "des": "Logiciel « JetStream »",
       "type": "logiciel",
       "systeme": "retro_visio",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200185_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200185_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200185_A-.pdf"
     },
     {
@@ -1097,7 +1107,7 @@ export class LdService {
       "des": "Rétro vision: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "retro_visio",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200187_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200187_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200187_A-.pdf"
     },
     {
@@ -1108,7 +1118,7 @@ export class LdService {
       "des": "Vidéo surveillance: Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "retro_visio",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200188_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200188_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200188_A-.pdf"
     },
     {
@@ -1119,7 +1129,7 @@ export class LdService {
       "des": "Logiciel « Flash Loader » / Chargement applicatifs platine SEMCO",
       "type": "logiciel",
       "systeme": "retro_visio",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200195_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200195_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200195_A-.pdf"
     },
     {
@@ -1130,11 +1140,9 @@ export class LdService {
       "des": "Module WC : Fonctionnement – Génération des codes défaut",
       "type": "code_defauts",
       "systeme": "retro_visio",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&amp;document=documents/LD5200196_A-.pdf",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200196_A-.pdf",
       "url_main_file": "assets/documents/LD/LD5200196_A-.pdf"
     }
   ]
-
-  filteredData: LDdataType[] = []
 
 }
