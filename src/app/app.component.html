@@ -5,12 +5,6 @@
     <router-outlet></router-outlet>
   </div>
   <app-modals id="modals-wrapper"></app-modals>
-  <wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">
-    <wcs-card-body id="warning-version-card-body">
-      ⚠️ Les documents ne sont pas tenus à la dernière version en mode hors-ligne...
-      <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.showOfflineCard = false"></wcs-mat-icon>
-    </wcs-card-body>
-  </wcs-card>
 </div>
 
 <!--Generate angular app from direct execute-->

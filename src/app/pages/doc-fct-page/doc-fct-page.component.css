@@ -1,23 +1,70 @@
+/*Define the page flexbox + card elements*/
 .page-content {
-  padding: 1em 1em;
+  padding: 1em;
   display: flex;
-  flex-direction: column;
   gap: var(--wcs-margin-l);
+  height: calc(100% - (56px + 64px)); /*Full heigh minus the navbar and title height*/
 }
+@media screen and (min-width: 1000px) {
+  .page-content {
+    flex-direction: row;
+  }
+  #documents-card-body {
+    overflow-y: scroll;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .page-content {
+    flex-direction: column;
+  }
+  #documents-card-body {
+    overflow-y: visible;
+  }
+}
+.bottom-card {
+  height: 100%;
+}
+
+/*Title*/
 #title-engin-field {
   font-size: 0.8em;
 }
-#filtres-container {
+
+/*Cards common elements*/
+h4 {
+  margin: 0 0 1em;
+  text-align: center;
+}
+.card-body {
   display: flex;
-  flex-direction: row;
-  gap: var(--wcs-base-margin);
-  align-items: flex-end;
+  flex-direction: column;
+  height: 100%;
+}
+
+/*Card filters*/
+#filters-card {
+  flex: 0 30%;
+  height: 100%;
+  overflow-y: auto;
+}
+#filters-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 #raccourcis-select {
   min-width: 12em;
 }
-#tableListItem {
-  padding: 1em;
-  border: transparent;
-  border-radius: 20px;
+
+/*Card documents*/
+#documents-card {
+  flex: 1 70%;
+  display: flex;
+}
+#documents-card-body {
+  display: flex;
+  justify-items: center;
+}
+#no-data-span {
+  text-align: center;
 }

@@ -39,18 +39,31 @@ img {
   cursor: not-allowed;
   color: var(--wcs-text-disabled);
 }
-
+/*Make the card containing the cloud logo and the on/off button a flexbox with gap*/
 #state-offline-card {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+/*Not show the offline state button*/
 #div-button-change-state-offline {
   display: none;
 }
-#state-offline-card:hover > #div-button-change-state-offline {
-  display: inherit;
+
+/*Prevent to show the on/off button for the offline mode if screen <630px*/
+@media screen and (min-width: 630px) {
+  #state-offline-card:hover > #div-button-change-state-offline {
+    display: inherit;
+  }
 }
 #state-offline-icon {
   color: var(--wcs-light);
+}
+.badge-en-ligne {
+  transition: background-color 1s ease;
+  background-color: var(--wcs-green);
+}
+.badge-hors-ligne {
+  transition: background-color 1s ease;
+  background-color: var(--wcs-yellow);
 }

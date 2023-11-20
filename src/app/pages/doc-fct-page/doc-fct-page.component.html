@@ -2,52 +2,46 @@
 <div class="page-content">
 
   <!--Card pour les filtres-->
-  <wcs-card mode="raised">
-    <wcs-card-body>
-      <div id="filtres-container">
+  <wcs-card mode="raised" id="filters-card" class="bottom-card">
+    <wcs-card-body id="filters-card-body">
 
-        <!--Input de recherche-->
-        <wcs-form-field id="string-search-field">
-          <wcs-label>Recherche</wcs-label>
-          <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="docFctService.search_value" (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
-        </wcs-form-field>
+      <!--Input de recherche-->
+      <wcs-form-field id="string-search-field">
+        <wcs-label>Recherche</wcs-label>
+        <wcs-input #inputSearch placeholder="ex: Afficheur latéral ..." [value]="docFctService.search_value" (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
+      </wcs-form-field>
 
-        <!--Select pour les raccourcis possibles : schémas electriques, codes défauts-->
-        <wcs-form-field id="raccourcis-select">
-          <wcs-label>Raccourcis</wcs-label>
-          <wcs-select #selectShortcut [value]="docFctService.shortcut" (wcsChange)="docFctService.changeValueFilter('shortcut', selectShortcut.value)">
-            <wcs-select-option *ngFor="let shortcut of docFctService.shortcuts | keyvalue" [value]="shortcut.key">{{shortcut.value}}</wcs-select-option>
-          </wcs-select>
-        </wcs-form-field>
+      <!--Grid de recherche-->
+      <wcs-grid #gridSearch id="systemes-grid" rowIdPath="id"
+                [data]="docFctService.systemes" selection-config="multiple"
+                [selectedItems]="docFctService.selected_systemes"
+                (wcsGridSelectionChange)="docFctService.changeValueFilter('systeme', $event)">
+        <wcs-grid-column name="Système" path="systeme_formatted"></wcs-grid-column>
+      </wcs-grid>
 
-        <!--Bouton pour reinitialiser / supprimer les filtres-->
-        <wcs-form-field>
-          <wcs-button class="wcs-warning" mode="clear" size="m" (click)="docFctService.reinitFormValues()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
-        </wcs-form-field>
-      </div>
     </wcs-card-body>
   </wcs-card>
 
-  <!--Card pour la grid-->
-  <wcs-card mode="raised">
-    <wcs-card-body>
-      <div id="tableListItem">
-        <wcs-list-item>
+  <!--Card pour les documents-->
+  <wcs-card mode="raised" id="documents-card" class="bottom-card">
+    <wcs-card-body id="documents-card-body" class="card-body">
+
+        <span *ngIf="docFctService.DocFctData.length == 0" id="no-data-span">Veuillez sélectionner une catégorie pour voir les documents associés</span>
+        <wcs-list-item *ngFor="let item of docFctService.DocFctData; index as i">
           <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
-          <div slot="title">Doc shéma puissance</div>
+          <div slot="title">{{item.des}}</div>
+          <wcs-list-item-properties>
+            <wcs-list-item-property>{{item.ref_main}}</wcs-list-item-property>
+            <wcs-list-item-property>{{item.type}}</wcs-list-item-property>
+            <wcs-list-item-property>{{item.systeme}}</wcs-list-item-property>
+          </wcs-list-item-properties>
           <div slot="actions">
-            <wcs-button shape="square" mode="stroked" class="wcs-secondary">
+            <wcs-button shape="square" mode="stroked" class="wcs-secondary" [href]="generalService.offlineMode ? item.url_main_file : item.url_main" target="_blank">
               <wcs-mat-icon icon="open_in_new" size="1" family="filled"></wcs-mat-icon>
             </wcs-button>
           </div>
-          <wcs-list-item-properties>
-            <wcs-list-item-property>Moteur diesel / Générateur</wcs-list-item-property>
-          </wcs-list-item-properties>
-          <div slot="description">
-            Description du document de fonction
-          </div>
         </wcs-list-item>
-      </div>
+
     </wcs-card-body>
   </wcs-card>
 

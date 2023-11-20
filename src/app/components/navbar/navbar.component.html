@@ -23,7 +23,7 @@
     </wcs-form-field>
 
     <!--Statut du mode Offline-->
-    <wcs-badge [class]="generalService.offlineMode ? 'wcs-warning' : 'wcs-success'" shape="normal" color="initial" id="state-offline-card">
+    <wcs-badge [class]="generalService.offlineMode ? 'badge-hors-ligne' : 'badge-en-ligne'" shape="normal" color="initial" id="state-offline-card">
       <wcs-mat-icon [icon]="generalService.offlineMode ? 'cloud_off' : 'cloud'" family="filled" id="state-offline-icon"></wcs-mat-icon>
       <wcs-tooltip for="state-offline-card">
         Etat du mode mode en ligne
