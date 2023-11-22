@@ -4,13 +4,14 @@
 
 <div class="page-content">
 
-  <!--Card pour les filtres-->
-  <wcs-card mode="flat" id="card-connect-services" *ngIf="!generalService.offlineMode && connectMessageStatus">
+  <!--Card d'avertissement plateformes DsMat et DocMat-->
+  <wcs-card mode="flat" id="card-connect-services" *ngIf="!generalService.offlineMode && generalService.connectMessageStatus"
+            slot="actions">
     <wcs-card-body id="body-card-connect-services">
       <span>Pour ouvrir les schémas électrique sur DsMat ou DocMat, il est nécessaire de s'authentifier auparavant</span>
       <wcs-button mode="stroked" size="s" href="https://dsmat.sncf.fr/Login.aspx" target="_blank">Se connecter à DsMat</wcs-button>
       <wcs-button mode="stroked" size="s" href="https://docmat.sncf.fr/#/" target="_blank">Se connecter à DocMat</wcs-button>
-      <wcs-mat-icon icon="close" id="button-close-card" (click)="hideConnectMessage()"></wcs-mat-icon>
+      <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.hideConnectMessage()"></wcs-mat-icon>
     </wcs-card-body>
   </wcs-card>
 
@@ -46,7 +47,7 @@
           <wcs-label>Système / Fonction</wcs-label>
           <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme" (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
             <wcs-select-option value="tous" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let systeme of ldService.systemes | keyvalue" [value]="systeme.key">{{systeme.value}}</wcs-select-option>
+            <wcs-select-option *ngFor="let systeme of ldService.systemes" [value]="systeme.systeme">{{systeme.systeme_formatted}}</wcs-select-option>
           </wcs-select>
         </wcs-form-field>
 
@@ -55,7 +56,7 @@
             <wcs-label>Raccourcis</wcs-label>
             <wcs-select #selectShortcut placeholder="Choisir un raccourci" [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
               <wcs-select-option value="tous" *ngIf="ldService.shortcut"><b>Tous</b></wcs-select-option>
-              <wcs-select-option *ngFor="let shortcut of ldService.shortcuts | keyvalue" [value]="shortcut.key">{{shortcut.value}}</wcs-select-option>
+              <wcs-select-option *ngFor="let shortcut of ldService.shortcuts" [value]="shortcut.shortcut">{{shortcut.shortcut_formatted}}</wcs-select-option>
             </wcs-select>
         </wcs-form-field>
 

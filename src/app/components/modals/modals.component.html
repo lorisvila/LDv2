@@ -1,8 +1,8 @@
 <!--Modal default engin-->
-<wcs-modal [show]="generalService.showDefaultEnginModal" id="modal-default-engin">
+<wcs-modal [show]="generalService.showDefaultEnginModal">
   <div slot="header">Choix de l'engin par défaut</div>
   <div class="modal-content">
-    <wcs-select #enginSelect [value]="actual_engin" size="m">
+    <wcs-select #enginSelect [value]="enginService.actual_engin" size="m">
       <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.key}}</wcs-select-option>
     </wcs-select>
     <p>
@@ -16,21 +16,62 @@
   </div>
 </wcs-modal>
 
-<!--Modal debug-->
-<wcs-modal [show]="generalService.showDebugModal" id="modal-debug" size="l">
-  <div slot="header">Fenêtre de debug</div>
-  <div class="modal-content">
-    <wcs-grid id="grid-simple-1" row-id-path="id" [data]="dataDebug">
-      <!--Colonnes de la grid-->
-      <wcs-grid-column name="Variable" path="var" sort="" id="column-var"></wcs-grid-column>
-      <wcs-grid-column name="Valeur" path="val" sort="" id="column-val"></wcs-grid-column>
+<!--Modal rajout engin-->
+<wcs-modal [show]="generalService.showEnginsFavoris" size="l">
+  <div slot="header">Choix des engins favoris</div>
+  <div class="modal-content" id="engins-fav-modal-content">
+
+    <wcs-label>Ajout d'un engin</wcs-label>
+    <!--Select engins fav-->
+    <div id="flex-engins-fav">
+      <wcs-select #enginFavCategorieSelect [value]="enginService.actual_engin" size="m">
+        <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+      </wcs-select>
+      <wcs-select #enginFavTypeSelect [value]="enginService.types_engin[enginFavCategorieSelect.value][0]" size="m">
+        <wcs-select-option *ngFor="let engin of enginService.types_engin[enginFavCategorieSelect.value]" [value]="engin">{{engin}}</wcs-select-option>
+      </wcs-select>
+      <wcs-input #enginNumberInput type="number" inputmode="decimal" [placeholder]="76519" required="true" [value]="inputNumberEngin"></wcs-input>
+      <wcs-button (click)="addFavEngin(enginFavCategorieSelect.value, enginFavTypeSelect.value, enginNumberInput.value)" class="wcs-success">Ajouter</wcs-button>
+    </div>
+
+    <wcs-grid rowIdPath="engin_numero" selection-config="multiple"
+              [data]="enginService.favoriteEngins"
+              (wcsGridSelectionChange)="updateSelectedFavEngin($event, 'single')"
+              (wcsGridAllSelectionChange)="updateSelectedFavEngin($event, 'all')">
+      <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
+      <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
+      <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
     </wcs-grid>
+    <wcs-button class="wcs-danger" id="button-delete-engin-fav" (click)="deleteFavEngins()">Supprimer</wcs-button>
 
   </div>
   <div slot="actions" class="slot-action">
-    <wcs-button (click)="generalService.toggleModal('debugModal', false)">OK</wcs-button>
+    <wcs-button (click)="generalService.toggleModal('enginsFavoris', false)">Fini !</wcs-button>
   </div>
 </wcs-modal>
+
+<!--Modal choix Technicentre + Rajout engin-->
+<wcs-modal [show]="generalService.showTechnicentreEnginModal" size="m">
+  <div slot="header">Choix du Technicentre et des engins</div>
+  <div class="modal-content">
+
+    <!--Select Technicentre-->
+    <wcs-label>Technicentre</wcs-label>
+    <wcs-select #technicentreSelect [value]="dataService.technicentresEngins[0].technicentre" size="m">
+      <wcs-select-option *ngFor="let technicentre of dataService.technicentresEngins" [value]="technicentre.technicentre" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{technicentre.technicentre_formatted}}</wcs-select-option>
+    </wcs-select>
+
+    <p>
+      Changer votre Technicentre d'affectation
+      <br><i>Ces données sont stockées dans les cookies</i>
+    </p>
+  </div>
+  <div slot="actions" class="slot-action">
+    <wcs-button mode="stroked" (click)="generalService.toggleModal('technicentreEnginModal', false)">Annuler</wcs-button>
+    <wcs-button (click)="setTechnicentre(technicentreSelect.value)">OK</wcs-button>
+  </div>
+</wcs-modal>
+
 
 <!--Card pour avertir que les données ne sont pas forcément tenues à jour-->
 <wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">

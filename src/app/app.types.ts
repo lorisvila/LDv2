@@ -1,3 +1,4 @@
+
 // Type for data in LD Dict
 export type ItemDataType = {
   id: number,
@@ -18,4 +19,30 @@ export type ItemDataType = {
 export type DebugDataType = {
   var: string,
   val: string | number | boolean
+}
+
+// Type for systeme element
+export type SystemeType = {
+  systeme_formatted: string,
+  systeme: string
+}
+
+// Type for shortcut element
+export type ShortcutType = {
+  shortcut_formatted: string,
+  shortcut: string
+}
+
+//Type for Technicentres and their engins
+export type Technicentre = {
+  technicentre_formatted: string,
+  technicentre: string,
+  engins: EnginType[]
+}
+
+// Type to define a engin
+export type EnginType = {
+  engin: string,
+  engin_type: string,
+  engin_numero?: number // A voir si utilisation d'un integer ou d'un string
 }

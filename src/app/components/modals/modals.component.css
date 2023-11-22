@@ -1,5 +1,6 @@
 .modal-content {
-  min-height: 20vh;
+  min-height: 30vh;
+  margin-top: 0.75em;
 }
 .slot-action {
   display: flex;
@@ -28,4 +29,16 @@
 }
 #button-close-card {
   cursor: pointer;
+}
+#engins-fav-modal-content {
+  min-height: 40vh;
+}
+#flex-engins-fav {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  margin: 0 0 0.5em 0;
+}
+#button-delete-engin-fav {
+  margin-top: 0.5em;
 }

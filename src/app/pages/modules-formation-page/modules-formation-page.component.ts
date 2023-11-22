@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import {GeneralService} from "../../services/general.service";
+import {EnginService} from "../../services/engin.service";
+import {ModulesFormationService} from "../../services/modules-formation.service";
 
 @Component({
   selector: 'app-modules-formation-page',
@@ -6,5 +9,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./modules-formation-page.component.css']
 })
 export class ModulesFormationPageComponent {
+
+  constructor(
+    public generalService: GeneralService,
+    public enginService: EnginService,
+    public modulesFormationService: ModulesFormationService
+  ) { }
 
 }

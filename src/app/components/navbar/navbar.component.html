@@ -14,6 +14,7 @@
 
   <!--Zone droite-->
   <div slot="actions" id="navbar-action">
+
     <!--Barre de recherche-->
     <wcs-form-field id="form-rechercher">
       <wcs-input placeholder="Rechercher"></wcs-input>
@@ -41,7 +42,15 @@
       <span slot="placeholder"><wcs-mat-icon icon="menu"></wcs-mat-icon> </span>
 
       <wcs-dropdown-header>Paramètres</wcs-dropdown-header>
-      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('defaultEnginModal', true)">Définir votre engin par défaut</wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('defaultEnginModal', true)">
+        Définir votre engin par défaut
+      </wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('technicentreEnginModal', true)">
+        Définir votre Technicentre
+      </wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('enginsFavoris', true)">
+        Ajouter des N° d'engins favoris
+      </wcs-dropdown-item>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleNetworkStatus()">
           {{generalService.offlineMode ? 'Désactiver' : 'Activer'}} le mode hors-ligne
       </wcs-dropdown-item>

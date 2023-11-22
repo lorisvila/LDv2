@@ -9,11 +9,14 @@
   <ng-container>
     <h2>Contenu du site</h2>
     <p>Ce site est a destination des agents de maintenance travaillant sur les AGC et TER 2N NG, il contient :</p>
-      <ul>
-        <li>Les livrets de dépannages contenant entre-autre les schémas, codes défauts et guides logiciels</li>
-        <li>Les documentations relatives au différents systèmes et organes</li>
-        <li>Les modules de formation des engins</li>
-        <li>Selon l'engin une aide à la localisation des organes</li>
-      </ul>
+    <ul>
+      <li>Les livrets de dépannages contenant entre-autre les schémas, codes défauts et guides logiciels</li>
+      <li>Les documentations relatives au différents systèmes et organes</li>
+      <li>Les modules de formation des engins</li>
+      <li>Selon l'engin une aide à la localisation des organes</li>
+    </ul>
+    <h2>Affectation
+      <wcs-badge class="wcs-info" shape="normal" color="initial" *ngIf="generalService.actualTechnicentre" style="height: fit-content; align-self: center">{{generalService.actualTechnicentre.technicentre_formatted}}</wcs-badge>
+    </h2>
   </ng-container>
 </div>

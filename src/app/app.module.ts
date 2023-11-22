@@ -12,7 +12,8 @@ import { LocOrgaPageComponent } from './pages/loc-orga-page/loc-orga-page.compon
 import {appRoutingModule} from "./app.routing";
 import { ModalsComponent } from './components/modals/modals.component';
 import {CookieService} from "ngx-cookie-service";
-import { GridComponent } from './pages/ld-page/grid/grid.component'
+import { GridComponent } from './pages/ld-page/grid/grid.component';
+import { CodesDefComponent } from './pages/codes-def/codes-def.component'
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -27,6 +28,7 @@ import { GridComponent } from './pages/ld-page/grid/grid.component'
     LocOrgaPageComponent,
     ModalsComponent,
     GridComponent,
+    CodesDefComponent,
   ],
   imports: [
     BrowserModule,
