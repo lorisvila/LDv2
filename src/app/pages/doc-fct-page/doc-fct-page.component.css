@@ -3,11 +3,12 @@
   padding: 1em;
   display: flex;
   gap: var(--wcs-margin-l);
+  height: 100%;
 }
 @media screen and (min-width: 1000px) {
   .page-content {
     flex-direction: row;
-    height: calc(100% - (56px + 64px)); /*Full heigh minus the navbar and title height*/
+    height: calc(100% - (56px + 60px)); /*Full heigh minus the navbar and title height*/
   }
   .bottom-card {
     overflow-y: auto;
@@ -22,13 +23,14 @@
     overflow-y: visible;
   }
 }
-.bottom-card {
-  height: 100%;
-}
 
 /*Title*/
 #title-engin-field {
   font-size: 0.8em;
+}
+#homeButton {
+  cursor: pointer;
+  user-select: none;
 }
 
 /*Cards common elements*/
@@ -72,4 +74,6 @@ h4 {
 }
 .document-textbox {
   text-align: center;
+  font-size: 1.5em;
+  font-weight: 500;
 }

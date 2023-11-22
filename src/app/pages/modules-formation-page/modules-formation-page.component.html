@@ -1,6 +1,9 @@
 <!--Action bar title + actual engin-->
 <wcs-action-bar gutter="">
   Modules de formation - <span id="title-engin-field">{{enginService.actual_engin}}</span>
+  <div slot="actions">
+    <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" routerLink="/"></wcs-mat-icon>
+  </div>
 </wcs-action-bar>
 
 <div class="page-content">
@@ -25,7 +28,7 @@
       </wcs-button>
 
       <!--Grid de modules de formation-->
-      <wcs-grid rowIdPath="id" selection-config="single"
+      <wcs-grid rowIdPath="id" selection-config="single" style="position: static; height: fit-content"
                 [data]="modulesFormationService.systemes"
                 [selectedItems]="modulesFormationService.systemesSelectedGridValues"
                 (wcsGridSelectionChange)="modulesFormationService.changeValueFilter('systeme', $event)">
@@ -39,7 +42,7 @@
   <!--Card pour les documents-->
   <wcs-card mode="raised" id="documents-card" class="bottom-card">
     <wcs-card-body id="documents-card-body" class="card-body"
-                   [ngStyle]="{'justify-content': modulesFormationService.docModuleFormation.length == 0 ? 'flex-start': 'center'}">
+                   [ngStyle]="{'justify-content': modulesFormationService.filteredModulesFormation.length == 0 ? 'center': 'flex-start'}">
 
       <!--Spinner loading in case of online-->
       <wcs-spinner class="wcs-primary" mode="border" *ngIf="modulesFormationService.loading"></wcs-spinner>
@@ -47,12 +50,12 @@
       <!--Span no categories selected-->
       <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.selected_systeme == ''" class="document-textbox">
           Veuillez sélectionner une catégorie pour voir les documents associés
-        </span>
+      </span>
 
       <!--Span no doc in categorie-->
       <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.selected_systeme != ''" class="document-textbox">
           Cette catégorie ne contient aucun documents
-        </span>
+      </span>
 
       <!--List item of results-->
       <wcs-list-item *ngFor="let item of modulesFormationService.filteredModulesFormation; index as i">

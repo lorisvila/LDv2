@@ -38,3 +38,10 @@ wcs-accordion-content {
 #button-close-card {
   cursor: pointer;
 }
+#button-delete-filters {
+  margin-top: 0.5em;
+}
+#homeButton {
+  cursor: pointer;
+  user-select: none;
+}

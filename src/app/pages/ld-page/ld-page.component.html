@@ -1,5 +1,8 @@
 <wcs-action-bar gutter="">
   Livrets de dépannages - <span id="title-engin-field">{{enginService.actual_engin}}</span>
+  <div slot="actions">
+    <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" routerLink="/"></wcs-mat-icon>
+  </div>
 </wcs-action-bar>
 
 <div class="page-content">
@@ -9,8 +12,8 @@
             slot="actions">
     <wcs-card-body id="body-card-connect-services">
       <span>Pour ouvrir les schémas électrique sur DsMat ou DocMat, il est nécessaire de s'authentifier auparavant</span>
-      <wcs-button mode="stroked" size="s" href="https://dsmat.sncf.fr/Login.aspx" target="_blank">Se connecter à DsMat</wcs-button>
-      <wcs-button mode="stroked" size="s" href="https://docmat.sncf.fr/#/" target="_blank">Se connecter à DocMat</wcs-button>
+      <wcs-button mode="stroked" size="s" [href]="generalService.URLconnectDsMat" target="_blank">Se connecter à DsMat</wcs-button>
+      <wcs-button mode="stroked" size="s" [href]="generalService.URLconnectDocMat" target="_blank">Se connecter à DocMat</wcs-button>
       <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.hideConnectMessage()"></wcs-mat-icon>
     </wcs-card-body>
   </wcs-card>
@@ -23,8 +26,9 @@
         <!--Select pour le type d'engin : BGC, XGC ou 3C, 2C etc.-->
         <wcs-form-field id="type-engin-field">
           <wcs-label>Type d'engin</wcs-label>
-          <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type" (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
-            <wcs-select-option value="tous" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
+          <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type"
+                      (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
+            <wcs-select-option value="" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
             <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
           </wcs-select>
         </wcs-form-field>
@@ -32,22 +36,35 @@
         <!--Input de recherche-->
         <wcs-form-field>
           <wcs-label>Recherche textuelle</wcs-label>
-          <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="ldService.search_value" (wcsChange)="ldService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
+          <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="ldService.search_value"
+                     (wcsChange)="ldService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
         </wcs-form-field>
 
         <!--Dans le LD 5 200 1 01 se situent les tableaux de correspondance schémas / engins-->
         <!--Input de numéro d'engin-->
         <wcs-form-field>
           <wcs-label>Numéro de rame</wcs-label>
-          <wcs-input #inputEnginNum placeholder="ex: X 76 533" [value]="ldService.enginNum_value" (wcsChange)="ldService.changeValueFilter('engin_num_value', inputEnginNum.value)"></wcs-input>
+          <wcs-input #inputEnginNum placeholder="ex: X 76 533" [value]="ldService.enginNum_value"
+                     (wcsChange)="ldService.changeValueFilter('engin_num_value', inputEnginNum.value)"></wcs-input>
+        </wcs-form-field>
+
+        <!--Select pour les engins enregistrés : Favoris + Technicentre-->
+        <wcs-form-field>
+          <wcs-label>N° enregistrés</wcs-label>
+          <wcs-select #selectFavEngin placeholder="Choisir un engin" [value]="ldService.favEngin"
+                      (wcsChange)="ldService.changeValueFilter('fav_engin', selectFavEngin.value)">
+            <wcs-select-option value="" *ngIf="ldService.favEngin"><b>Aucun</b></wcs-select-option>
+            <wcs-select-option *ngFor="let engin of enginService.combinedTechFavEngins" [value]="engin.engin_numero">{{engin.engin}} {{engin.engin_type}} {{engin.engin_numero}}</wcs-select-option>
+          </wcs-select>
         </wcs-form-field>
 
         <!--Select pour les Système / Fonction possibles : motrice, remorque, groupe électrogène, etc.-->
         <wcs-form-field>
           <wcs-label>Système / Fonction</wcs-label>
-          <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme" (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
-            <wcs-select-option value="tous" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let systeme of ldService.systemes" [value]="systeme.systeme">{{systeme.systeme_formatted}}</wcs-select-option>
+          <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme"
+                      (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
+            <wcs-select-option value="" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
+            <wcs-select-option *ngFor="let systeme of dataService.systemesLD" [value]="systeme.systeme">{{systeme.systeme_formatted}}</wcs-select-option>
           </wcs-select>
         </wcs-form-field>
 
@@ -56,16 +73,18 @@
             <wcs-label>Raccourcis</wcs-label>
             <wcs-select #selectShortcut placeholder="Choisir un raccourci" [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
               <wcs-select-option value="tous" *ngIf="ldService.shortcut"><b>Tous</b></wcs-select-option>
-              <wcs-select-option *ngFor="let shortcut of ldService.shortcuts" [value]="shortcut.shortcut">{{shortcut.shortcut_formatted}}</wcs-select-option>
+              <wcs-select-option *ngFor="let shortcut of dataService.shortcutsLD" [value]="shortcut.shortcut">{{shortcut.shortcut_formatted}}</wcs-select-option>
             </wcs-select>
         </wcs-form-field>
 
-        <!--Bouton pour reinitialiser / supprimer les filtres-->
-        <wcs-form-field>
-          <wcs-button class="wcs-warning" mode="clear" size="m" (click)="ldService.reinitFormValues()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
-        </wcs-form-field>
       </div>
+
+      <!--Bouton pour reinitialiser / supprimer les filtres-->
+      <wcs-form-field id="button-delete-filters">
+        <wcs-button class="wcs-warning" mode="clear" size="m" (click)="ldService.reinitFormValues()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
+      </wcs-form-field>
     </wcs-card-body>
+
   </wcs-card>
 
   <!--Card pour la grid-->

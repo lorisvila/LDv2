@@ -1,5 +1,85 @@
+/* Page items*/
 .page-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+#pageContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3em;
+}
+
+/* Card common items*/
+.card {
+  padding: 1em;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card > h3 {
+  margin-top: 0.1em;
+  margin-bottom: 0.7em;
+}
+
+/*News card*/
+#newsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.newsItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--wcs-light);
+  border-radius: 10px;
+  padding: 0.5em 1em;
+  text-align: justify;
+}
+.newsItem > h4, h5 {
+  margin: 0.2em 0 0.7em 0;
+  text-align: center;
+}
+.buttons-url-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+.buttons-url-list > * {
+  margin-top: 0.5em;
+}
+
+/*Versions card*/
+#versionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+.versionItem {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+/*Fav Engin Card*/
+#favEnginsCard {
+  overflow-y: auto;
+}
+#favEnginContainer {
+  width: 100%;
+}
+#buttonsEditContainer {
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1em;
 }

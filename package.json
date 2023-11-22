@@ -10,7 +10,8 @@
     "test": "ng test",
     "electron": "electron .",
     "electron-build": "ng build --configuration production && electron .",
-    "electron-export": "electron-packager ./ electronLDv2_Angular --platform-win32 --overwrite"
+    "electron-export": "electron-packager ./ electronLDv2_Angular --platform-win32 --overwrite --appname=LDv2 --icon=src/assets/sncf-logo.ico",
+    "electron-export-build": "npm run build && npm run electron-export"
   },
   "private": true,
   "dependencies": {
@@ -22,8 +23,6 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
-    "@orama/orama": "^2.0.0-beta.5",
-    "electron": "^27.0.4",
     "electron-packager": "^17.1.2",
     "ngx-cookie-service": "^16.0.2",
     "orama": "^2.0.6",
@@ -38,6 +37,7 @@
     "@angular/cli": "^16.2.9",
     "@angular/compiler-cli": "^16.2.0",
     "@types/jasmine": "~4.3.0",
+    "electron": "^27.0.4",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

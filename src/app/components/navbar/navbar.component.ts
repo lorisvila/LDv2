@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {EnginService} from "../../services/engin.service";
 import {GeneralService} from "../../services/general.service";
-import {trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-navbar',

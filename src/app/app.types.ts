@@ -1,4 +1,3 @@
-
 // Type for data in LD Dict
 export type ItemDataType = {
   id: number,
@@ -13,12 +12,6 @@ export type ItemDataType = {
   url_main_file?: string,
   url_aux_file?: string,
   type?: string,
-}
-
-// Type for DebugData element
-export type DebugDataType = {
-  var: string,
-  val: string | number | boolean
 }
 
 // Type for systeme element
@@ -45,4 +38,15 @@ export type EnginType = {
   engin: string,
   engin_type: string,
   engin_numero?: number // A voir si utilisation d'un integer ou d'un string
+}
+
+//Type for the news Object
+export type NewsType = {
+  title: string,
+  subtitle?: string,
+  content: string,
+  urls?: {
+    title: string
+    url: string
+  }[]
 }

@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import {GeneralService} from "./services/general.service";
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +9,6 @@ import {GeneralService} from "./services/general.service";
 export class AppComponent {
   title = 'ld-main';
 
-  constructor( ) {
-  }
+  constructor() {}
 
 }

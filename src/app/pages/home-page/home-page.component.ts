@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import {GeneralService} from "../../services/general.service";
+import {DataService} from "../../services/data.service";
+import {EnginService} from "../../services/engin.service";
 
 @Component({
   selector: 'app-home-page',
@@ -8,7 +10,11 @@ import {GeneralService} from "../../services/general.service";
 })
 export class HomePageComponent {
 
-  constructor(public generalService: GeneralService) {
+  constructor(
+    public generalService: GeneralService,
+    public dataService: DataService,
+    public enginService: EnginService
+    ) {
   }
 
 }

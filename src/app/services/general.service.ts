@@ -1,5 +1,4 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
-import {CookieService} from "ngx-cookie-service";
+import {EventEmitter, Injectable, Output} from '@angular/core';
 import {DataService} from "./data.service";
 import {Technicentre} from "../app.types";
 import {CommunicationService} from "./communication.service";
@@ -18,18 +17,25 @@ export class GeneralService {
   }
 
   @Output() $offlineMode: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() $changeTechnicentre: EventEmitter<null> = new EventEmitter<null>()
 
   //Variables des versions et dates de mise à jour
   app_version: string = "V 2.1.0";
   app_build: string = "dev";
 
-  date_maj_applicatif: Date = new Date("04/11/2023");
-  date_maj_data_AGC: Date = new Date("04/11/2023");
-  date_maj_data_TER2NNG: Date = new Date("04/11/2023");
+  date_maj_applicatif: Date = new Date("11/22/2023"); // /!\ Format de date US /!\
+  date_maj_data_AGC: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
+  date_maj_data_TER2NNG: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
 
   date_maj_applicatif_string: string = this.date_maj_applicatif.toLocaleDateString('fr-FR');
   date_maj_data_AGC_string: string = this.date_maj_data_AGC.toLocaleDateString('fr-FR');
   date_maj_data_TER2NNG_string: string = this.date_maj_data_TER2NNG.toLocaleDateString('fr-FR');
+
+  // URL des sites
+  URLDsMat = "https://dsmat.sncf.fr/"
+  URLDocMat: string = "https://docmat.sncf.fr/#/"
+  URLconnectDsMat: string = this.URLDsMat + "Login.aspx";
+  URLconnectDocMat: string = this.URLDocMat
 
   // Name of cookies or localStorage variables
   basicEnginLocalStorageVarName: string = "defaultEngin";
@@ -78,9 +84,7 @@ export class GeneralService {
   // Function to toggle the network status state
   toggleNetworkStatus() {
     this.offlineMode = !this.offlineMode;
-    if (this.offlineMode) {this.showOfflineCard = true;}
-    else {this.showOfflineCard = false;}
-    console.log("Changing the offline mode to " + this.offlineMode)
+    this.showOfflineCard = this.offlineMode;
     this.$offlineMode.emit(this.offlineMode)
   }
 
@@ -88,8 +92,8 @@ export class GeneralService {
   updateActualTechnicentre() {
     let technicentreLocalStorage = this.communicationService.getDataFromStorage(this.technicentreLocalStorageVarName)
     if (technicentreLocalStorage !== null) {
-      this.actualTechnicentre = technicentreLocalStorage
-      console.log("Technicentre par défaut : " + this.actualTechnicentre)
+      this.actualTechnicentre = this.dataService.technicentresEngins.filter((item) => item.technicentre == technicentreLocalStorage)[0]
+      console.log("Technicentre par défaut : ", this.actualTechnicentre)
     }
   }
 
@@ -97,6 +101,11 @@ export class GeneralService {
   changeTechnicentre(technicentre: string) {
     this.communicationService.updateDataFromStorage(this.technicentreLocalStorageVarName, technicentre)
     this.actualTechnicentre = this.dataService.technicentresEngins.filter((item) => item.technicentre == technicentre)[0]
+    this.$changeTechnicentre.emit(null) // Juste dire que j'ai changé de Technicentre
   }
 
+  // Function to open a link in new tab
+  openURL(URL: string, target: string) {
+    window.open(URL, target)
+  }
 }
