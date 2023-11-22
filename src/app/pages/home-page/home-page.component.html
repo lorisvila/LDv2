@@ -1,22 +1,57 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
-  <wcs-card mode="flat" style="width: 40vw; text-align: center">
-    <wcs-card-body>
-      Dernière mise à jour des ressources AGC : <b>{{generalService.date_maj_data_AGC_string}}</b>
-      <br>Dernière mise à jour des ressources TER 2N NG : <b>{{generalService.date_maj_data_TER2NNG_string}}</b>
-    </wcs-card-body>
-  </wcs-card>
-  <ng-container>
-    <h2>Contenu du site</h2>
-    <p>Ce site est a destination des agents de maintenance travaillant sur les AGC et TER 2N NG, il contient :</p>
-    <ul>
-      <li>Les livrets de dépannages contenant entre-autre les schémas, codes défauts et guides logiciels</li>
-      <li>Les documentations relatives au différents systèmes et organes</li>
-      <li>Les modules de formation des engins</li>
-      <li>Selon l'engin une aide à la localisation des organes</li>
-    </ul>
-    <h2>Affectation
-      <wcs-badge class="wcs-info" shape="normal" color="initial" *ngIf="generalService.actualTechnicentre" style="height: fit-content; align-self: center">{{generalService.actualTechnicentre.technicentre_formatted}}</wcs-badge>
-    </h2>
-  </ng-container>
+  <div id="pageContainer">
+
+    <!--Card dernières Infos-->
+    <wcs-card mode="flat" class="card" id="newsCard">
+      <h3>Infos</h3>
+      <!--List of all the news-->
+      <div id="newsContainer">
+        <div *ngFor="let news of dataService.homePageNews"
+             class="newsItem">
+          <h4>{{news.title}}</h4>
+          <h5 *ngIf="news.subtitle">{{news.subtitle}}</h5>
+          <span>{{news.content}}</span>
+          <div class="buttons-url-list" *ngIf="news.urls">
+            <wcs-button *ngFor="let url of news.urls" [href]="url.url" target="_blank">{{url.title}}</wcs-button>
+          </div>
+        </div>
+      </div>
+    </wcs-card>
+
+    <!--Card Versions-->
+    <wcs-card mode="flat" class="card" id="versionsCard">
+      <h3>Versions</h3>
+      <div id="versionsContainer">
+        <div class="versionItem">
+          Mise à jour <b>Application</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_applicatif_string}}</wcs-badge>
+        </div>
+        <div class="versionItem">
+          Mise à jour données <b>AGC</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_AGC_string}}</wcs-badge>
+        </div>
+        <div class="versionItem">
+          Mise à jour données <b>TER 2N NG</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_TER2NNG_string}}</wcs-badge>
+        </div>
+      </div>
+    </wcs-card>
+
+    <!--Card Engins Fav-->
+    <wcs-card mode="flat" class="card" id="favEnginsCard">
+      <h3>Engins Favoris</h3>
+      Technicentre sélectionné : <i><b>{{generalService.actualTechnicentre?.technicentre_formatted}}</b></i>
+      <br>
+      <div id="favEnginContainer">
+        <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins">
+          <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
+          <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
+          <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
+        </wcs-grid>
+      </div>
+      <div id="buttonsEditContainer">
+        <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Technicentre</wcs-button>
+        <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
+      </div>
+    </wcs-card>
+
+  </div>
 </div>

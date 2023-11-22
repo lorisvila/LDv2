@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ItemDataType, ShortcutType, SystemeType, Technicentre} from "../app.types";
+import {ItemDataType, NewsType, ShortcutType, SystemeType, Technicentre} from "../app.types";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class DataService {
 
   // to convert Excel to JSON : https://tableconvert.com/excel-to-json
   // to convert XML to JSON : https://codebeautify.org/xmltojson
-  // The object must match the type ItemDataType described in the app.types.ts file
+  // The object Data must match the type ItemDataType described in the app.types.ts file
 
   // Data for Technicentre engins
   technicentresEngins: Technicentre[] = [
@@ -1183,7 +1183,86 @@ export class DataService {
       "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
       "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
-    }
+    },
+    {
+      "id": 9,
+      "engin": "TER 2N NG",
+      "engin_type": ['2C'],
+      "ref_main": "LD 5 200 2 04 E01",
+      "ref_aux": "05-3 709 839",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) jusqu’à la rame X76561",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 839",
+      "url_main_file": "assets/documents/LD/LD5200204E01_A-.pdf"
+    },
+    {
+      "id": 10,
+      "engin": "TER 2N NG",
+      "engin_type": ['2C'],
+      "ref_main": "LD 5 200 2 04 E02",
+      "ref_aux": "05-3 709 840",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) à partir de la rame X76565",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 840",
+      "url_main_file": "assets/documents/LD/LD5200204E02_A-.pdf"
+    },
+    {
+      "id": 11,
+      "engin": "AGC",
+      "engin_type": ['ZGC'],
+      "ref_main": "LD 4 200 2 05 E01",
+      "ref_aux": "05-3 712 347",
+      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) rame Z27503",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
+      "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
+    },
+    {
+      "id": 12,
+      "engin": "TER 2N NG",
+      "engin_type": ['2C'],
+      "ref_main": "LD 5 200 2 04 E01",
+      "ref_aux": "05-3 709 839",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) jusqu’à la rame X76561",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 839",
+      "url_main_file": "assets/documents/LD/LD5200204E01_A-.pdf"
+    },
+    {
+      "id": 13,
+      "engin": "TER 2N NG",
+      "engin_type": ['2C'],
+      "ref_main": "LD 5 200 2 04 E02",
+      "ref_aux": "05-3 709 840",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) à partir de la rame X76565",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 840",
+      "url_main_file": "assets/documents/LD/LD5200204E02_A-.pdf"
+    },
+    {
+      "id": 14,
+      "engin": "AGC",
+      "engin_type": ['ZGC'],
+      "ref_main": "LD 4 200 2 05 E01",
+      "ref_aux": "05-3 712 347",
+      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) rame Z27503",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
+      "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
+    },
+
   ]
 
   // Data for ModulesFormationPage
@@ -1278,6 +1357,31 @@ export class DataService {
       "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
       "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
+    }
+  ]
+
+  // List of news
+  homePageNews: NewsType[] = [
+    {
+      title: "Mise en ligne !",
+      subtitle: "Le LD v2 vient d'être lancé",
+      content: "Le LD Interactif v2 vient d'arriver en ligne :), il reste toujours en cours de développement mais est désormais utilisable",
+      urls: [
+        {
+        title: "J'y vais",
+        url: ""
+        }
+      ]
+    },
+    {
+      title: "En cours de développement",
+      content: "Malgré son apparence, le LD Interactif v2 est toujours en cours de développement",
+      urls: [
+        {
+          title: "Contactez-moi",
+          url: "mailto:loris.vila@sncf.fr"
+        }
+      ]
     }
   ]
 

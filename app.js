@@ -4,23 +4,22 @@ const {
   app,
   BrowserWindow
 } = require('electron')
-
+const path = require('path')
 let appWindow
 
 function createWindow() {
   appWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: `dist/ldV2_Angular/assets/sncf-logo.png`,
+    icon: path.join(__dirname, "dist", "ldV2_Angular", "assets", "sncf-logo.png"),
     autoHideMenuBar: true,
   })
 
-  // For the moment
   //appWindow.webContents.openDevTools()
 
   appWindow.maximize()
 
-  appWindow.loadFile('dist/ldV2_Angular/index.html');
+  appWindow.loadFile("dist/ldV2_Angular/index.html");
 
   appWindow.on('closed', function () {
     appWindow = null

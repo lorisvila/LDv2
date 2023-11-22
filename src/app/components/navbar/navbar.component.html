@@ -55,8 +55,9 @@
           {{generalService.offlineMode ? 'Désactiver' : 'Activer'}} le mode hors-ligne
       </wcs-dropdown-item>
 
-      <wcs-dropdown-header>Debug</wcs-dropdown-header>
-      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.toggleModal('debugModal', true)"><i>Fenêtre de debug</i></wcs-dropdown-item>
+      <wcs-dropdown-header>Connexion</wcs-dropdown-header>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDsMat, '_blank')">Connexion à DsMat</wcs-dropdown-item>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDocMat, '_blank')">Connexion à DocMat</wcs-dropdown-item>
     </wcs-dropdown>
   </div>
 </wcs-header>

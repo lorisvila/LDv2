@@ -30,6 +30,10 @@
 #title-engin-field {
   font-size: 0.8em;
 }
+#homeButton {
+  cursor: pointer;
+  user-select: none;
+}
 
 /*Cards common elements*/
 h4 {
@@ -72,5 +76,6 @@ h4 {
 }
 .document-textbox {
   text-align: center;
+  font-size: 1.5em;
+  font-weight: 500;
 }
-/*Le flexbox align-content center est fait dans le template dû à la nécessité d'un ng if*/

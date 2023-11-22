@@ -1,8 +1,8 @@
-import {EventEmitter, Injectable, Output} from '@angular/core';
-import {CookieService} from "ngx-cookie-service";
+import {AfterContentInit, EventEmitter, Injectable, Output} from '@angular/core';
 import {EnginType} from "../app.types";
 import {GeneralService} from "./general.service";
 import {CommunicationService} from "./communication.service";
+import {DataService} from "./data.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,8 @@ export class EnginService {
 
   favoriteEngins: EnginType[] = []
 
+  combinedTechFavEngins: EnginType[] = []
+
   constructor(
     public generalService: GeneralService,
     public communicationSerice: CommunicationService
@@ -29,18 +31,27 @@ export class EnginService {
     this.updateBasicEngin()
     // Set the favorites engins when page loads
     this.updateFavEngin()
+    // Set the combined Technicentre and Favorites engins
+    this.combineEnginsTechFav()
+    // Listen to a change in Technicentre to update the combined Fav Engin + Tech list
+    this.generalService.$changeTechnicentre.subscribe((value) => {
+      this.combineEnginsTechFav()
+    })
   }
 
+  // Change the actual engin var + send a event for the listeners in other services / components
   changeActualEngin(engin: string){
     this.actual_engin = engin
     this.actual_type_engin = this.types_engin[this.actual_engin]
     this.$actual_engin.emit(engin)
   }
 
+  // Change the default engin in the localStorage
   changeDefaultEngin(engin: string) {
     this.communicationSerice.updateDataFromStorage(this.generalService.basicEnginLocalStorageVarName, engin)
   }
 
+  // Add a Favorite Engin in the locaStorage
   addFavEngin(engin: EnginType) {
     // Vérifier si l'engin respecte les conditions
     if (this.favoriteEngins.filter((item) => item.engin_numero == engin.engin_numero).length != 0) {return;}
@@ -52,6 +63,8 @@ export class EnginService {
     this.communicationSerice.updateDataFromStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
     this.updateFavEngin()
   }
+
+  // Remove a Favorite Engin from the localStorage
   deleteFavEngin(engin: EnginType) {
     // Vérifier si l'engin respecte les conditions
     if (this.favoriteEngins.filter((item) => item.engin_numero == engin.engin_numero).length == 0) {return;}
@@ -64,8 +77,7 @@ export class EnginService {
     this.updateFavEngin()
   }
 
-
-  // Functions to update the variables linked with the localStorage
+  // Update the actual basic engin from the localStorage
   updateBasicEngin() {
     let defaultEnginLocalStorage = this.communicationSerice.getDataFromStorage(this.generalService.basicEnginLocalStorageVarName)
     if (defaultEnginLocalStorage !== null) {
@@ -76,10 +88,30 @@ export class EnginService {
       this.changeActualEngin("AGC")
     }
   }
+  // Update the Favorite Engin from the localStorage
   updateFavEngin() {
     let favEnginLocalStorage = this.communicationSerice.getDataFromStorage(this.generalService.enginFavLocalStorageVarName)
     if (favEnginLocalStorage !== null) {
       this.favoriteEngins = favEnginLocalStorage
+      console.log("Favorite engins : ", favEnginLocalStorage)
+    }
+    this.combineEnginsTechFav()
+  }
+
+  // Combine the engins from Technicentre and FavEngin
+  combineEnginsTechFav() {
+    this.combinedTechFavEngins = []
+    for (let engin of this.favoriteEngins) {
+      if (this.combinedTechFavEngins.filter((item) => item.engin_numero == engin.engin_numero).length == 0) {
+        this.combinedTechFavEngins.push(engin)
+      }
+    }
+    if (this.generalService.actualTechnicentre?.engins) {
+      for (let engin of this.generalService.actualTechnicentre?.engins) {
+        if (this.combinedTechFavEngins.filter((item) => item.engin_numero == engin.engin_numero).length == 0) {
+          this.combinedTechFavEngins.push(engin)
+        }
+      }
     }
   }
 

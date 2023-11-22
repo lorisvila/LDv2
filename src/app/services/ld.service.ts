@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import {EnginService} from "./engin.service";
 import {GeneralService} from "./general.service";
-import {ItemDataType, ShortcutType, SystemeType} from "../app.types";
-import {create, insert, insertMultiple, Orama, Results, search, SearchParams, TypedDocument} from "@orama/orama";
+import {EnginType, ItemDataType, ShortcutType, SystemeType} from "../app.types";
 import {DataService} from "./data.service";
 
 @Injectable({
@@ -26,37 +25,39 @@ export class LdService {
     })
   };
 
-  // Filters and selection
+  // Filters as a string
   engin_type: string = "";
-  engin_types = this.enginService.types_engin;
   search_value: string = "";
   enginNum_value: string = "";
   systeme: string = "";
-  systemes: SystemeType[] = this.dataService.systemesLD
-
+  favEngin: string = ""
   shortcut: string = "";
-  shortcuts: ShortcutType[] = this.dataService.shortcutsLD
+
+  // Filters results as Objects
+  favEnginObject: EnginType | undefined = undefined;
+  systemeObject: SystemeType | undefined = undefined;
+  shortcutObject: ShortcutType | undefined = undefined;
+  enginTypeObject: EnginType | undefined = undefined;
 
   // Function to reset all the filter elements
   reinitFormValues() {
-    console.log(this.shortcut, this.engin_type);
     this.changeValueFilter("shortcut", "");
     this.changeValueFilter("systeme", "");
     this.changeValueFilter("engin_type", "");
     this.changeValueFilter("search_value", "");
     this.changeValueFilter("enginNum_value", "");
-    console.log(this.shortcut, this.engin_type);
+    this.changeValueFilter("fav_engin", "");
   }
 
-  // Methode executed when a event is triggered on a filter element (the element call it in the DOM)
+  // Function executed when a event is triggered on a filter element (the element call it in the DOM)
   changeValueFilter(variableName: string, value: any) {
-    console.log("Change variable " + variableName + " to value " + value)
     switch (variableName) {
       case "engin_type": {
-        if (value == "tous") {
-          value = ""
-        }
         this.engin_type = value;
+        this.enginTypeObject = {
+          "engin": this.enginService.actual_engin,
+          "engin_type": this.enginService.types_engin[this.enginService.actual_engin].filter((item) => item == value)[0]
+        }
         break;
       }
       case "search_value": {
@@ -68,17 +69,21 @@ export class LdService {
         break;
       }
       case "systeme": {
-        if (value == "tous") {
-          value = ""
-        }
         this.systeme = value;
+        this.systemeObject = this.dataService.systemesLD.filter((item) => item.systeme == value)[0]
+        // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs systemes matcheraient la value
         break;
       }
       case "shortcut": {
-        if (value == "tous") {
-          value = ""
-        }
         this.shortcut = value;
+        this.shortcutObject = this.dataService.shortcutsLD.filter((item) => item.shortcut == value)[0]
+        // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs shortcuts matcheraient la value
+        break;
+      }
+      case "fav_engin": {
+        this.favEngin = value;
+        this.favEnginObject = this.enginService.combinedTechFavEngins.filter((item) => item.engin_numero == value)[0]
+        // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs engins favoris matcheraient la value
         break;
       }
     }
