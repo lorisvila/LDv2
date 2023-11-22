@@ -16,8 +16,4 @@ export class LDPageComponent {
     public generalService: GeneralService
   ) {}
 
-  connectMessageStatus: boolean = true;
-
-  hideConnectMessage() {this.connectMessageStatus = false}
-
 }

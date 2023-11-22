@@ -1,13 +1,16 @@
-import {Injectable, IterableDiffers} from '@angular/core';
-import {ItemDataType, SystemeType} from "../app.types";
+import { Injectable } from '@angular/core';
 import {GeneralService} from "./general.service";
 import {EnginService} from "./engin.service";
 import {DataService} from "./data.service";
+import {ItemDataType, SystemeType} from "../app.types";
+
+// This module is nearly indentical than the doc fonction service ;
+// the term "system" in this module refers to the formation
 
 @Injectable({
   providedIn: 'root'
 })
-export class DocFctService {
+export class ModulesFormationService {
 
   constructor(
     public generalService: GeneralService,
@@ -29,7 +32,7 @@ export class DocFctService {
   // Filters and selection
   search_value: string = "";
   selected_systeme: string = "";
-  systemes: SystemeType[] = this.dataService.systemesDocFct
+  systemes: SystemeType[] = this.dataService.systemesModuleFormation
   systemesSelectedGridValues: [] = [] // used to reinit values, not used to see what is selected...
 
   // List Item params
@@ -64,11 +67,11 @@ export class DocFctService {
     // Add data in the var
     let data: ItemDataType[] = []
     if (this.generalService.offlineMode) {
-      data = this.docFctData // Add local data
+      data = this.docModuleFormation // Add local data
       this.loading = false
     } else if (!this.generalService.offlineMode) {
-      data = this.docFctData // TODO : Ajouter les données du serveur SQL
-      this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite, le temps de reçevoir les données du serveur
+      data = this.docModuleFormation // TODO : Ajouter les données du serveur SQL
+      this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite
     }
     // use only data for the engin
     data = data.filter((item) => item.engin == this.enginService.actual_engin)
@@ -85,11 +88,11 @@ export class DocFctService {
     }
     if (this.search_value != "") {} // TODO : Add the filtering by text
 
-    this.filteredDocFctData = data
+    this.filteredModulesFormation = data
   }
 
-  filteredDocFctData: ItemDataType[] = []
+  filteredModulesFormation: ItemDataType[] = []
 
-  docFctData: ItemDataType[] = this.dataService.docFctData
+  docModuleFormation: ItemDataType[] = this.dataService.docModuleFormation
 
 }

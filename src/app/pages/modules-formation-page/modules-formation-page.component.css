@@ -1,0 +1,76 @@
+/*Define the page flexbox + card elements*/
+.page-content {
+  padding: 1em;
+  display: flex;
+  gap: var(--wcs-margin-l);
+}
+@media screen and (min-width: 1000px) { /*Full mode*/
+  .page-content {
+    flex-direction: row;
+    height: calc(100% - (56px + 64px)); /*Full heigh minus the navbar and title height*/
+  }
+  .bottom-card {
+    overflow-y: scroll;
+  }
+}
+@media screen and (max-width: 1000px) { /*Reduced mode*/
+  .page-content {
+    flex-direction: column;
+    height: 100%;
+  }
+  .bottom-card {
+    overflow-y: visible;
+  }
+}
+.bottom-card {
+  height: 100%;
+}
+
+/*Title*/
+#title-engin-field {
+  font-size: 0.8em;
+}
+
+/*Cards common elements*/
+h4 {
+  margin: 0 0 1em;
+  text-align: center;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.ft-w-400 {
+  font-weight: 400;
+}
+.ft-w-500 {
+  font-weight: 500;
+}
+
+/*Card filters*/
+#filters-card {
+  flex: 0 35%;
+  height: 100%;
+}
+#filters-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+#raccourcis-select {
+  min-width: 12em;
+}
+
+/*Card documents*/
+#documents-card {
+  flex: 1 65%;
+  display: flex;
+}
+#documents-card-body {
+  display: flex;
+}
+.document-textbox {
+  text-align: center;
+}
+/*Le flexbox align-content center est fait dans le template dû à la nécessité d'un ng if*/

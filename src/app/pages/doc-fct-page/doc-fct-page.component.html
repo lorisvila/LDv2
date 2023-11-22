@@ -1,4 +1,8 @@
-<wcs-action-bar gutter="">Documentation par fonction - <span id="title-engin-field">{{enginService.actual_engin}}</span></wcs-action-bar>
+<!--Action bar title + actual engin-->
+<wcs-action-bar gutter="">
+  Documentation par fonction - <span id="title-engin-field">{{enginService.actual_engin}}</span>
+</wcs-action-bar>
+
 <div class="page-content">
 
   <!--Card pour les filtres-->
@@ -8,13 +12,23 @@
       <!--Input de recherche-->
       <wcs-form-field id="string-search-field">
         <wcs-label>Recherche</wcs-label>
-        <wcs-input #inputSearch placeholder="ex: Afficheur latéral ..." [value]="docFctService.search_value" (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
+        <wcs-input #inputSearch placeholder="ex: Afficheur latéral ..."
+                   [value]="docFctService.search_value"
+                   (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)">
+        </wcs-input>
       </wcs-form-field>
 
+      <!--Bouton tout afficher-->
+      <wcs-button class="wcs-primary" mode="stroked" shape="" size="s"
+                  (click)="docFctService.changeValueFilter('systeme_all', '')">
+        Tout afficher
+      </wcs-button>
+
       <!--Grid de recherche-->
-      <wcs-grid #gridSearch id="systemes-grid" rowIdPath="id"
-                [data]="docFctService.systemes" selection-config="multiple"
-                [selectedItems]="docFctService.selected_systemes"
+      <!--TODO : Rajouter le fait de montrer le nombre de docs par système (si possible)-->
+      <wcs-grid rowIdPath="id" selection-config="single"
+                [data]="docFctService.systemes"
+                [selectedItems]="docFctService.systemesSelectedGridValues"
                 (wcsGridSelectionChange)="docFctService.changeValueFilter('systeme', $event)">
         <wcs-grid-column name="Système" path="systeme_formatted"></wcs-grid-column>
       </wcs-grid>
@@ -26,19 +40,49 @@
   <wcs-card mode="raised" id="documents-card" class="bottom-card">
     <wcs-card-body id="documents-card-body" class="card-body">
 
-        <span *ngIf="docFctService.DocFctData.length == 0" id="no-data-span">Veuillez sélectionner une catégorie pour voir les documents associés</span>
-        <wcs-list-item *ngFor="let item of docFctService.DocFctData; index as i">
+        <!--Spinner loading in case of online-->
+        <wcs-spinner class="wcs-primary" mode="border" *ngIf="docFctService.loading"></wcs-spinner>
+
+        <!--Span no categories selected-->
+        <span *ngIf="docFctService.filteredDocFctData.length == 0 && docFctService.selected_systeme == ''" class="document-textbox">
+          Veuillez sélectionner une catégorie pour voir les documents associés
+        </span>
+
+        <!--Span no doc in categorie-->
+        <span *ngIf="docFctService.filteredDocFctData.length == 0 && docFctService.selected_systeme != ''" class="document-textbox">
+          Cette catégorie ne contient aucun documents
+        </span>
+
+        <!--List item of results-->
+        <wcs-list-item *ngFor="let item of docFctService.filteredDocFctData; index as i">
           <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
-          <div slot="title">{{item.des}}</div>
+          <div slot="title"><span class="ft-w-500">{{item.des}}</span></div>
           <wcs-list-item-properties>
-            <wcs-list-item-property>{{item.ref_main}}</wcs-list-item-property>
-            <wcs-list-item-property>{{item.type}}</wcs-list-item-property>
-            <wcs-list-item-property>{{item.systeme}}</wcs-list-item-property>
+            <wcs-list-item-property><span class="ft-w-400">{{item.ref_main}}</span></wcs-list-item-property>
+            <wcs-list-item-property><span class="ft-w-400">{{item.type}}</span></wcs-list-item-property> <!--TODO : Replace the type by the translated / "humanized" one-->
+            <wcs-list-item-property><span class="ft-w-400">{{item.systeme}}</span></wcs-list-item-property>
           </wcs-list-item-properties>
           <div slot="actions">
-            <wcs-button shape="square" mode="stroked" class="wcs-secondary" [href]="generalService.offlineMode ? item.url_main_file : item.url_main" target="_blank">
-              <wcs-mat-icon icon="open_in_new" size="1" family="filled"></wcs-mat-icon>
+
+            <!--Bouton mode hors-ligne : fichier Principal / DsMat local en utilisant "url_main_file"-->
+            <wcs-button mode="clear" size="s" target="_blank"
+                        *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
+                        [href]="item.url_main_file"
+                        [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
+              Ouvrir en local 📥
             </wcs-button>
+
+            <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
+            <!--TODO : Reste à styliser le texte aucun fichiers dispo...-->
+
+            <!--Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"-->
+            <wcs-button mode="clear" size="s" target="_blank"
+                        *ngIf="!generalService.offlineMode"
+                        [href]="item.url_main"
+                        [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
+              Ouvrir sur DocMat 🔗
+            </wcs-button>
+
           </div>
         </wcs-list-item>
 

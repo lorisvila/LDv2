@@ -37,8 +37,23 @@
 #page-content-wrapper {
   grid-area: content;
   overflow-y: auto;
-  height: 100%;
 }
 #modals-wrapper {
   grid-area: modals;
+}
+
+
+#card-connect-services {
+  background-color: rgb(253, 236, 189);
+  border-color: rgb(253, 181, 18);
+  color: var(--wcs-orange);
+}
+#body-card-connect-services {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+}
+#button-close-card {
+  cursor: pointer;
 }
