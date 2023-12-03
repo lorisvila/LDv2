@@ -17,7 +17,7 @@
 </wcs-modal>
 
 <!--Modal rajout engin-->
-<wcs-modal [show]="generalService.showEnginsFavoris" size="l">
+<wcs-modal [show]="generalService.showEnginsFavorisModal" size="l">
   <div slot="header">Choix des engins favoris</div>
   <div class="modal-content" id="engins-fav-modal-content">
 
@@ -27,10 +27,12 @@
       <wcs-select #enginFavCategorieSelect [value]="enginService.actual_engin" size="m">
         <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
       </wcs-select>
-      <wcs-select #enginFavTypeSelect [value]="enginService.types_engin[enginFavCategorieSelect.value][0]" size="m">
-        <wcs-select-option *ngFor="let engin of enginService.types_engin[enginFavCategorieSelect.value]" [value]="engin">{{engin}}</wcs-select-option>
-      </wcs-select>
-      <wcs-input #enginNumberInput type="number" inputmode="decimal" [placeholder]="76519" required="true" [value]="inputNumberEngin"></wcs-input>
+      <wcs-form-field>
+        <wcs-select #enginFavTypeSelect [value]="enginService.types_engin[enginFavCategorieSelect.value][0]" size="m" slot="prefix">
+          <wcs-select-option *ngFor="let engin of enginService.types_engin[enginFavCategorieSelect.value]" [value]="engin">{{engin}}</wcs-select-option>
+        </wcs-select>
+        <wcs-input #enginNumberInput type="number" inputmode="decimal" [placeholder]="76519" required="true" [value]="inputNumberEngin" slot="prefix"></wcs-input>
+      </wcs-form-field>
       <wcs-button (click)="addFavEngin(enginFavCategorieSelect.value, enginFavTypeSelect.value, enginNumberInput.value)" class="wcs-success">Ajouter</wcs-button>
     </div>
 
@@ -72,6 +74,32 @@
   </div>
 </wcs-modal>
 
+<!--Modal d'Authentification pour page d'administration-->
+<wcs-modal [show]="generalService.showAuthConnectModal" size="m">
+  <div slot="header">Connexion à la base SQL</div>
+  <div class="modal-content">
+
+    <!--Input utilisateur-->
+    <div class="modal-line-element">
+      <wcs-label>Utilisateur</wcs-label>
+      <wcs-input id="auth-user-input" state="" icon="person" type="" value="" prefix-label="" suffix-label="" size=""></wcs-input>
+    </div>
+
+    <!--Input mot de passe-->
+    <div class="modal-line-element">
+      <wcs-label>Utilisateur</wcs-label>
+      <wcs-input id="auth-password-input" state="" icon="key" type="password" value="" prefix-label="" suffix-label="" size=""></wcs-input>
+    </div>
+
+    <p class="modal-line-element">
+      Authentification auprès de la base de donnée SQL.<br>Identifiants différents du SI SNCF
+    </p>
+  </div>
+  <div slot="actions" class="slot-action">
+    <wcs-button mode="stroked" (click)="generalService.toggleModal('authConnect', false)">Annuler</wcs-button>
+    <wcs-button>Se connecter</wcs-button>
+  </div>
+</wcs-modal>
 
 <!--Card pour avertir que les données ne sont pas forcément tenues à jour-->
 <wcs-card mode="flat" *ngIf="generalService.showOfflineCard" id="warning-version-card">

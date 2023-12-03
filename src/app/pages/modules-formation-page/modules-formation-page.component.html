@@ -32,8 +32,8 @@
                 [data]="modulesFormationService.systemes"
                 [selectedItems]="modulesFormationService.systemesSelectedGridValues"
                 (wcsGridSelectionChange)="modulesFormationService.changeValueFilter('systeme', $event)">
-        <wcs-grid-column name="" path="systeme"></wcs-grid-column>
-        <wcs-grid-column name="Module de formation" path="systeme_formatted"></wcs-grid-column>
+        <wcs-grid-column name="" path="filter"></wcs-grid-column>
+        <wcs-grid-column name="Module de formation" path="filter_formatted"></wcs-grid-column>
       </wcs-grid>
 
     </wcs-card-body>

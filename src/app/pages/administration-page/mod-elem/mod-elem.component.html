@@ -1,0 +1,174 @@
+<div class="page-content">
+  <!--Card pour les filtres-->
+  <wcs-card mode="raised" id="filters-card" class="bottom-card">
+    <wcs-card-body id="filters-card-body">
+
+      <!--Select page en cours-->
+      <div class="filterElementDiv">
+        <wcs-label>Page à modifier</wcs-label>
+        <wcs-select #selectPage placeholder="Choisir une page" id="select-page"
+                    (wcsChange)="administrationService.changeActualPageSelectedPageMod(selectPage.value)">
+          <wcs-select-option *ngFor="let page of dataService.webPages" [value]="page.title">{{page.title_formatted}}</wcs-select-option>
+        </wcs-select>
+      </div>
+
+      <!--Input de recherche-->
+      <div class="filterElementDiv">
+        <wcs-label>Recherche</wcs-label>
+        <wcs-input #inputSearch placeholder="ex: LD 5 200 2 02 E1"
+                   (wcsChange)="generalService.toggleModal('')">
+        </wcs-input>
+      </div>
+
+      <!--Grid de recherche-->
+      <!--TODO : Rajouter le fait de montrer le nombre de docs par système (si possible)-->
+      <div class="filterElementDiv">
+        <wcs-label>Document à modifier</wcs-label>
+        <wcs-grid rowIdPath="id" selection-config="single" id="grid-items"
+                  [data]="administrationService.dataGridDocumentsModPage"
+                  [selectedItems]=""
+                  (wcsGridSelectionChange)="administrationService.selectDocumentPageMod($event)">
+          <wcs-grid-column name="Désignation" path="des"></wcs-grid-column>
+          <wcs-grid-column name="Référence" path="ref_main"></wcs-grid-column>
+        </wcs-grid>
+      </div>
+
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Card pour les documents-->
+  <wcs-card mode="raised" id="documents-card" class="bottom-card">
+    <wcs-card-body id="documents-card-body" class="card-body"
+                   [class]="administrationService.selectedDocumentModPage === null ? 'card-body-empty' : 'card-body-not-empty'">
+
+      <!--Span no document selected-->
+      <span class="document-textbox" *ngIf="administrationService.selectedDocumentModPage === null">
+          Veuillez sélectionner un document pour pouvoir le modifier
+      </span>
+
+      <div class="form-container" *ngIf="administrationService.selectedDocumentModPage !== null">
+        <h4>Modification du {{administrationService.selectedDocumentModPage.ref_main}}</h4>
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>Page <span class="required-star">*</span></wcs-label>
+            <wcs-select #selectPageModPage [value]="administrationService.selectedDocumentModPage.page"
+                        (wcsChange)="administrationService.valuePageModPage = selectPageModPage.value">
+              <wcs-select-option *ngFor="let page of dataService.webPages" [value]="page.title">{{page.title_formatted}}</wcs-select-option>
+            </wcs-select>
+          </div>
+        </div>
+
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>Engin <span class="required-star">*</span></wcs-label>
+            <wcs-select #selectEnginModPage [value]="administrationService.selectedDocumentModPage.engin"
+                        (wcsChange)="administrationService.valueEnginModPage = selectEnginModPage.value">
+              <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+            </wcs-select>
+          </div>
+          <div class="form-element">
+            <wcs-label>Type d'engin <span class="required-star">*</span></wcs-label>
+            <wcs-select multiple="true" #selectTypeEnginModPage [value]="administrationService.selectedDocumentModPage.engin_type"
+                        (wcsChange)="administrationService.valueTypeEnginModPage = selectTypeEnginModPage.value">
+              <wcs-select-option *ngFor="let typeEngin of enginService.types_engin[selectEnginModPage.value]" [value]="typeEngin">{{typeEngin}}</wcs-select-option>
+            </wcs-select>
+          </div>
+        </div>
+
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>Système <span class="required-star">*</span></wcs-label>
+            <wcs-select #selectSystemeModPage [value]="administrationService.selectedDocumentModPage.systeme"
+                        (wcsChange)="administrationService.valueSystemeModPage = selectSystemeModPage.value">
+              <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+            </wcs-select>
+          </div>
+          <div class="form-element">
+            <wcs-label>Type</wcs-label>
+            <wcs-select #selectTypeModPage [value]="administrationService.selectedDocumentModPage.type"
+                        (wcsChange)="administrationService.valueTypeModPage = selectTypeModPage.value">
+              <wcs-select-option *ngFor="let typeEngin of enginService.types_engin[selectEnginModPage.value]" [value]="typeEngin">{{typeEngin}}</wcs-select-option>
+            </wcs-select>
+          </div>
+        </div>
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>Système (Manuellement)</wcs-label>
+            <wcs-input placeholder="ex: LD 5 200 ..." #inputSystemeModPage [value]="administrationService.selectedDocumentModPage.systeme"
+                       (wcsChange)="administrationService.valueSystemeModPage = inputSystemeModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>Type (Manuellement)</wcs-label>
+            <wcs-input placeholder="ex: 05-3 709 829" #inputTypeModPage [value]="administrationService.selectedDocumentModPage.type"
+                       (wcsChange)="administrationService.valueTypeModPage = inputTypeModPage.value"></wcs-input>
+          </div>
+        </div>
+
+        <div class="form-line">
+          <div class="form-element long-element">
+            <wcs-label>Désignation <span class="required-star">*</span></wcs-label>
+            <wcs-input placeholder="ex: Schémas de principe..." #inputDesignationModPage [value]="administrationService.selectedDocumentModPage.des"
+                       (wcsChange)="administrationService.valueDesignationModPage = inputDesignationModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>Ref. Principale <span class="required-star">*</span></wcs-label>
+            <wcs-input placeholder="ex: LD 5 200 ..." #inputRefPrincipaleModPage [value]="administrationService.selectedDocumentModPage.ref_main"
+                       (wcsChange)="administrationService.valueRefPrincipaleModPage = inputRefPrincipaleModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>Ref. Auxiliaire</wcs-label>
+            <wcs-input placeholder="ex: 05-3 709 829" #inputRefAuxiliaireModPage [value]="administrationService.selectedDocumentModPage.ref_aux"
+                       (wcsChange)="administrationService.valueRefAuxiliaireModPage = inputRefAuxiliaireModPage.value"></wcs-input>
+          </div>
+        </div>
+
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>URL Principale <span class="required-star">*</span></wcs-label>
+            <wcs-input placeholder="ex: https://dsmat..." #inputURLPrincipaleModPage [value]="administrationService.selectedDocumentModPage.url_main"
+                       (wcsChange)="administrationService.valueMainURLModPage = inputURLPrincipaleModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>URL Auxiliaire</wcs-label>
+            <wcs-input placeholder="ex: https://docmat..." #inputURLAuxiliaireModPage [value]="administrationService.selectedDocumentModPage.url_aux"
+                       (wcsChange)="administrationService.valueAuxURLModPage = inputURLAuxiliaireModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>Chemin local Principal</wcs-label>
+            <wcs-input placeholder="ex: assets/documents/xx/xxx" #inputCheminLocalPrincipaleModPage [value]="administrationService.selectedDocumentModPage.url_main_file"
+                       (wcsChange)="administrationService.valueMainPathModPage = inputCheminLocalPrincipaleModPage.value"></wcs-input>
+          </div>
+          <div class="form-element">
+            <wcs-label>Chemin local Auxiliaire</wcs-label>
+            <wcs-input placeholder="ex: assets/documents/xx/xxx" #inputCheminLocalAuxiliaireModPage [value]="administrationService.selectedDocumentModPage.url_aux_file"
+                       (wcsChange)="administrationService.valueAuxPathModPage = inputRefPrincipaleModPage.value"></wcs-input>
+          </div>
+        </div>
+
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-button class="wcs-warning"
+                        (click)="administrationService.modElementFromDB(
+                    selectPageModPage.value,
+                    selectEnginModPage.value,
+                    selectTypeEnginModPage.value,
+                    inputRefPrincipaleModPage.value,
+                    inputRefAuxiliaireModPage.value,
+                    inputURLPrincipaleModPage.value,
+                    inputURLAuxiliaireModPage.value,
+                    inputCheminLocalPrincipaleModPage.value,
+                    inputCheminLocalAuxiliaireModPage.value,
+                    inputDesignationModPage.value,
+                    inputTypeModPage.value,
+                    inputSystemeModPage.value)">
+              Modifier
+            </wcs-button>
+          </div>
+        </div>
+
+      </div>
+
+    </wcs-card-body>
+  </wcs-card>
+
+</div>

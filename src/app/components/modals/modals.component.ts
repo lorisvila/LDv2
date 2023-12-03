@@ -35,7 +35,8 @@ export class ModalsComponent {
   // Function to interface the request for adding a Favorite Engin to the Local Storage
   addFavEngin(engin: string, engin_type: string, engin_numero: number | string | null | undefined) {
     if (engin_numero !== undefined && engin_numero != "" && typeof engin_numero === "string") {
-      if (engin_numero.split("").length >= 5) { // TODO : Rajouter message d'erreur n° d'engin trop court...
+      let length = engin_numero.split("").length
+      if (length >= 5 && length <= 7) { // TODO : Rajouter message d'erreur n° d'engin trop court ou trop long --> <= 7 car je ne sais pas trop encore...
         let objetEngin: EnginType = {
           "engin": engin,
           "engin_type": engin_type,

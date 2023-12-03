@@ -1,0 +1,65 @@
+/*Define the page flexbox + card elements*/
+.page-content {
+  padding: 1em;
+  display: flex;
+  gap: var(--wcs-margin-l);
+  height: 100%;
+}
+@media screen and (min-width: 1000px) {
+  .page-content {
+    flex-direction: row;
+    height: calc(100% - (56px + 60px)); /*Full heigh minus the navbar and title height*/
+  }
+}
+@media screen and (max-width: 1000px) {
+  .page-content {
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+/*Title*/
+#actionBarActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2em;
+}
+#homeButton {
+  cursor: pointer;
+  user-select: none;
+}
+wcs-tabs {
+  user-select: none;
+}
+wcs-tabs > * {
+  user-select: text;
+}
+.authContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5em;
+  cursor: pointer;
+}
+
+/*Cards common elements*/
+.ft-w-400 {
+  font-weight: 400;
+}
+.ft-w-500 {
+  font-weight: 500;
+}
+
+/*Not auth card*/
+#notAuthCard {
+  display: flex;
+  width: fit-content;
+  padding: 0 1em 0 1em;
+}
+#page {
+  padding-top: 2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}

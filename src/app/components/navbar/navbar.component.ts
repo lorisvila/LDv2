@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {EnginService} from "../../services/engin.service";
 import {GeneralService} from "../../services/general.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,9 @@ export class NavbarComponent {
   // Import the variables and initialise with constructor
   constructor(
     public enginService: EnginService,
-    public generalService: GeneralService
+    public generalService: GeneralService,
+    public router: Router,
+    public route: ActivatedRoute
   ) {
   }
 

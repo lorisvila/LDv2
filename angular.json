@@ -26,7 +26,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/wcs-core/dist/wcs/wcs.css"
+              "node_modules/wcs-core/dist/wcs/wcs.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },
