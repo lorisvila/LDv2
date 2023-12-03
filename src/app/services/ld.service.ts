@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {EnginService} from "./engin.service";
 import {GeneralService} from "./general.service";
-import {EnginType, ItemDataType, ShortcutType, SystemeType} from "../app.types";
+import {EnginType, ItemDataType, ShortcutType, FilterType} from "../app.types";
 import {DataService} from "./data.service";
 
 @Injectable({
@@ -34,9 +34,9 @@ export class LdService {
   shortcut: string = "";
 
   // Filters results as Objects
+  systemeObject: FilterType | undefined = undefined;
+  shortcutObject: FilterType | undefined = undefined;
   favEnginObject: EnginType | undefined = undefined;
-  systemeObject: SystemeType | undefined = undefined;
-  shortcutObject: ShortcutType | undefined = undefined;
   enginTypeObject: EnginType | undefined = undefined;
 
   // Function to reset all the filter elements
@@ -70,19 +70,23 @@ export class LdService {
       }
       case "systeme": {
         this.systeme = value;
-        this.systemeObject = this.dataService.systemesLD.filter((item) => item.systeme == value)[0]
+        this.systemeObject = this.dataService.filters.filter((item) =>
+          item.filter == value || item.page == 'ld' || item.type == 'systeme')[0]
         // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs systemes matcheraient la value
         break;
       }
       case "shortcut": {
         this.shortcut = value;
-        this.shortcutObject = this.dataService.shortcutsLD.filter((item) => item.shortcut == value)[0]
+        this.shortcutObject = this.dataService.filters.filter((item) =>
+          item.filter == value || item.page == 'ld' || item.type == 'type')[0]
         // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs shortcuts matcheraient la value
         break;
       }
       case "fav_engin": {
         this.favEngin = value;
         this.favEnginObject = this.enginService.combinedTechFavEngins.filter((item) => item.engin_numero == value)[0]
+        this.enginNum_value = typeof this.favEnginObject.engin_numero == "number" ? this.favEnginObject.engin_numero.toString() : ""
+        this.engin_type = this.favEnginObject.engin_type
         // [0] pour 1er élement de la liste au cas où il y aurait une erreur et plusieurs engins favoris matcheraient la value
         break;
       }

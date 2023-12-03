@@ -1,5 +1,7 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
+  <img *ngIf="enginService.actual_engin == 'AGC'" src="assets/images/AGC_4C.png" alt="Image d'un AGC 4 caisses">
+  <img *ngIf="enginService.actual_engin == 'TER 2N NG'" src="assets/images/TER2NNG_3C.png" alt="Image d'un AGC 4 caisses">
   <div id="pageContainer">
 
     <!--Card dernières Infos-->
@@ -21,7 +23,7 @@
 
     <!--Card Versions-->
     <wcs-card mode="flat" class="card" id="versionsCard">
-      <h3>Versions</h3>
+      <h3>Mise à jour</h3>
       <div id="versionsContainer">
         <div class="versionItem">
           Mise à jour <b>Application</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_applicatif_string}}</wcs-badge>

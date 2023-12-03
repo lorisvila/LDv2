@@ -5,6 +5,8 @@ import {Injectable} from '@angular/core';
 })
 export class CommunicationService {
 
+  adminAuth: boolean = true;
+
   // Main function to retrieve data from localStorage
   getDataFromStorage(key: string): null | any {
     let resultsString = localStorage.getItem(key)
@@ -16,7 +18,7 @@ export class CommunicationService {
   }
 
   // Main function to store data to localStrorage
-  updateDataFromStorage(key: string, value: string | [] | {}) {
+  updateDataToStorage(key: string, value: string | [] | {}) {
     let stringifiedValue = JSON.stringify(value)
     localStorage.setItem(key, stringifiedValue)
   }

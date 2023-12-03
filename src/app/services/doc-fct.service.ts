@@ -1,5 +1,5 @@
 import {Injectable, IterableDiffers} from '@angular/core';
-import {ItemDataType, SystemeType} from "../app.types";
+import {ItemDataType, FilterType} from "../app.types";
 import {GeneralService} from "./general.service";
 import {EnginService} from "./engin.service";
 import {DataService} from "./data.service";
@@ -29,7 +29,7 @@ export class DocFctService {
   // Filters and selection
   search_value: string = "";
   selected_systeme: string = "";
-  systemes: SystemeType[] = this.dataService.systemesDocFct
+  systemes: FilterType[] = this.dataService.filters.filter((item) => item.page == 'docFct' && item.type == 'systeme') // TODO : Rajouter la synchro des systemes quand la var globale des système s'update
   systemesSelectedGridValues: [] = [] // used to reinit values, not used to see what is selected...
 
   // List Item params

@@ -14,10 +14,16 @@ export class GeneralService {
   ) {
     // Set the technicentre Object when loading the page
     this.updateActualTechnicentre()
+
+    // Gather the cached data if there is from Local Storage
+    this.updateDataFromCache()
+
+    // Gather the filters if there is from Local Storage
+    this.updateFiltersFromCache()
   }
 
   @Output() $offlineMode: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() $changeTechnicentre: EventEmitter<null> = new EventEmitter<null>()
+  @Output() $changeTechnicentre: EventEmitter<null> = new EventEmitter<null>();
 
   //Variables des versions et dates de mise à jour
   app_version: string = "V 2.1.0";
@@ -37,15 +43,18 @@ export class GeneralService {
   URLconnectDsMat: string = this.URLDsMat + "Login.aspx";
   URLconnectDocMat: string = this.URLDocMat
 
-  // Name of cookies or localStorage variables
+  // Name of localStorage variables
   basicEnginLocalStorageVarName: string = "defaultEngin";
   enginFavLocalStorageVarName: string = "enginFav";
   technicentreLocalStorageVarName: string = "technicentre";
+  cachedDataLocalStorageVarName: string = "cachedData";
+  filtersLocalStorageVarName: string = "filters";
 
   // Variables pour les modals
   showDefaultEnginModal: boolean = false;
   showTechnicentreEnginModal: boolean = false;
-  showEnginsFavoris: boolean = false;
+  showEnginsFavorisModal: boolean = false;
+  showAuthConnectModal: boolean = false;
 
   // Variables pour les cards
   showOfflineCard: boolean = false;
@@ -74,7 +83,11 @@ export class GeneralService {
         break;
       }
       case "enginsFavoris": {
-        this.showEnginsFavoris = state;
+        this.showEnginsFavorisModal = state;
+        break;
+      }
+      case "authConnect": {
+        this.showAuthConnectModal = state;
         break;
       }
 
@@ -97,9 +110,27 @@ export class GeneralService {
     }
   }
 
+  // Function to update all the Item Data list
+  updateDataFromCache() {
+    let cachedDataLocalStorage = this.communicationService.getDataFromStorage(this.cachedDataLocalStorageVarName)
+    if (cachedDataLocalStorage !== null) {
+      this.dataService.allItemsData = cachedDataLocalStorage
+      console.log("Data récupérée du cache : ", cachedDataLocalStorage)
+    }
+  }
+
+  // Function to update the Filters from the Local Storage
+  updateFiltersFromCache() {
+    let filtersLocalStorage = this.communicationService.getDataFromStorage(this.filtersLocalStorageVarName)
+    if (filtersLocalStorage !== null) {
+      this.dataService.filters = filtersLocalStorage
+      console.log("Filtres récupérés : ", filtersLocalStorage)
+    }
+  }
+
   // Function to change the actual Technicentre
   changeTechnicentre(technicentre: string) {
-    this.communicationService.updateDataFromStorage(this.technicentreLocalStorageVarName, technicentre)
+    this.communicationService.updateDataToStorage(this.technicentreLocalStorageVarName, technicentre)
     this.actualTechnicentre = this.dataService.technicentresEngins.filter((item) => item.technicentre == technicentre)[0]
     this.$changeTechnicentre.emit(null) // Juste dire que j'ai changé de Technicentre
   }

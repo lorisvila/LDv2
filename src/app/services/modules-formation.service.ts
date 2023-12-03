@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {GeneralService} from "./general.service";
 import {EnginService} from "./engin.service";
 import {DataService} from "./data.service";
-import {ItemDataType, SystemeType} from "../app.types";
+import {ItemDataType, FilterType} from "../app.types";
 
 // This module is nearly indentical than the doc fonction service ;
 // the term "system" in this module refers to the formation
@@ -27,12 +27,13 @@ export class ModulesFormationService {
     this.enginService.$actual_engin.subscribe((value) => {
       this.updateFilteredData()
     })
+    console.log(this.systemes)
   }
 
   // Filters and selection
   search_value: string = "";
   selected_systeme: string = "";
-  systemes: SystemeType[] = this.dataService.systemesModuleFormation
+  systemes: FilterType[] = this.dataService.filters.filter((item) => item.page == 'modulesFormation' && item.type == 'systeme') // TODO : Rajouter la synchro des systemes quand la var globale des système s'update
   systemesSelectedGridValues: [] = [] // used to reinit values, not used to see what is selected...
 
   // List Item params

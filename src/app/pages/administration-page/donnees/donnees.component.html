@@ -1,0 +1,18 @@
+<div class="page-content">
+  <wcs-card mode="raised">
+    <wcs-card-body>Export de données JSON</wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <wcs-button class="wcs-success" (click)="administrationService.updateExportTextArea()">Rafraîchir</wcs-button>
+      <wcs-textarea icon="" resize="auto" placeholder="Placeholder" [value]="administrationService.exportTextAreaVarDoneesPage"></wcs-textarea>
+    </wcs-card-body>
+  </wcs-card>
+  <wcs-card mode="raised" class="content-card">
+    <wcs-card-body>Import de données JSON</wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <wcs-button class="wcs-info" (click)="administrationService.importFromImportTextArea(textAreaImportDonneesPage.value)">Importer</wcs-button>
+      <wcs-textarea icon="" resize="auto" placeholder="Placeholder" [value]="administrationService.importTextAreaVarDoneesPage" #textAreaImportDonneesPage></wcs-textarea>
+    </wcs-card-body>
+  </wcs-card>
+</div>

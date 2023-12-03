@@ -1,0 +1,54 @@
+<wcs-action-bar gutter="">
+  Panel d'administation
+  <div slot="actions" id="actionBarActions">
+    <ng-container *ngIf="communicationService.adminAuth; else notAuthTitle">
+      <div class="authContainer" (click)="generalService.toggleModal('authConnect', true)">
+        Authentifié en tant que : <wcs-badge class="wcs-danger">Pas connecté</wcs-badge> <!--TODO : Reste à implémenter l'auth-->
+      </div>
+    </ng-container>
+    <ng-template #notAuthTitle>
+      <div class="authContainer">
+        <wcs-badge class="wcs-danger">Pas authentifié</wcs-badge>
+      </div>
+    </ng-template>
+    <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" routerLink="/"></wcs-mat-icon>
+  </div>
+</wcs-action-bar>
+
+<ng-container *ngIf="communicationService.adminAuth; else elseAuth">
+  <wcs-tabs align="center" gutter="true" [selectedKey]="selectedPageFromUrl" (tabChange)="changeUrlToTab($event)" #AdministrationTabs>
+
+    <!--Tab Explication structure data-->
+    <wcs-tab header="Guide d'utilisation" itemKey="guide">
+      <app-guide-utilisation></app-guide-utilisation>
+    </wcs-tab>
+
+    <!--Tab modification data-->
+    <wcs-tab header="Modification" itemKey="modif">
+      <app-mod-elem></app-mod-elem>
+    </wcs-tab>
+
+    <!--Tab ajout data-->
+    <wcs-tab header="Ajout" itemKey="ajout">
+      <app-add-elem></app-add-elem>
+    </wcs-tab>
+
+    <!--Tab export data-->
+    <wcs-tab header="Données" itemKey="donees">
+      <app-donnees></app-donnees>
+    </wcs-tab>
+
+    <!--Tab gestion Filtres-->
+    <wcs-tab header="Gestion filtres" itemKey="filtres">
+      <app-gest-filtres></app-gest-filtres>
+    </wcs-tab>
+
+  </wcs-tabs>
+</ng-container>
+<ng-template #elseAuth>
+  <div id="page">
+    <wcs-card mode="flat" id="notAuthCard">
+      <h3>Vous ne pouvez pas accéder à cette ressource car vous n'êtes pas authentifié</h3>
+    </wcs-card>
+  </div>
+</ng-template>

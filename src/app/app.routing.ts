@@ -5,7 +5,8 @@ import {LDPageComponent} from "./pages/ld-page/ld-page.component";
 import {LocOrgaPageComponent} from "./pages/loc-orga-page/loc-orga-page.component";
 import {DocFctPageComponent} from "./pages/doc-fct-page/doc-fct-page.component";
 import {ModulesFormationPageComponent} from "./pages/modules-formation-page/modules-formation-page.component";
-import {CodesDefComponent} from "./pages/codes-def/codes-def.component";
+import {CodesDefPageComponent} from "./pages/codes-def-page/codes-def-page.component";
+import {AdministrationPageComponent} from "./pages/administration-page/administration-page.component";
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'documentationParFonction', component: DocFctPageComponent},
   {path: 'modulesDeFormation', component: ModulesFormationPageComponent},
   {path: 'localisationDesOrganes', component: LocOrgaPageComponent},
-  {path: 'codesDefauts', component: CodesDefComponent},
+  {path: 'codesDefauts', component: CodesDefPageComponent},
+  {path: 'administration', component: AdministrationPageComponent},
   {path: '**', redirectTo: ""}
 ];
 

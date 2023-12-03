@@ -58,6 +58,10 @@
       <wcs-dropdown-header>Connexion</wcs-dropdown-header>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDsMat, '_blank')">Connexion à DsMat</wcs-dropdown-item>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDocMat, '_blank')">Connexion à DocMat</wcs-dropdown-item>
+
+      <wcs-dropdown-header>Admin</wcs-dropdown-header>
+      <wcs-dropdown-item (wcsDropdownItemClick)="router.navigateByUrl('/administration')">Panel d'admninistration</wcs-dropdown-item>
+
     </wcs-dropdown>
   </div>
 </wcs-header>

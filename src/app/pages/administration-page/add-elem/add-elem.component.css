@@ -1,0 +1,35 @@
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1em 2em;
+  gap: 1em;
+}
+h3 {margin: 0.2em 0 0.5em 0}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.form-line {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin: 0.5em 0;
+}
+.form-element {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.long-element {
+  width: 31em; /*Because there is a 1 em gap in the lines aboves*/
+  min-width: 15em;
+}
+wcs-select, wcs-input {
+  min-width: 15em;
+}
+.required-star {
+  color: var(--wcs-red);
+}

@@ -1,0 +1,108 @@
+/*Define the page flexbox + card elements*/
+.page-content {
+  padding: 1em;
+  display: flex;
+  gap: var(--wcs-margin-l);
+}
+@media screen and (min-width: 1000px) {
+  .page-content {
+    flex-direction: row;
+    height: calc(100vh - (230px)); /*Full heigh minus the navbar and title height*/
+  }
+  .bottom-card {
+    overflow-y: auto;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .page-content {
+    flex-direction: column;
+    height: 100%;
+  }
+  .bottom-card {
+    overflow-y: visible;
+  }
+}
+
+/*Cards common elements*/
+h4 {
+  margin: 0 0 1em;
+  text-align: center;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.ft-w-400 {
+  font-weight: 400;
+}
+.ft-w-500 {
+  font-weight: 500;
+}
+
+/*Card filters*/
+#filters-card {
+  flex: 1 40%;
+  height: 100%;
+}
+#filters-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.filterElementDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#select-page, #grid-items {width: 100%}
+
+/*Card documents*/
+#documents-card {
+  flex: 1 60%;
+  display: flex;
+}
+#documents-card-body {
+  display: flex;
+}
+.document-textbox {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: 500;
+}
+.card-body-not-empty {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.card-body-empty {
+  justify-content: center;
+  align-items: center;
+}
+
+/*Form styling*/
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.form-line {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin: 0.5em 0;
+}
+.form-element {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+wcs-select, wcs-input {
+  min-width: 15em;
+}
+.long-element {
+  width: 30em;
+}
+.required-star {
+  color: var(--wcs-red);
+}

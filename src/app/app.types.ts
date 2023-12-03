@@ -1,5 +1,8 @@
 // Type for data in LD Dict
+import {Component} from "@angular/core";
+
 export type ItemDataType = {
+  page?: string,
   id: number,
   des: string,
   engin: string,
@@ -15,9 +18,11 @@ export type ItemDataType = {
 }
 
 // Type for systeme element
-export type SystemeType = {
-  systeme_formatted: string,
-  systeme: string
+export type FilterType = {
+  filter_formatted: string,
+  filter: string,
+  page: string,
+  type: string
 }
 
 // Type for shortcut element
@@ -49,4 +54,11 @@ export type NewsType = {
     title: string
     url: string
   }[]
+}
+
+// Type for page
+export type PageType = {
+  title: string,
+  title_formatted: string,
+  url: string
 }

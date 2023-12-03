@@ -20,67 +20,69 @@
 
   <!--Card pour les filtres-->
   <wcs-card mode="raised">
-    <wcs-card-body>
+    <wcs-card-body id="filters-card-body">
       <div id="filtres-container">
-
-        <!--Select pour le type d'engin : BGC, XGC ou 3C, 2C etc.-->
-        <wcs-form-field id="type-engin-field">
-          <wcs-label>Type d'engin</wcs-label>
-          <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type"
-                      (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
-            <wcs-select-option value="" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
-          </wcs-select>
-        </wcs-form-field>
-
-        <!--Input de recherche-->
-        <wcs-form-field>
-          <wcs-label>Recherche textuelle</wcs-label>
-          <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="ldService.search_value"
-                     (wcsChange)="ldService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
-        </wcs-form-field>
-
-        <!--Dans le LD 5 200 1 01 se situent les tableaux de correspondance schémas / engins-->
-        <!--Input de numéro d'engin-->
-        <wcs-form-field>
-          <wcs-label>Numéro de rame</wcs-label>
-          <wcs-input #inputEnginNum placeholder="ex: X 76 533" [value]="ldService.enginNum_value"
-                     (wcsChange)="ldService.changeValueFilter('engin_num_value', inputEnginNum.value)"></wcs-input>
-        </wcs-form-field>
-
         <!--Select pour les engins enregistrés : Favoris + Technicentre-->
-        <wcs-form-field>
+        <div>
           <wcs-label>N° enregistrés</wcs-label>
           <wcs-select #selectFavEngin placeholder="Choisir un engin" [value]="ldService.favEngin"
                       (wcsChange)="ldService.changeValueFilter('fav_engin', selectFavEngin.value)">
             <wcs-select-option value="" *ngIf="ldService.favEngin"><b>Aucun</b></wcs-select-option>
             <wcs-select-option *ngFor="let engin of enginService.combinedTechFavEngins" [value]="engin.engin_numero">{{engin.engin}} {{engin.engin_type}} {{engin.engin_numero}}</wcs-select-option>
           </wcs-select>
-        </wcs-form-field>
+        </div>
+
+        <!--Select pour le type d'engin : BGC, XGC ou 3C, 2C etc.-->
+        <div id="type-engin-field">
+          <wcs-label>Type d'engin</wcs-label>
+          <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type"
+                      (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
+            <wcs-select-option value="" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
+            <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
+          </wcs-select>
+        </div>
+
+        <!--Dans le LD 5 200 1 01 se situent les tableaux de correspondance schémas / engins-->
+        <!--Input de numéro d'engin-->
+        <div>
+          <wcs-label>Numéro de rame</wcs-label>
+          <wcs-input #inputEnginNum placeholder="ex: X 76 533" [value]="ldService.enginNum_value"
+                     (wcsChange)="ldService.changeValueFilter('engin_num_value', inputEnginNum.value)"></wcs-input>
+        </div>
 
         <!--Select pour les Système / Fonction possibles : motrice, remorque, groupe électrogène, etc.-->
-        <wcs-form-field>
+        <div>
           <wcs-label>Système / Fonction</wcs-label>
           <wcs-select #selectSysteme placeholder="Choisir un système" [value]="ldService.systeme"
                       (wcsChange)="ldService.changeValueFilter('systeme', selectSysteme.value)">
             <wcs-select-option value="" *ngIf="ldService.systeme"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let systeme of dataService.systemesLD" [value]="systeme.systeme">{{systeme.systeme_formatted}}</wcs-select-option>
+            <ng-container *ngFor="let systeme of dataService.filters">
+              <wcs-select-option *ngIf="systeme.page == 'ld' && systeme.type == 'systeme'" [value]="systeme.filter">{{systeme.filter_formatted}}</wcs-select-option>
+            </ng-container>
           </wcs-select>
-        </wcs-form-field>
+        </div>
 
         <!--Select pour les raccourcis possibles : schémas electriques, codes défauts-->
-        <wcs-form-field>
+        <div>
             <wcs-label>Raccourcis</wcs-label>
             <wcs-select #selectShortcut placeholder="Choisir un raccourci" [value]="ldService.shortcut" (wcsChange)="ldService.changeValueFilter('shortcut', selectShortcut.value)">
               <wcs-select-option value="tous" *ngIf="ldService.shortcut"><b>Tous</b></wcs-select-option>
-              <wcs-select-option *ngFor="let shortcut of dataService.shortcutsLD" [value]="shortcut.shortcut">{{shortcut.shortcut_formatted}}</wcs-select-option>
+              <ng-container *ngFor="let systeme of dataService.filters">
+                <wcs-select-option *ngIf="systeme.page == 'ld' && systeme.type == 'type'" [value]="systeme.filter">{{systeme.filter_formatted}}</wcs-select-option>
+              </ng-container>
             </wcs-select>
-        </wcs-form-field>
+        </div>
+      </div>
 
+      <!--Input de recherche-->
+      <div>
+        <wcs-label>Recherche textuelle</wcs-label>
+        <wcs-input #inputSearch placeholder="ex: LD 5 200 ..." [value]="ldService.search_value"
+                   (wcsChange)="ldService.changeValueFilter('search_value', inputSearch.value)"></wcs-input>
       </div>
 
       <!--Bouton pour reinitialiser / supprimer les filtres-->
-      <wcs-form-field id="button-delete-filters">
+      <wcs-form-field>
         <wcs-button class="wcs-warning" mode="clear" size="m" (click)="ldService.reinitFormValues()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
       </wcs-form-field>
     </wcs-card-body>

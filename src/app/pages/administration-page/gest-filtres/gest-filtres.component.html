@@ -1,0 +1,99 @@
+<div class="page-content">
+  <!--Card pour les filtres-->
+  <wcs-card mode="raised" id="filters-card" class="bottom-card">
+    <wcs-card-body id="filters-card-body">
+
+      <!--Select filtre en question-->
+      <div class="filterElementDiv">
+        <wcs-label>Filtre à modifier</wcs-label>
+        <wcs-select #selectFiltresFiltrePage placeholder="Choisir un filtre" id="select-filtre" [value]="administrationService.actualFilterSelectedFilterPage"
+                    (wcsChange)="administrationService.actualFilterSelectedFilterPage = selectFiltresFiltrePage.value">
+          <wcs-select-option value="technicentre">Technicentre</wcs-select-option>
+          <wcs-select-option value="systeme">Système</wcs-select-option>
+          <wcs-select-option value="type">Type</wcs-select-option>
+        </wcs-select>
+      </div>
+
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Card pour les documents-->
+  <wcs-card mode="raised" id="documents-card" class="bottom-card">
+    <wcs-card-body id="documents-card-body" class="card-body"
+                   [class]="administrationService.actualFilterSelectedFilterPage === null ? 'card-body-empty' : 'card-body-not-empty'">
+
+      <!--Span no document selected-->
+      <span class="document-textbox" *ngIf="administrationService.actualFilterSelectedFilterPage === null">
+          Veuillez sélectionner un filtre
+      </span>
+
+      <!--Div systèmes-->
+      <div class="form-container" *ngIf="selectFiltresFiltrePage.value === 'systeme'"> <!--NG IF FILTRE SYSTEME IS CHOSEN-->
+        <h4>Modification des Systèmes</h4>
+
+        <div class="form-line">
+          <div class="form-element">
+            <wcs-label>Page <span class="required-star">*</span></wcs-label>
+            <wcs-select #selectPage_FilterPage [value]="administrationService.pageSelectedFiltersPage"
+                        (wcsChange)="administrationService.pageSelectedFiltersPage = selectPage_FilterPage.value">
+              <wcs-select-option *ngFor="let page of dataService.webPages" [value]="page.title">{{page.title_formatted}}</wcs-select-option>
+            </wcs-select>
+          </div>
+        </div>
+
+        <ng-container *ngIf="administrationService.pageSelectedFiltersPage != null">
+
+          <h5>Modifier un filtre</h5>
+          <div class="form-line">
+            <div class="form-element">
+              <wcs-label>Système à modifier <span class="required-star">*</span></wcs-label>
+              <wcs-select #selectSysteme_SystemeFilterPage [value]="administrationService.systemeSelectedFilterPage"
+                          (wcsChange)="administrationService.systemeSelectedFilterPage = selectSysteme_SystemeFilterPage.value">
+                <ng-container *ngFor="let systeme of dataService.filters">
+                  <wcs-select-option *ngIf="systeme.page === administrationService.pageSelectedFiltersPage"
+                                     [value]="systeme.filter">
+                    {{systeme.filter_formatted}}
+                  </wcs-select-option>
+                </ng-container>
+              </wcs-select>
+            </div>
+            <ng-container *ngIf="administrationService.systemeSelectedFilterPage !== null">
+              <div class="form-element">
+                <wcs-label>Nouveau nom côté SQL</wcs-label>
+                <wcs-input #inputCodeNameModSystemeFilterPage placeholder="ex: MPCOF"></wcs-input>
+              </div>
+              <div class="form-element">
+                <wcs-label>Nouveau nom côté humain</wcs-label>
+                <wcs-input #inputHumanNameMod_SystemeFilterPage placeholder="ex: Manipulateur de Traction / Freinage"></wcs-input>
+              </div>
+              <div class="form-element" style="align-self: flex-end">
+                <wcs-button class="wcs-warning" (click)="administrationService.changeFilterSystemeOrType(inputCodeNameModSystemeFilterPage.value, inputHumanNameMod_SystemeFilterPage.value)">
+                  Changer
+                </wcs-button>
+              </div>
+            </ng-container>
+          </div>
+
+          <wcs-divider></wcs-divider>
+
+          <h5>Créer un filtre</h5>
+          <div class="form-line">
+            <div class="form-element">
+              <wcs-label>Nouveau nom côté SQL</wcs-label>
+              <wcs-input placeholder="ex: MPCOF" #inputCodeNameCreate_SystemeFilterPage></wcs-input>
+            </div>
+            <div class="form-element">
+              <wcs-label>Nouveau nom côté humain</wcs-label>
+              <wcs-input placeholder="ex: Manipulateur de Traction / Freinage" #inputHumanNameCreate_SystemeFilterPage></wcs-input>
+            </div>
+            <div class="form-element" style="align-self: flex-end">
+              <wcs-button class="wcs-success">Créer</wcs-button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+    </wcs-card-body>
+  </wcs-card>
+
+</div>

@@ -13,13 +13,13 @@
     <wcs-card-body id="filters-card-body">
 
       <!--Input de recherche-->
-      <wcs-form-field id="string-search-field">
+      <div id="string-search-field">
         <wcs-label>Recherche</wcs-label>
         <wcs-input #inputSearch placeholder="ex: Afficheur latéral ..."
                    [value]="docFctService.search_value"
                    (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)">
         </wcs-input>
-      </wcs-form-field>
+      </div>
 
       <!--Bouton tout afficher-->
       <wcs-button class="wcs-primary" mode="stroked" shape="" size="s"
@@ -29,11 +29,11 @@
 
       <!--Grid de recherche-->
       <!--TODO : Rajouter le fait de montrer le nombre de docs par système (si possible)-->
-      <wcs-grid rowIdPath="id" selection-config="single"
+      <wcs-grid selection-config="single"
                 [data]="docFctService.systemes"
                 [selectedItems]="docFctService.systemesSelectedGridValues"
                 (wcsGridSelectionChange)="docFctService.changeValueFilter('systeme', $event)">
-        <wcs-grid-column name="Système" path="systeme_formatted"></wcs-grid-column>
+        <wcs-grid-column name="Système" path="filter_formatted"></wcs-grid-column>
       </wcs-grid>
 
     </wcs-card-body>

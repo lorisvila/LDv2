@@ -44,11 +44,12 @@ export class EnginService {
     this.actual_engin = engin
     this.actual_type_engin = this.types_engin[this.actual_engin]
     this.$actual_engin.emit(engin)
+    this.combineEnginsTechFav()
   }
 
   // Change the default engin in the localStorage
   changeDefaultEngin(engin: string) {
-    this.communicationSerice.updateDataFromStorage(this.generalService.basicEnginLocalStorageVarName, engin)
+    this.communicationSerice.updateDataToStorage(this.generalService.basicEnginLocalStorageVarName, engin)
   }
 
   // Add a Favorite Engin in the locaStorage
@@ -60,7 +61,7 @@ export class EnginService {
 
     // Si l'engin est valide alors l'ajouter
     this.favoriteEngins.push(engin)
-    this.communicationSerice.updateDataFromStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
+    this.communicationSerice.updateDataToStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
     this.updateFavEngin()
   }
 
@@ -73,7 +74,7 @@ export class EnginService {
 
     // Si l'engin est valide alors supprimer
     this.favoriteEngins.splice(this.favoriteEngins.indexOf(engin), 1)
-    this.communicationSerice.updateDataFromStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
+    this.communicationSerice.updateDataToStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
     this.updateFavEngin()
   }
 
@@ -113,6 +114,7 @@ export class EnginService {
         }
       }
     }
+    this.combinedTechFavEngins = this.combinedTechFavEngins.filter((item) => item.engin == this.actual_engin)
   }
 
 }
