@@ -16,7 +16,6 @@ export class AddElemComponent {
     public generalService: GeneralService,
     public enginService: EnginService,
     public administrationService: AdministrationService
-  ) {
-  }
+  ) {}
 
 }

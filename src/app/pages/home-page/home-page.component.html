@@ -40,7 +40,9 @@
     <!--Card Engins Fav-->
     <wcs-card mode="flat" class="card" id="favEnginsCard">
       <h3>Engins Favoris</h3>
-      Technicentre sélectionné : <i><b>{{generalService.actualTechnicentre?.technicentre_formatted}}</b></i>
+      <ng-container *ngIf="generalService.actualTechnicentre">
+        Technicentre sélectionné : <i><b>{{generalService.actualTechnicentre.technicentre_formatted}}</b></i>
+      </ng-container>
       <br>
       <div id="favEnginContainer">
         <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins">
@@ -50,7 +52,7 @@
         </wcs-grid>
       </div>
       <div id="buttonsEditContainer">
-        <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Technicentre</wcs-button>
+        <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('technicentreEnginModal', true)">Editer Technicentre</wcs-button>
         <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
       </div>
     </wcs-card>

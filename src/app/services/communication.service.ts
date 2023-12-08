@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable, Output} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class CommunicationService {
   }
 
   // Main function to store data to localStrorage
-  updateDataToStorage(key: string, value: string | [] | {}) {
+  updateDataToStorage(key: string, value: any) {
     let stringifiedValue = JSON.stringify(value)
     localStorage.setItem(key, stringifiedValue)
   }

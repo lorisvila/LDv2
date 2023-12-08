@@ -1,6 +1,4 @@
 // Type for data in LD Dict
-import {Component} from "@angular/core";
-
 export type ItemDataType = {
   page?: string,
   id: number,
@@ -17,6 +15,29 @@ export type ItemDataType = {
   type?: string,
 }
 
+// Different type -> be able to change the Human name of filters without touching to the items itself (by touching to the filters object)
+export type OramaItemDataType = {
+  page?: string,
+  id: string,
+  des: string,
+  engin: string,
+  engin_type: string[],
+  ref_main: string,
+  url_main: string,
+  ref_aux?: string,
+  url_aux?: string,
+  url_main_file?: string,
+  url_aux_file?: string,
+  systeme: {
+    filter: string,
+    filter_formatted: string
+  }
+  type?: {
+    filter: string,
+    filter_formatted: string
+  },
+}
+
 // Type for systeme element
 export type FilterType = {
   filter_formatted: string,
@@ -25,10 +46,13 @@ export type FilterType = {
   type: string
 }
 
-// Type for shortcut element
-export type ShortcutType = {
-  shortcut_formatted: string,
-  shortcut: string
+export type PageFilters = {
+  engin?: string,
+  engin_type?: string[],
+  engin_num?: string,
+  systeme?: string,
+  type?: string,
+  page?: string
 }
 
 //Type for Technicentres and their engins

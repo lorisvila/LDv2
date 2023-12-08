@@ -27,7 +27,6 @@ export class ModulesFormationService {
     this.enginService.$actual_engin.subscribe((value) => {
       this.updateFilteredData()
     })
-    console.log(this.systemes)
   }
 
   // Filters and selection
@@ -41,7 +40,7 @@ export class ModulesFormationService {
 
   // Methode executed when a event is triggered on a filter element (the element call it in the DOM)
   changeValueFilter(variableName: string, value: any) {
-    console.log("Change variable " + variableName + " to value " + value)
+    console.log("Change variable ", variableName, " to value ", value)
     switch (variableName) {
       case "search_value": {
         this.search_value = value;
@@ -49,7 +48,7 @@ export class ModulesFormationService {
       }
       case "systeme": {
         if (value.detail.row.selected) { // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
-          this.selected_systeme = value.detail.row.data.systeme
+          this.selected_systeme = value.detail.row.data.filter
         } else {
           this.selected_systeme = ""
         }
@@ -68,10 +67,10 @@ export class ModulesFormationService {
     // Add data in the var
     let data: ItemDataType[] = []
     if (this.generalService.offlineMode) {
-      data = this.docModuleFormation // Add local data
+      data = this.dataService.allItemsData.filter((item) => item.page == "modulesFormation") // Add local data
       this.loading = false
     } else if (!this.generalService.offlineMode) {
-      data = this.docModuleFormation // TODO : Ajouter les données du serveur SQL
+      data = this.dataService.allItemsData.filter((item) => item.page == "modulesFormation") // TODO : Ajouter les données du serveur SQL
       this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite
     }
     // use only data for the engin
@@ -93,7 +92,5 @@ export class ModulesFormationService {
   }
 
   filteredModulesFormation: ItemDataType[] = []
-
-  docModuleFormation: ItemDataType[] = this.dataService.docModuleFormation
 
 }
