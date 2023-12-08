@@ -15,6 +15,7 @@ h1 {
   font-weight: 500;
   font-size: 1.5em;
   color: white;
+  cursor: pointer;
 }
 
 /*Enlever la barre de recherche si écran < 900px*/

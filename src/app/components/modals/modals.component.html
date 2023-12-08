@@ -59,8 +59,8 @@
 
     <!--Select Technicentre-->
     <wcs-label>Technicentre</wcs-label>
-    <wcs-select #technicentreSelect [value]="dataService.technicentresEngins[0].technicentre" size="m">
-      <wcs-select-option *ngFor="let technicentre of dataService.technicentresEngins" [value]="technicentre.technicentre" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{technicentre.technicentre_formatted}}</wcs-select-option>
+    <wcs-select #technicentreSelect [value]="dataService.technicentres[0].technicentre" size="m">
+      <wcs-select-option *ngFor="let technicentre of dataService.technicentres" [value]="technicentre.technicentre" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{technicentre.technicentre_formatted}}</wcs-select-option>
     </wcs-select>
 
     <p>
@@ -82,13 +82,13 @@
     <!--Input utilisateur-->
     <div class="modal-line-element">
       <wcs-label>Utilisateur</wcs-label>
-      <wcs-input id="auth-user-input" state="" icon="person" type="" value="" prefix-label="" suffix-label="" size=""></wcs-input>
+      <wcs-input id="auth-user-input" icon="person" type=""></wcs-input>
     </div>
 
     <!--Input mot de passe-->
     <div class="modal-line-element">
       <wcs-label>Utilisateur</wcs-label>
-      <wcs-input id="auth-password-input" state="" icon="key" type="password" value="" prefix-label="" suffix-label="" size=""></wcs-input>
+      <wcs-input id="auth-password-input" icon="key" type="password"></wcs-input>
     </div>
 
     <p class="modal-line-element">

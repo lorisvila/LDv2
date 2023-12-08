@@ -45,7 +45,7 @@ export class DocFctService {
       }
       case "systeme": {
         if (value.detail.row.selected) { // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
-          this.selected_systeme = value.detail.row.data.systeme
+          this.selected_systeme = value.detail.row.data.filter
         } else {
           this.selected_systeme = ""
         }
@@ -64,10 +64,10 @@ export class DocFctService {
     // Add data in the var
     let data: ItemDataType[] = []
     if (this.generalService.offlineMode) {
-      data = this.docFctData // Add local data
+      data = this.dataService.allItemsData.filter((item) => item.page == "docFct") // Add local data
       this.loading = false
     } else if (!this.generalService.offlineMode) {
-      data = this.docFctData // TODO : Ajouter les données du serveur SQL
+      data = this.dataService.allItemsData.filter((item) => item.page == "docFct") // TODO : Ajouter les données du serveur SQL
       this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite, le temps de reçevoir les données du serveur
     }
     // use only data for the engin
@@ -89,7 +89,5 @@ export class DocFctService {
   }
 
   filteredDocFctData: ItemDataType[] = []
-
-  docFctData: ItemDataType[] = this.dataService.docFctData
 
 }

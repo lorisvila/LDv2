@@ -7,6 +7,7 @@ import {DocFctPageComponent} from "./pages/doc-fct-page/doc-fct-page.component";
 import {ModulesFormationPageComponent} from "./pages/modules-formation-page/modules-formation-page.component";
 import {CodesDefPageComponent} from "./pages/codes-def-page/codes-def-page.component";
 import {AdministrationPageComponent} from "./pages/administration-page/administration-page.component";
+import {SearchPageComponent} from "./pages/search-page/search-page.component";
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'localisationDesOrganes', component: LocOrgaPageComponent},
   {path: 'codesDefauts', component: CodesDefPageComponent},
   {path: 'administration', component: AdministrationPageComponent},
+  {path: 'recherche', component: SearchPageComponent},
   {path: '**', redirectTo: ""}
 ];
 

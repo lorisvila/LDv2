@@ -39,14 +39,14 @@
   <!--Card pour les documents-->
   <wcs-card mode="raised" id="documents-card" class="bottom-card">
     <wcs-card-body id="documents-card-body" class="card-body"
-                   [class]="administrationService.selectedDocumentModPage === null ? 'card-body-empty' : 'card-body-not-empty'">
+                   [class]="administrationService.selectedDocumentModPage === undefined ? 'card-body-empty' : 'card-body-not-empty'">
 
       <!--Span no document selected-->
-      <span class="document-textbox" *ngIf="administrationService.selectedDocumentModPage === null">
+      <span class="document-textbox" *ngIf="administrationService.selectedDocumentModPage === undefined">
           Veuillez sélectionner un document pour pouvoir le modifier
       </span>
 
-      <div class="form-container" *ngIf="administrationService.selectedDocumentModPage !== null">
+      <div class="form-container" *ngIf="administrationService.selectedDocumentModPage !== undefined">
         <h4>Modification du {{administrationService.selectedDocumentModPage.ref_main}}</h4>
         <div class="form-line">
           <div class="form-element">
@@ -80,27 +80,21 @@
             <wcs-label>Système <span class="required-star">*</span></wcs-label>
             <wcs-select #selectSystemeModPage [value]="administrationService.selectedDocumentModPage.systeme"
                         (wcsChange)="administrationService.valueSystemeModPage = selectSystemeModPage.value">
-              <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+              <ng-container *ngFor="let filter of dataService.filters">
+                <wcs-select-option *ngIf="filter.page === administrationService.valuePageModPage && filter.type === 'systeme'"
+                                   [value]="filter.filter">{{filter.filter_formatted}}</wcs-select-option>
+              </ng-container>
             </wcs-select>
           </div>
           <div class="form-element">
             <wcs-label>Type</wcs-label>
             <wcs-select #selectTypeModPage [value]="administrationService.selectedDocumentModPage.type"
                         (wcsChange)="administrationService.valueTypeModPage = selectTypeModPage.value">
-              <wcs-select-option *ngFor="let typeEngin of enginService.types_engin[selectEnginModPage.value]" [value]="typeEngin">{{typeEngin}}</wcs-select-option>
+              <ng-container *ngFor="let filter of dataService.filters">
+                <wcs-select-option *ngIf="filter.page === administrationService.valuePageModPage && filter.type === 'type'"
+                                   [value]="filter.filter">{{filter.filter_formatted}}</wcs-select-option>
+              </ng-container>
             </wcs-select>
-          </div>
-        </div>
-        <div class="form-line">
-          <div class="form-element">
-            <wcs-label>Système (Manuellement)</wcs-label>
-            <wcs-input placeholder="ex: LD 5 200 ..." #inputSystemeModPage [value]="administrationService.selectedDocumentModPage.systeme"
-                       (wcsChange)="administrationService.valueSystemeModPage = inputSystemeModPage.value"></wcs-input>
-          </div>
-          <div class="form-element">
-            <wcs-label>Type (Manuellement)</wcs-label>
-            <wcs-input placeholder="ex: 05-3 709 829" #inputTypeModPage [value]="administrationService.selectedDocumentModPage.type"
-                       (wcsChange)="administrationService.valueTypeModPage = inputTypeModPage.value"></wcs-input>
           </div>
         </div>
 
@@ -112,12 +106,12 @@
           </div>
           <div class="form-element">
             <wcs-label>Ref. Principale <span class="required-star">*</span></wcs-label>
-            <wcs-input placeholder="ex: LD 5 200 ..." #inputRefPrincipaleModPage [value]="administrationService.selectedDocumentModPage.ref_main"
+            <wcs-input placeholder="ex: LD5200 ..." #inputRefPrincipaleModPage [value]="administrationService.selectedDocumentModPage.ref_main"
                        (wcsChange)="administrationService.valueRefPrincipaleModPage = inputRefPrincipaleModPage.value"></wcs-input>
           </div>
           <div class="form-element">
             <wcs-label>Ref. Auxiliaire</wcs-label>
-            <wcs-input placeholder="ex: 05-3 709 829" #inputRefAuxiliaireModPage [value]="administrationService.selectedDocumentModPage.ref_aux"
+            <wcs-input placeholder="ex: 053709829" #inputRefAuxiliaireModPage [value]="administrationService.selectedDocumentModPage.ref_aux"
                        (wcsChange)="administrationService.valueRefAuxiliaireModPage = inputRefAuxiliaireModPage.value"></wcs-input>
           </div>
         </div>
@@ -149,20 +143,32 @@
           <div class="form-element">
             <wcs-button class="wcs-warning"
                         (click)="administrationService.modElementFromDB(
-                    selectPageModPage.value,
-                    selectEnginModPage.value,
-                    selectTypeEnginModPage.value,
-                    inputRefPrincipaleModPage.value,
-                    inputRefAuxiliaireModPage.value,
-                    inputURLPrincipaleModPage.value,
-                    inputURLAuxiliaireModPage.value,
-                    inputCheminLocalPrincipaleModPage.value,
-                    inputCheminLocalAuxiliaireModPage.value,
-                    inputDesignationModPage.value,
-                    inputTypeModPage.value,
-                    inputSystemeModPage.value)">
+                        selectPageModPage.value,
+                        selectEnginModPage.value,
+                        selectTypeEnginModPage.value,
+                        inputRefPrincipaleModPage.value,
+                        inputRefAuxiliaireModPage.value,
+                        inputURLPrincipaleModPage.value,
+                        inputURLAuxiliaireModPage.value,
+                        inputCheminLocalPrincipaleModPage.value,
+                        inputCheminLocalAuxiliaireModPage.value,
+                        inputDesignationModPage.value,
+                        selectSystemeModPage.value,
+                        selectTypeModPage.value)">
               Modifier
             </wcs-button>
+          </div>
+          <div class="form-element">
+            <wcs-button class="wcs-danger" (click)="administrationService.showDeleteButton1ModPage = true">Supprimer</wcs-button>
+          </div>
+          <div class="form-element" *ngIf="administrationService.showDeleteButton1ModPage">
+            <wcs-button class="wcs-danger" (click)="administrationService.showDeleteButton2ModPage = true">Sûr ?</wcs-button>
+          </div>
+          <div class="form-element" *ngIf="administrationService.showDeleteButton2ModPage">
+            <wcs-button class="wcs-danger" (click)="administrationService.showDeleteButton3ModPage = true">Certain ?</wcs-button>
+          </div>
+          <div class="form-element" *ngIf="administrationService.showDeleteButton3ModPage">
+            <wcs-button class="wcs-danger" (click)="administrationService.deleteFromDB()">Confirmer</wcs-button>
           </div>
         </div>
 

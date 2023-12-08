@@ -2,6 +2,8 @@ import {EventEmitter, Injectable, Output} from '@angular/core';
 import {DataService} from "./data.service";
 import {Technicentre} from "../app.types";
 import {CommunicationService} from "./communication.service";
+import {ToastrService} from "ngx-toastr";
+import {SearchService} from "./search.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,9 @@ export class GeneralService {
 
   constructor(
     public dataService: DataService,
-    public communicationService: CommunicationService
+    public communicationService: CommunicationService,
+    public searchService: SearchService,
+    public notif: ToastrService
   ) {
     // Set the technicentre Object when loading the page
     this.updateActualTechnicentre()
@@ -20,8 +24,11 @@ export class GeneralService {
 
     // Gather the filters if there is from Local Storage
     this.updateFiltersFromCache()
-  }
 
+    // Tell that setup is finished
+    this.searchService.$finishedLoadingDataFromCache.emit(true)
+  }
+  // Events
   @Output() $offlineMode: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() $changeTechnicentre: EventEmitter<null> = new EventEmitter<null>();
 
@@ -64,9 +71,9 @@ export class GeneralService {
   restrictOfflineMode: boolean = false; // TODO : A modifier si utilisation sur serveur
 
   //Variables pour l'affectation Technicentre
-  actualTechnicentre: Technicentre | undefined = undefined
+  actualTechnicentre: Technicentre | null = null
 
-  // Message info connect systemes
+  // Message / popup info connect to DsMat and DocMat
   connectMessageStatus: boolean = true;
   hideConnectMessage() {this.connectMessageStatus = false}
 
@@ -105,7 +112,13 @@ export class GeneralService {
   updateActualTechnicentre() {
     let technicentreLocalStorage = this.communicationService.getDataFromStorage(this.technicentreLocalStorageVarName)
     if (technicentreLocalStorage !== null) {
-      this.actualTechnicentre = this.dataService.technicentresEngins.filter((item) => item.technicentre == technicentreLocalStorage)[0]
+      if (!(technicentreLocalStorage.hasOwnProperty("technicentre") && technicentreLocalStorage.hasOwnProperty("technicentre_formatted") && technicentreLocalStorage.hasOwnProperty("engins"))) {
+        this.notif.error("L'importation du Technicentre d'affectation a échoué", "Aïe...")
+        console.error("L'importation du Technicentre d'affectation a échoué")
+        this.communicationService.deleteDataFromStorage(this.technicentreLocalStorageVarName)
+        return;
+      }
+      this.actualTechnicentre = technicentreLocalStorage
       console.log("Technicentre par défaut : ", this.actualTechnicentre)
     }
   }
@@ -129,10 +142,11 @@ export class GeneralService {
   }
 
   // Function to change the actual Technicentre
-  changeTechnicentre(technicentre: string) {
+  changeTechnicentre(technicentre: Technicentre) {
     this.communicationService.updateDataToStorage(this.technicentreLocalStorageVarName, technicentre)
-    this.actualTechnicentre = this.dataService.technicentresEngins.filter((item) => item.technicentre == technicentre)[0]
+    this.actualTechnicentre = technicentre
     this.$changeTechnicentre.emit(null) // Juste dire que j'ai changé de Technicentre
+    this.notif.success(technicentre.technicentre_formatted + " ajouté !", "C'est bon !")
   }
 
   // Function to open a link in new tab

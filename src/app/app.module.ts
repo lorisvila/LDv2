@@ -22,6 +22,7 @@ import { DonneesComponent } from './pages/administration-page/donnees/donnees.co
 import { GestFiltresComponent } from './pages/administration-page/gest-filtres/gest-filtres.component';
 import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { SearchPageComponent } from './pages/search-page/search-page.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -43,6 +44,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     GuideUtilisationComponent,
     DonneesComponent,
     GestFiltresComponent,
+    SearchPageComponent,
   ],
   imports: [
     BrowserModule,

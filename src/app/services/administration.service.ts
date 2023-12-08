@@ -27,10 +27,11 @@ export class AdministrationService {
     let data: ItemDataType[] = this.dataService.allItemsData
     // TODO : Add check if Object type is wright
     if (data !== null && data.length > 0){ // If the object is not empty
-      if (data.filter((item) => // If the doc does not exist in list
-        item.ref_main == element.ref_main ||
+      if (data.filter((item) => // Check if item not already exist for type of engin
+        (item.ref_main == element.ref_main ||
         item.url_main == element.url_main ||
-        item.des == element.des).length > 0) {
+        item.des == element.des) &&
+        (item.engin == element.engin && item.engin_type == element.engin_type)).length > 0) {
         this.notif.warning("L'élement que vous essayer de créer existe déjà", "Aïe...")
         return;
       }
@@ -125,7 +126,7 @@ export class AdministrationService {
   // Variables
   actualPageSelectedModPage: string = "";
   dataGridDocumentsModPage: ItemDataType[] = [];
-  selectedDocumentModPage: ItemDataType | null = null;
+  selectedDocumentModPage: ItemDataType | undefined = undefined;
 
   valuePageModPage: string = "";
   valueEnginModPage: string = "";
@@ -140,11 +141,15 @@ export class AdministrationService {
   valueMainPathModPage: string | number | null | undefined = "";
   valueAuxPathModPage: string | number | null | undefined = "";
 
+  showDeleteButton1ModPage: boolean = false;
+  showDeleteButton2ModPage: boolean = false;
+  showDeleteButton3ModPage: boolean = false;
+
   // Functions
   changeActualPageSelectedPageMod(page: string) {
     this.actualPageSelectedModPage = page;
     this.dataGridDocumentsModPage = this.dataService.allItemsData.filter((item) => item.page == page);
-    this.selectedDocumentModPage = null; // TODO : Remettre à null le document sélectionné car le choix page à changé donc doc dans la grid aussi
+    this.selectedDocumentModPage = undefined; // TODO : Remettre à null le document sélectionné car le choix page à changé donc doc dans la grid aussi
   }
   selectDocumentPageMod(event: any) {
     this.selectedDocumentModPage = event.detail.row.data
@@ -152,7 +157,7 @@ export class AdministrationService {
   modElementFromDB(page: any, engin: any, typeEngin: string[],
                    mainRef: any, auxRef: any, mainURL: any,
                    auxURL: any, mainPath: any, auxPath: any,
-                   des: any, type: any, systeme: any) {
+                   des: any, systeme: any, type: any) {
 
     let id = this.selectedDocumentModPage?.id
     if (id == undefined) {
@@ -168,6 +173,15 @@ export class AdministrationService {
     } else { // Catch error
       this.notif.error("Un problème avec l'élément crée dans la fonction est survenu...")
     }
+  }
+
+  deleteFromDB() {
+    if (this.selectedDocumentModPage === undefined) {
+      this.notif.error("Vous n'avez pas sélectionné de documents à supprimer...", "Aïe...")
+      return;
+    }
+    let index = this.dataService.allItemsData.indexOf(this.selectedDocumentModPage)
+    this.writeCachedDataToLocalStorage(this.dataService.allItemsData.splice(index, 1))
   }
 
   // ################################### Add Doc FORM ###################################
@@ -196,6 +210,7 @@ export class AdministrationService {
       this.addElementToCacheLocalStorage(element)
       this.notif.success("Le document " + element.ref_main + " a bien été crée", "C'est bon !")
     }
+    location.reload() // Reload to prevent bad variable issue
   }
   reinitFieldsPageAdd() {
     this.valueEnginAddPage = "";
