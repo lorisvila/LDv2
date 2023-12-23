@@ -42,8 +42,12 @@ testem.log
 .DS_Store
 Thumbs.db
 
+#Logs
+/API/logs/*
+
 #Electron executabes
 /electronLDv2_Angular-win32-x64
 
 # Documents folder in the assets --> Sensible + big files
 /src/assets/documents
+/API/config.ini
