@@ -123,7 +123,8 @@ function logRequest(req, response) {
 function generateResponseObject(endpoint=undefined) {
   return {
     code: 200,
-    date: new Date().getTime(),
+    requestTime: new Date().getTime(),
+    lastRefreshTime: lastRefreshAllData.getTime(),
     endpoint: endpoint,
     success: true,
     message: undefined,
