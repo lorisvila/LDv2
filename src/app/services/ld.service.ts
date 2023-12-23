@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import {EnginService} from "./engin.service";
 import {GeneralService} from "./general.service";
-import {EnginType, ItemDataType, FilterType, PageFilters} from "../app.types";
+import {EnginType, ItemDataType, FilterType, PageFilters, OramaItemDataType} from "../app.types";
 import {DataService} from "./data.service";
 import {SearchService} from "./search.service";
 import {Results} from "@orama/orama";
 import {ToastrService} from "ngx-toastr";
+import {AdministrationService} from "./administration.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,9 @@ export class LdService {
     public generalService: GeneralService,
     public dataService: DataService,
     public searchService: SearchService,
-    public notif: ToastrService
+    public notif: ToastrService,
+
+    public administrationService: AdministrationService
   ) {
     // When the LD page start show the elements in the grid
     this.updateFilteredData()
@@ -28,6 +31,7 @@ export class LdService {
     this.enginService.$actual_engin.subscribe((value) => {
       this.updateFilteredData()
     })
+
   };
 
   // Filters as a string
@@ -48,8 +52,7 @@ export class LdService {
   pageSize: number = 15
 
   // Data for grid
-  filteredLDdata: Results<any> | undefined = undefined;
-  LDdata: ItemDataType[] = this.dataService.LDdata
+  filteredLDdata: OramaItemDataType[] | undefined = undefined;
 
   // Function executed when a event is triggered on a filter element (the element call it in the DOM)
   changeValueFilter(variableName: string, value: any) {
@@ -66,15 +69,16 @@ export class LdService {
       case "fav_engin": {
         let num_engin = value.split("_")[1]
         this.fav_engin = value;
-        if (value.split("_")[0] === "fav") {
+        console.log(value)
+        if (value.split("_")[0] === "fav") { // If user select a favorite engin from his list
           this.favEnginObject = this.enginService.combinedTechFavEngins.engins_fav.find((item) =>
             item.engin_numero == num_engin)
-        }
-        else if (value.split("_")[0] === "technicentre") {
+        } else if (value.split("_")[0] === "technicentre") { // If user select a favorite engin from the technicentre list
           this.favEnginObject = this.enginService.combinedTechFavEngins.engins_technicentre.find((item) =>
             item.engin_numero == num_engin)
-        } else {
-          this.notif.error("Il y a un problème avec votre engin favori...", "Aïe...")
+        } else { // If he unselect favorite engin
+          this.enginNum_value = ""
+          this.engin_type = ""
           return;
         }
         if (!this.favEnginObject?.engin_numero) {
@@ -87,27 +91,6 @@ export class LdService {
       default: { // TODO : See if there is here a XSS vulnerabilty
         (this as any)[variableName] = value
       }
-      /* OLD WAY OF PUTTING VALUES
-      case "engin_type": {
-        this.engin_type = value;
-        break;
-      }
-      case "search_value": {
-        this.search_value = value;
-        break;
-      }
-      case "enginNum_value": {
-        this.enginNum_value = value;
-        break;
-      }
-      case "systeme": {
-        this.systeme = value;
-        break;
-      }
-      case "type": {
-        this.type = value;
-        break;
-      }*/
     }
 
     if (variableName == "fav_engin") { // If there is a fav engin, handle it before preparing the filter
@@ -125,7 +108,8 @@ export class LdService {
       this.notif.error("Une erreur est survenue dans la recherche...", "Aïe...")
       return;
     }
-    this.filteredLDdata = results
+    let results_purified: OramaItemDataType[] = this.searchService.purifyObjectIntoOramaItemDataType(results)
+    this.filteredLDdata = results_purified
   }
 
 }

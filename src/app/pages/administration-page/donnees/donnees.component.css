@@ -1,40 +1,23 @@
 /*Define the page flexbox + card elements*/
 .page-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  padding: 1em;
+  padding: 2em;
   gap: var(--wcs-margin-l);
 }
-@media screen and (min-width: 1000px) {
-  .page-content {
-    flex-direction: row;
-    height: calc(100vh - (230px)); /*Full heigh minus the navbar and title height*/
-  }
-  wcs-card {
-    overflow-y: auto;
-  }
+h3 {
+  margin: 0.5em 0;
 }
-@media screen and (max-width: 1000px) {
-  .page-content {
-    flex-direction: column;
-    height: 100%;
-  }
-  wcs-card {
-    overflow-y: visible;
-  }
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-  align-items: center;
-  height: 40vh;
-  width: 30vw;
-}
-
 wcs-textarea {
-  height: 20em;
+  min-height: 15em;
+}
+wcs-select {
+  min-width: 17em;
+}
+wcs-card-body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
 }

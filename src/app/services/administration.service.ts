@@ -4,6 +4,7 @@ import {DataService} from "./data.service";
 import {CommunicationService} from "./communication.service";
 import {GeneralService} from "./general.service";
 import {ToastrService} from "ngx-toastr";
+import {filter} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -40,10 +41,11 @@ export class AdministrationService {
       elementMod.id = lastId + 1
       data.push(elementMod)
     } else {
-      this.notif.warning("Liste de data corrompue dans le Local Storage du navigateur", "Oups....")
+      this.notif.warning("La liste de data était vide ou corrompue, ajout de cet élement dans la liste", "Oups....")
       data = [element] // Si liste vide ou corrompue --> écraser par le nouvel élement seulement
     }
     this.writeCachedDataToLocalStorage(data)
+    console.log(data)
     this.dataService.allItemsData = data
   }
 
@@ -85,6 +87,9 @@ export class AdministrationService {
 
     return element;
   }
+  updateAllPagesData() {
+    this.changeActualPageSelectedPageMod(this.actualPageSelectedModPage)
+  }
 
   // Functions filter elements
   writeFiltersToLocalStorage(fullData: FilterType[]) {
@@ -108,7 +113,7 @@ export class AdministrationService {
     this.writeFiltersToLocalStorage(filters)
     this.dataService.filters = filters
   }
-  createFilter(filter: string, filter_formatted: string, page: string, type: string): FilterType | null {
+  createFilter(filter: string, filter_formatted: string, page: string, type: string, engin: string): FilterType | null {
       if (filter === "" || filter_formatted === "" || page === "" || type === "") {
         this.notif.error("L'élement que vous essayer de créer n'est pas valable...", "Aïe...")
         return null;
@@ -117,7 +122,8 @@ export class AdministrationService {
           filter_formatted: filter_formatted,
           filter: filter,
           page: page,
-          type: type
+          type: type,
+          engin: engin
         };
       }
   }
@@ -173,6 +179,7 @@ export class AdministrationService {
     } else { // Catch error
       this.notif.error("Un problème avec l'élément crée dans la fonction est survenu...")
     }
+    this.updateAllPagesData()
   }
 
   deleteFromDB() {
@@ -180,8 +187,10 @@ export class AdministrationService {
       this.notif.error("Vous n'avez pas sélectionné de documents à supprimer...", "Aïe...")
       return;
     }
-    let index = this.dataService.allItemsData.indexOf(this.selectedDocumentModPage)
-    this.writeCachedDataToLocalStorage(this.dataService.allItemsData.splice(index, 1))
+    let newData: ItemDataType[] = this.dataService.allItemsData.filter((item) =>
+      item.id != this.selectedDocumentModPage?.id && item.engin != this.selectedDocumentModPage?.engin)
+    this.writeCachedDataToLocalStorage(newData)
+    this.updateAllPagesData()
   }
 
   // ################################### Add Doc FORM ###################################
@@ -210,7 +219,7 @@ export class AdministrationService {
       this.addElementToCacheLocalStorage(element)
       this.notif.success("Le document " + element.ref_main + " a bien été crée", "C'est bon !")
     }
-    location.reload() // Reload to prevent bad variable issue
+    this.updateAllPagesData()
   }
   reinitFieldsPageAdd() {
     this.valueEnginAddPage = "";
@@ -226,61 +235,139 @@ export class AdministrationService {
     this.valueAuxPathAddPage= "";
   }
 
-  // ################################### Modification Doc FORM ###################################
+  // ################################### Données FORM ###################################
   // Variables
+  typesOfDataToBeImportedExportedDoneesPage = [
+    {
+      "filter": "document",
+      "filter_formatted": "Documents"
+    },
+    {
+      "filter": "filters",
+      "filter_formatted": "Filtres"
+    },
+    {
+      "filter": "technicentres",
+      "filter_formatted": "Technicentres"
+    },
+    {
+      "filter": "engins",
+      "filter_formatted": "Engins"
+    },
+  ];
   exportTextAreaVarDoneesPage = "";
   importTextAreaVarDoneesPage = "";
+  typeOfDataExportDoneesPage: string | null = this.typesOfDataToBeImportedExportedDoneesPage[0].filter;
+  typeOfDataImportDoneesPage: string | null = this.typesOfDataToBeImportedExportedDoneesPage[0].filter;
+  keysOfImpotedDataDonneesPage: {name: string, keys: string[]}[] = [
+    {name: "document", keys: ["id", "des", "engin", "engin_type", "ref_main", "url_main", "systeme"]}
+  ]
 
   // Function
   updateExportTextArea() {
     this.exportTextAreaVarDoneesPage = JSON.stringify(this.dataService.allItemsData)
   }
   importFromImportTextArea(stringified_object: string | null | undefined) {
-    if (stringified_object === null || stringified_object === undefined || stringified_object === "") {
+    if (stringified_object === null || stringified_object === undefined || stringified_object === "" || this.typeOfDataImportDoneesPage == null) {
       this.notif.error("Le texte importé est vide", "Erreur...")
       return;
     }
-    let userObject: ItemDataType[] = JSON.parse(stringified_object) // Créer l'objet depuis le JSON en texte
-    if (typeof userObject != "object") {
+    let JSONobject: [] = JSON.parse(stringified_object) // Créer l'objet depuis le JSON en texte
+    if (typeof JSONobject != "object") {
       this.notif.error("L'objet n'est pas une liste", "Erreur...")
       return;
     }
-    let incorrectItems = userObject.filter((item) => item.page == "" || item.id == null ||
-                                    item.ref_main == "" || item.des == "" || item.ref_main == "" || item.url_main == "")
-    if (incorrectItems.length > 0) {
-      this.notif.error("Un des élement de l'objet donné est incorrect", "Erreur...")
+    let keysToCheck = this.keysOfImpotedDataDonneesPage.find((type) => type.name == this.typeOfDataImportDoneesPage)
+    if (!keysToCheck) {
+      this.notif.error("La vérification des données à échouée", "Erreur...")
+      return;
     }
+    let incorrectItems: {badKey: string, items: ItemDataType[]}[] = []
+    for (let key of keysToCheck.keys) {
+      let currentIncorrectItem = JSONobject.filter((item) => item[key] == "")
+      if (currentIncorrectItem.length > 0) {
+        incorrectItems.push({badKey: key, items: currentIncorrectItem})
+      }
+    }
+    /*let incorrectItems = (JSON.parse(stringified_object) as ItemDataType[]).filter((item) => objects.find((item2) => item2.name == this.typeOfDataImportDoneesPage)?.keys.find((key) => item[(key as keyof object)] != "") !== undefined)*/
+    console.log(incorrectItems)
+    if (incorrectItems.length > 0) {
+      this.notif.error("Un des élement de l'objet donné est incorrect, voir la console", "Erreur...")
+      console.error("Cet ou ces objets posent problème... : ", incorrectItems)
+      return;
+    }
+   /* let userObject: ItemDataType[] = (JSONobject as ItemDataType[])
     this.writeCachedDataToLocalStorage(userObject)
-    this.notif.success("L'objet de " + userObject.length + " élement(s) a été crée", "C'est bon !")
+    this.notif.success("L'objet de " + userObject.length + " élement(s) a été crée", "C'est bon !")*/
   }
 
   // ################################### Filters FORM ###################################
   // Variables filters globales
-  actualFilterSelectedFilterPage: string | null = null
-  pageSelectedFiltersPage: string | null = null
+  kindOfFilterSelectedFilterPage: string | null = null;
 
   // Variables filters systemes
-  systemeSelectedFilterPage: string | null = null
+  pageSelectedFiltersPage: string | null = null;
+  enginSelectedFilterPage: string | null = null;
+  systemeOrTypeSelectedFilterPage: string | null = null;
+  showSureDeleteButtonFilterPage: boolean = false;
 
   // Functions
-  changeFilterSystemeOrType(newNameSQL: string | number | null | undefined, newNameHuman: string | number | null | undefined) {
-    if (this.pageSelectedFiltersPage == null || this.actualFilterSelectedFilterPage == null ||
-      typeof newNameSQL !== "string" || typeof newNameHuman !== "string") {
+  createOrChangeFilterSystemeOrType(newNameSQL: string | number | null | undefined, newNameHuman: string | number | null | undefined, createElement?: boolean) {
+    if (this.pageSelectedFiltersPage == null || this.kindOfFilterSelectedFilterPage == null ||
+      this.enginSelectedFilterPage == null || typeof newNameSQL !== "string" || typeof newNameHuman !== "string") {
       this.notif.warning("Vous essayer d'executer une fonction sans tous ses paramètres ou avec des paramètres invalides...", "Oups...")
       return;
     }
-    let oldObject = this.dataService.filters.filter((item) =>
-      item.page == this.pageSelectedFiltersPage &&
-      item.filter == this.systemeSelectedFilterPage)[0]
-    let index = this.dataService.filters.indexOf(oldObject)
     let filters = this.dataService.filters
-    let newObject = this.createFilter(newNameSQL, newNameHuman, this.pageSelectedFiltersPage, this.actualFilterSelectedFilterPage)
+    let newObject = this.createFilter(newNameSQL, newNameHuman, this.pageSelectedFiltersPage, this.kindOfFilterSelectedFilterPage, this.enginSelectedFilterPage)
     if (newObject == null) {
       return;
     }
-    filters.splice(index, 1, newObject)
+    if (createElement) {
+      filters.push(newObject)
+    } else {
+      let oldObject = this.dataService.filters.find((item) =>
+        item.page == this.pageSelectedFiltersPage &&
+        item.filter == this.systemeOrTypeSelectedFilterPage)
+      if (!oldObject) {
+        this.notif.error("L'objet à modifier n'a pas été trouvé...")
+        return;
+      }
+      let index = this.dataService.filters.indexOf(oldObject)
+      if (index === -1) {
+        this.notif.error("Le filtre sélectionné n'a pas été trouvé...", "Aïe...")
+        return;
+      }
+      filters.splice(index, 1, newObject)
+    }
     this.writeFiltersToLocalStorage(filters)
-    console.log(filters)
+    this.notif.success("Le filtre " + newNameHuman + " a été crée / modifié", "C'est bon!")
   }
+
+  deleteFilterSystemeOrType() {
+    if (this.pageSelectedFiltersPage == null || this.kindOfFilterSelectedFilterPage == null ||
+      this.enginSelectedFilterPage == null) {
+      this.notif.warning("Vous essayer d'executer une fonction sans tous ses paramètres ou avec des paramètres invalides...", "Oups...")
+      return;
+    }
+    let elementObject = this.dataService.filters.find((item) =>
+      item.filter == this.systemeOrTypeSelectedFilterPage &&
+      item.engin == this.enginSelectedFilterPage &&
+      item.page == this.pageSelectedFiltersPage)
+    console.log(this.dataService.filters, elementObject, this.kindOfFilterSelectedFilterPage, this.enginSelectedFilterPage, this.pageSelectedFiltersPage)
+    if (!elementObject) {
+      this.notif.error("Le filtre sélectionné n'a pas été trouvé...", "Aïe...")
+      return;
+    }
+    let index = this.dataService.filters.indexOf(elementObject)
+    if (index === -1) {
+      this.notif.error("L'index de l'objet trouvé n'est pas correct...", "Aïe...")
+      return;
+    }
+    this.dataService.filters.splice(index, 1)
+    this.notif.success("L'objet " + elementObject.filter_formatted + " a bien été supprimé", "C'est bon!")
+    this.showSureDeleteButtonFilterPage = false;
+  }
+
 
 }

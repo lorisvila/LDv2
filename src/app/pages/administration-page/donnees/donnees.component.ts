@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {AdministrationService} from "../../../services/administration.service";
+import {DataService} from "../../../services/data.service";
 
 @Component({
   selector: 'app-donnees',
@@ -9,8 +10,8 @@ import {AdministrationService} from "../../../services/administration.service";
 export class DonneesComponent {
 
   constructor(
-    public administrationService: AdministrationService
-  ) {
-  }
+    public administrationService: AdministrationService,
+    public dataService: DataService,
+  ) {}
 
 }

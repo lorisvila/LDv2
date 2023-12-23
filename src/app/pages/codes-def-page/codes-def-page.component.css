@@ -2,20 +2,8 @@
 .page-content {
   padding: 1em;
   display: flex;
+  flex-direction: column;
   gap: var(--wcs-margin-l);
-  height: 100%;
-}
-@media screen and (min-width: 1000px) {
-  .page-content {
-    flex-direction: row;
-    height: calc(100% - (56px + 60px)); /*Full heigh minus the navbar and title height*/
-  }
-}
-@media screen and (max-width: 1000px) {
-  .page-content {
-    flex-direction: column;
-    height: 100%;
-  }
 }
 
 /*Title*/
@@ -33,4 +21,18 @@
 }
 .ft-w-500 {
   font-weight: 500;
+}
+.required-star {
+  color: var(--wcs-red);
+}
+
+/*Cards filtres*/
+.form-line {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+wcs-select, wcs-input {
+  min-width: 15em;
 }

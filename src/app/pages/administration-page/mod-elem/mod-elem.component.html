@@ -14,7 +14,7 @@
 
       <!--Input de recherche-->
       <div class="filterElementDiv">
-        <wcs-label>Recherche</wcs-label>
+        <wcs-label>Recherche [PAS ENCORE IMPLEMENTE]</wcs-label>
         <wcs-input #inputSearch placeholder="ex: LD 5 200 2 02 E1"
                    (wcsChange)="generalService.toggleModal('')">
         </wcs-input>
@@ -63,14 +63,19 @@
             <wcs-label>Engin <span class="required-star">*</span></wcs-label>
             <wcs-select #selectEnginModPage [value]="administrationService.selectedDocumentModPage.engin"
                         (wcsChange)="administrationService.valueEnginModPage = selectEnginModPage.value">
-              <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+              <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+
             </wcs-select>
           </div>
           <div class="form-element">
             <wcs-label>Type d'engin <span class="required-star">*</span></wcs-label>
             <wcs-select multiple="true" #selectTypeEnginModPage [value]="administrationService.selectedDocumentModPage.engin_type"
                         (wcsChange)="administrationService.valueTypeEnginModPage = selectTypeEnginModPage.value">
-              <wcs-select-option *ngFor="let typeEngin of enginService.types_engin[selectEnginModPage.value]" [value]="typeEngin">{{typeEngin}}</wcs-select-option>
+              <ng-container *ngFor="let engin of enginService.engins">
+                <ng-container *ngIf="engin.engin == selectEnginModPage.value">
+                  <wcs-select-option *ngFor="let type of engin.types_engin" [value]="type">{{type}}</wcs-select-option>
+                </ng-container>
+              </ng-container>
             </wcs-select>
           </div>
         </div>
