@@ -3,7 +3,7 @@
   <div slot="header">Choix de l'engin par défaut</div>
   <div class="modal-content">
     <wcs-select #enginSelect [value]="enginService.actual_engin" size="m">
-      <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.key}}</wcs-select-option>
+      <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.engin}}</wcs-select-option>
     </wcs-select>
     <p>
       Celui-ci sera sélectionné par défaut lors des prochaines ouvertures du site
@@ -25,11 +25,15 @@
     <!--Select engins fav-->
     <div id="flex-engins-fav">
       <wcs-select #enginFavCategorieSelect [value]="enginService.actual_engin" size="m">
-        <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+        <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
       </wcs-select>
       <wcs-form-field>
-        <wcs-select #enginFavTypeSelect [value]="enginService.types_engin[enginFavCategorieSelect.value][0]" size="m" slot="prefix">
-          <wcs-select-option *ngFor="let engin of enginService.types_engin[enginFavCategorieSelect.value]" [value]="engin">{{engin}}</wcs-select-option>
+        <wcs-select #enginFavTypeSelect size="m" slot="prefix">
+          <ng-container *ngFor="let engin of enginService.engins">
+            <ng-container *ngIf="engin.engin == enginFavCategorieSelect.value">
+              <wcs-select-option *ngFor="let type of engin.types_engin" [value]="type">{{type}}</wcs-select-option>
+            </ng-container>
+          </ng-container>
         </wcs-select>
         <wcs-input #enginNumberInput type="number" inputmode="decimal" [placeholder]="76519" required="true" [value]="inputNumberEngin" slot="prefix"></wcs-input>
       </wcs-form-field>

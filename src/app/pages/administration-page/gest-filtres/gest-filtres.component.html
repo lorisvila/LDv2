@@ -6,8 +6,8 @@
       <!--Select filtre en question-->
       <div class="filterElementDiv">
         <wcs-label>Filtre à modifier</wcs-label>
-        <wcs-select #selectFiltresFiltrePage placeholder="Choisir un filtre" id="select-filtre" [value]="administrationService.actualFilterSelectedFilterPage"
-                    (wcsChange)="administrationService.actualFilterSelectedFilterPage = selectFiltresFiltrePage.value">
+        <wcs-select #selectFiltresFiltrePage placeholder="Choisir un filtre" id="select-filtre" [value]="administrationService.kindOfFilterSelectedFilterPage"
+                    (wcsChange)="administrationService.kindOfFilterSelectedFilterPage = selectFiltresFiltrePage.value">
           <wcs-select-option value="technicentre">Technicentre</wcs-select-option>
           <wcs-select-option value="systeme">Système</wcs-select-option>
           <wcs-select-option value="type">Type</wcs-select-option>
@@ -20,15 +20,15 @@
   <!--Card pour les documents-->
   <wcs-card mode="raised" id="documents-card" class="bottom-card">
     <wcs-card-body id="documents-card-body" class="card-body"
-                   [class]="administrationService.actualFilterSelectedFilterPage === null ? 'card-body-empty' : 'card-body-not-empty'">
+                   [class]="administrationService.kindOfFilterSelectedFilterPage === null ? 'card-body-empty' : 'card-body-not-empty'">
 
       <!--Span no document selected-->
-      <span class="document-textbox" *ngIf="administrationService.actualFilterSelectedFilterPage === null">
+      <span class="document-textbox" *ngIf="administrationService.kindOfFilterSelectedFilterPage === null">
           Veuillez sélectionner un filtre
       </span>
 
-      <!--Div systèmes-->
-      <div class="form-container" *ngIf="selectFiltresFiltrePage.value === 'systeme'"> <!--NG IF FILTRE SYSTEME IS CHOSEN-->
+      <!--Div système + types-->
+      <div class="form-container" *ngIf="['systeme', 'type'].includes(selectFiltresFiltrePage.value)">
         <h4>Modification des Systèmes</h4>
 
         <div class="form-line">
@@ -39,25 +39,39 @@
               <wcs-select-option *ngFor="let page of dataService.webPages" [value]="page.title">{{page.title_formatted}}</wcs-select-option>
             </wcs-select>
           </div>
+
+          <div class="form-element">
+            <wcs-label>Engin <span class="required-star">*</span></wcs-label>
+            <wcs-select #selectEngin_SystemeFilterPage [value]="administrationService.enginSelectedFilterPage"
+                        (wcsChange)="administrationService.enginSelectedFilterPage = selectEngin_SystemeFilterPage.value">
+              <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+            </wcs-select>
+          </div>
         </div>
 
-        <ng-container *ngIf="administrationService.pageSelectedFiltersPage != null">
+
+
+        <ng-container *ngIf="administrationService.pageSelectedFiltersPage != null && administrationService.enginSelectedFilterPage != null">
 
           <h5>Modifier un filtre</h5>
           <div class="form-line">
+
             <div class="form-element">
-              <wcs-label>Système à modifier <span class="required-star">*</span></wcs-label>
-              <wcs-select #selectSysteme_SystemeFilterPage [value]="administrationService.systemeSelectedFilterPage"
-                          (wcsChange)="administrationService.systemeSelectedFilterPage = selectSysteme_SystemeFilterPage.value">
+              <wcs-label>Système / Type à modifier <span class="required-star">*</span></wcs-label>
+              <wcs-select #selectSysteme_SystemeFilterPage [value]="administrationService.systemeOrTypeSelectedFilterPage"
+                          (wcsChange)="administrationService.systemeOrTypeSelectedFilterPage = selectSysteme_SystemeFilterPage.value">
                 <ng-container *ngFor="let systeme of dataService.filters">
-                  <wcs-select-option *ngIf="systeme.page === administrationService.pageSelectedFiltersPage"
+                  <wcs-select-option *ngIf="systeme.page === administrationService.pageSelectedFiltersPage &&
+                                            systeme.type === administrationService.kindOfFilterSelectedFilterPage &&
+                                            systeme.engin === administrationService.enginSelectedFilterPage"
                                      [value]="systeme.filter">
                     {{systeme.filter_formatted}}
                   </wcs-select-option>
                 </ng-container>
               </wcs-select>
             </div>
-            <ng-container *ngIf="administrationService.systemeSelectedFilterPage !== null">
+
+            <ng-container *ngIf="administrationService.systemeOrTypeSelectedFilterPage !== null">
               <div class="form-element">
                 <wcs-label>Nouveau nom côté SQL</wcs-label>
                 <wcs-input #inputCodeNameModSystemeFilterPage placeholder="ex: MPCOF"></wcs-input>
@@ -66,15 +80,29 @@
                 <wcs-label>Nouveau nom côté humain</wcs-label>
                 <wcs-input #inputHumanNameMod_SystemeFilterPage placeholder="ex: Manipulateur de Traction / Freinage"></wcs-input>
               </div>
+
               <div class="form-element" style="align-self: flex-end">
-                <wcs-button class="wcs-warning" (click)="administrationService.changeFilterSystemeOrType(inputCodeNameModSystemeFilterPage.value, inputHumanNameMod_SystemeFilterPage.value)">
+                <wcs-button class="wcs-warning" (click)="administrationService.createOrChangeFilterSystemeOrType(
+                inputCodeNameModSystemeFilterPage.value,
+                inputHumanNameMod_SystemeFilterPage.value)">
                   Changer
                 </wcs-button>
               </div>
+
+              <div class="form-element" style="align-self: flex-end">
+                <wcs-button class="wcs-danger" (click)="administrationService.showSureDeleteButtonFilterPage = true">
+                  Supprimer
+                </wcs-button>
+              </div>
+
+              <div class="form-element" style="align-self: flex-end" *ngIf="administrationService.showSureDeleteButtonFilterPage">
+                <wcs-button class="wcs-danger" (click)="administrationService.deleteFilterSystemeOrType()">
+                  Sûr ?
+                </wcs-button>
+              </div>
+
             </ng-container>
           </div>
-
-          <wcs-divider></wcs-divider>
 
           <h5>Créer un filtre</h5>
           <div class="form-line">
@@ -87,9 +115,14 @@
               <wcs-input placeholder="ex: Manipulateur de Traction / Freinage" #inputHumanNameCreate_SystemeFilterPage></wcs-input>
             </div>
             <div class="form-element" style="align-self: flex-end">
-              <wcs-button class="wcs-success">Créer</wcs-button>
+              <wcs-button class="wcs-success" (click)="administrationService.createOrChangeFilterSystemeOrType(
+              inputCodeNameCreate_SystemeFilterPage.value,
+              inputHumanNameCreate_SystemeFilterPage.value, true)">
+                Créer
+              </wcs-button>
             </div>
           </div>
+
         </ng-container>
       </div>
 

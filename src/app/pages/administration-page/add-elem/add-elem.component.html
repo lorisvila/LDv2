@@ -17,14 +17,18 @@
         <wcs-label>Engin <span class="required-star">*</span></wcs-label>
         <wcs-select #selectEnginAddPage [value]="administrationService.valueEnginAddPage"
                     (wcsChange)="administrationService.valueEnginAddPage = selectEnginAddPage.value">
-          <wcs-select-option *ngFor="let engin of enginService.types_engin | keyvalue" [value]="engin.key">{{engin.key}}</wcs-select-option>
+          <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
         </wcs-select>
       </div>
       <div class="form-element">
         <wcs-label>Type d'engin <span class="required-star">*</span></wcs-label>
         <wcs-select multiple="true" #selectTypeEnginAddPage [value]="administrationService.valueTypeEnginAddPage"
                     (wcsChange)="administrationService.valueTypeEnginAddPage = selectTypeEnginAddPage.value">
-          <wcs-select-option *ngFor="let typeEngin of enginService.types_engin[selectEnginAddPage.value]" [value]="typeEngin">{{typeEngin}}</wcs-select-option>
+          <ng-container *ngFor="let engin of enginService.engins">
+            <ng-container *ngIf="engin.engin == selectEnginAddPage.value">
+              <wcs-select-option *ngFor="let type of engin.types_engin" [value]="type">{{type}}</wcs-select-option>
+            </ng-container>
+          </ng-container>
         </wcs-select>
       </div>
     </div>

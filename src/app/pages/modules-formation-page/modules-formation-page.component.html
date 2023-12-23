@@ -23,7 +23,7 @@
 
       <!--Bouton tout afficher-->
       <wcs-button class="wcs-primary" mode="stroked" shape="" size="s"
-                  (click)="modulesFormationService.changeValueFilter('systeme_all', '')">
+                  (click)="modulesFormationService.changeValueFilter('systeme', '')">
         Tout afficher
       </wcs-button>
 
@@ -48,13 +48,13 @@
       <wcs-spinner class="wcs-primary" mode="border" *ngIf="modulesFormationService.loading"></wcs-spinner>
 
       <!--Span no categories selected-->
-      <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.selected_systeme == '' && !modulesFormationService.loading"
+      <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.systeme == '' && !modulesFormationService.loading"
             class="document-textbox">
           Veuillez sélectionner une catégorie pour voir les documents associés
       </span>
 
       <!--Span no doc in categorie-->
-      <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.selected_systeme != '' && !modulesFormationService.loading"
+      <span *ngIf="modulesFormationService.filteredModulesFormation.length == 0 && modulesFormationService.systeme != '' && !modulesFormationService.loading"
             class="document-textbox">
           Cette catégorie ne contient aucun documents
       </span>

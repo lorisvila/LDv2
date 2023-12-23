@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {AdministrationService} from "../../../services/administration.service";
 import {DataService} from "../../../services/data.service";
+import {EnginService} from "../../../services/engin.service";
 
 @Component({
   selector: 'app-gest-filtres',
@@ -11,7 +12,8 @@ export class GestFiltresComponent {
 
   constructor(
     public administrationService: AdministrationService,
-    public dataService: DataService
+    public dataService: DataService,
+    public enginService: EnginService
   ) {
   }
 

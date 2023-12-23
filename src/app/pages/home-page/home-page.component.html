@@ -1,7 +1,9 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
-  <img *ngIf="enginService.actual_engin == 'AGC'" src="assets/images/AGC_4C.png" alt="Image d'un AGC 4 caisses">
-  <img *ngIf="enginService.actual_engin == 'TER 2N NG'" src="assets/images/TER2NNG_3C.png" alt="Image d'un AGC 4 caisses">
+  <ng-container *ngFor="let engin of enginService.engins">
+    <!--Image de l'engin-->
+    <img *ngIf="enginService.actual_engin == engin.engin" [src]="'assets/images/' + engin.url_image_engin">
+  </ng-container>
   <div id="pageContainer">
 
     <!--Card dernières Infos-->
@@ -13,7 +15,7 @@
              class="newsItem">
           <h4>{{news.title}}</h4>
           <h5 *ngIf="news.subtitle">{{news.subtitle}}</h5>
-          <span>{{news.content}}</span>
+          <span>{{news.article_content}}</span>
           <div class="buttons-url-list" *ngIf="news.urls">
             <wcs-button *ngFor="let url of news.urls" [href]="url.url" target="_blank">{{url.title}}</wcs-button>
           </div>

@@ -8,11 +8,11 @@ export type ItemDataType = {
   ref_main: string,
   url_main: string,
   systeme: string
+  type?: string,
   ref_aux?: string, // Paramètres optionnels
   url_aux?: string,
   url_main_file?: string,
   url_aux_file?: string,
-  type?: string,
 }
 
 // Different type -> be able to change the Human name of filters without touching to the items itself (by touching to the filters object)
@@ -43,9 +43,11 @@ export type FilterType = {
   filter_formatted: string,
   filter: string,
   page: string,
-  type: string
+  type: string,
+  engin: string
 }
 
+// Type used for the Orama search
 export type PageFilters = {
   engin?: string,
   engin_type?: string[],
@@ -73,7 +75,7 @@ export type EnginType = {
 export type NewsType = {
   title: string,
   subtitle?: string,
-  content: string,
+  article_content: string,
   urls?: {
     title: string
     url: string

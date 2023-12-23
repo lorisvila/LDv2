@@ -1,6 +1,6 @@
-import {insertMultiple, create, search, Orama, Results} from "@orama/orama";
+import {insertMultiple, create, search, Orama, Results, Result} from "@orama/orama";
 import {EventEmitter, Injectable} from '@angular/core';
-import {ItemDataType, PageFilters} from "../app.types";
+import {ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
 import {DataService} from "./data.service";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
@@ -13,6 +13,7 @@ export class SearchService {
   searchDB: undefined | Promise<Orama<any>> = undefined; // I put any in the DB type because it is already checked in the import method
   searchedObjects: any = undefined;
   searchValue: string  | undefined = undefined;
+  currentlySearching: boolean = false;
 
   actual_engin: string | undefined = undefined;
   $actual_engin: EventEmitter<string> = new EventEmitter<string>()
@@ -121,18 +122,27 @@ export class SearchService {
     let searchParams: any = {}
     if (searchValue) {searchParams.term = searchValue}
     if (filters) {searchParams.where = filters}
+    searchParams.limit = 400
     return await search(await db, searchParams);
   }
 
-  purifyObjectIntoItemDataType(results: Orama<any>) {
-    let returnObjects: Orama<any> = results
+  purifyObjectIntoOramaItemDataType(results: Results<any>): OramaItemDataType[] {
+    if (results.hits.length > 0) {
+      let returnList: OramaItemDataType[] = []
+      // J'utilise la function filter pour rajouter le score dans l'objet, c'est pas propre mais... ça marche
+      results.hits.filter((item) => item.document.score = item.score)
+      results.hits.forEach((item: Result<any>) => returnList.push(item.document))
+      return (returnList as OramaItemDataType[])
+    } else {
+      return []
+    }
   }
 
   prepareFilterObject(variableName: string, value: string, filterObject: PageFilters) {
     // Handle the different cases for preparing the filter object for Orama search
     if (variableName == "reset") { // If I want to reset the search
       filterObject = {page: "ld"}
-    } else if (["engin_num", "search_value", "fav_engin"].includes(variableName)) { // Do nothing if it is a search, engin num or fav_engin
+    } else if (["enginNum_value", "search_value", "fav_engin"].includes(variableName)) { // Do nothing if it is a search, engin num or fav_engin
     } else if (["systeme", "type"].includes(variableName)) { // If the filter is systeme or type --> nest it into the filter parameter
       if (value !== "") {
         (filterObject as any)[variableName + ".filter"] = value
@@ -148,14 +158,16 @@ export class SearchService {
   }
 
   async searchIntoWebSite(search: string | number | null | undefined) {
+
     this.searchedObjects = []
     let data: any = undefined
 
     if (typeof search == "string" && this.searchDB) {
-      data = await this.searchInDB(await this.searchDB, search, {"engin": "AGC"})
+      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actual_engin})
       this.searchValue = search
     } else {
       this.notif.error("Erreur lors de la recherche", "Aïe...")
+      console.error("Erreur lors de la recherche... car soit search value n'est pas string ou la DB n'existe pas encore")
     }
 
     if (this.router.url !== "/recherche") { // Redirect user if not on the search page
@@ -163,7 +175,7 @@ export class SearchService {
     }
 
     if (data) {
-      this.searchedObjects = data
+      this.searchedObjects = this.purifyObjectIntoOramaItemDataType(data)
     } else {
       this.notif.error("Erreur lors de l'affichage des données de recherche...", "Aïe...")
       console.error("Erreur lors de l'affichage des donneés de recherche...")

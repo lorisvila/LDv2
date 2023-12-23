@@ -23,7 +23,7 @@
 
       <!--Bouton tout afficher-->
       <wcs-button class="wcs-primary" mode="stroked" shape="" size="s"
-                  (click)="docFctService.changeValueFilter('systeme_all', '')">
+                  (click)="docFctService.changeValueFilter('systeme', '')">
         Tout afficher
       </wcs-button>
 
@@ -42,25 +42,25 @@
   <!--Card pour les documents-->
   <wcs-card mode="raised" id="documents-card" class="bottom-card">
     <wcs-card-body id="documents-card-body" class="card-body"
-                   [ngStyle]="{'justify-content': docFctService.filteredDocFctData.length == 0 ? 'center': 'flex-start'}">
+                   [ngStyle]="{'justify-content': docFctService.filteredDocFctData ? 'center': 'flex-start'}">
 
         <!--Spinner loading in case of online-->
         <wcs-spinner class="wcs-primary" mode="border" *ngIf="docFctService.loading"></wcs-spinner>
 
         <!--Span no categories selected-->
-        <span *ngIf="docFctService.filteredDocFctData.length == 0 && docFctService.selected_systeme == '' && !docFctService.loading"
+        <span *ngIf="docFctService.filteredDocFctData && docFctService.systeme == '' && !docFctService.loading"
               class="document-textbox">
           Veuillez sélectionner une catégorie pour voir les documents associés
         </span>
 
         <!--Span no doc in categorie-->
-        <span *ngIf="docFctService.filteredDocFctData.length == 0 && docFctService.selected_systeme != '' && !docFctService.loading"
+        <span *ngIf="docFctService.filteredDocFctData && docFctService.systeme != '' && !docFctService.loading"
               class="document-textbox">
           Cette catégorie ne contient aucun documents
         </span>
 
         <!--List item of results-->
-        <wcs-list-item *ngFor="let item of docFctService.filteredDocFctData; index as i">
+        <wcs-list-item *ngFor="let item of docFctService.filteredDocFctData">
           <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
           <div slot="title"><span class="ft-w-500">{{item.des}}</span></div>
           <wcs-list-item-properties>
@@ -70,12 +70,19 @@
           </wcs-list-item-properties>
           <div slot="actions">
 
-            <!--Bouton mode hors-ligne : fichier Principal / DsMat local en utilisant "url_main_file"-->
+            <!--Bouton mode hors-ligne : fichier Principal / Docmat local en utilisant "url_main_file"-->
             <wcs-button mode="clear" size="s" target="_blank"
                         *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
                         [href]="item.url_main_file"
                         [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
               Ouvrir en local 📥
+            </wcs-button>
+            <!--Bouton mode hors-ligne : fichier Auxiliaire local en utilisant "url_aux_file"-->
+            <wcs-button mode="clear" size="s" target="_blank"
+                        *ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
+                        [href]="item.url_aux_file"
+                        [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
+              Ouvrir Aux en local 📥
             </wcs-button>
 
             <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
@@ -87,6 +94,13 @@
                         [href]="item.url_main"
                         [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
               Ouvrir sur DocMat 🔗
+            </wcs-button>
+            <!--Bouton mode en ligne : fichier en ligne Auxiliaire en utilisant "url_aux"-->
+            <wcs-button mode="clear" size="s" target="_blank"
+                        *ngIf="!generalService.offlineMode"
+                        [href]="item.url_aux"
+                        [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
+              Ouvrir Aux sur DocMat 🔗
             </wcs-button>
 
           </div>

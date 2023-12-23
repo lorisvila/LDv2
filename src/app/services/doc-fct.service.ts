@@ -1,8 +1,11 @@
 import {Injectable, IterableDiffers} from '@angular/core';
-import {ItemDataType, FilterType} from "../app.types";
+import {ItemDataType, FilterType, PageFilters, OramaItemDataType} from "../app.types";
 import {GeneralService} from "./general.service";
 import {EnginService} from "./engin.service";
 import {DataService} from "./data.service";
+import {SearchService} from "./search.service";
+import {ToastrService} from "ngx-toastr";
+import {Results} from "@orama/orama";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +15,9 @@ export class DocFctService {
   constructor(
     public generalService: GeneralService,
     public enginService: EnginService,
-    public dataService: DataService
+    public dataService: DataService,
+    public searchService: SearchService,
+    public notif: ToastrService
   ) {
     // When the doc fonction page start show the elements in the grid
     this.updateFilteredData()
@@ -28,66 +33,51 @@ export class DocFctService {
 
   // Filters and selection
   search_value: string = "";
-  selected_systeme: string = "";
+  systeme: string = "";
   systemes: FilterType[] = this.dataService.filters.filter((item) => item.page == 'docFct' && item.type == 'systeme') // TODO : Rajouter la synchro des systemes quand la var globale des système s'update
   systemesSelectedGridValues: [] = [] // used to reinit values, not used to see what is selected...
+  filtersPage: PageFilters = {page: "docFct"};
 
   // List Item params
   loading: boolean = false;
 
+  // Data for the item list
+  filteredDocFctData: OramaItemDataType[] | undefined = undefined;
+
   // Methode executed when a event is triggered on a filter element (the element call it in the DOM)
   changeValueFilter(variableName: string, value: any) {
-    console.log("Change variable " + variableName + " to value " + value)
     switch (variableName) {
-      case "search_value": {
-        this.search_value = value;
-        break;
-      }
       case "systeme": {
-        if (value.detail.row.selected) { // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
-          this.selected_systeme = value.detail.row.data.filter
+        if (value.detail?.row) { // Bug on the wcs-core grid element, return a state selected to "true" even when deselect --> Ticket already created
+          this.systeme = value.detail.row.data.filter
+          value = value.detail.row.data.filter
         } else {
-          this.selected_systeme = ""
+          // Déselectionner le grid si "Tout afficher"
+          // /!\ Bug possible si le filter est mal rentré et est "" (string vide)
+          if (value == ""){this.systemesSelectedGridValues = []}
+
+          this.systeme = value
         }
         break;
       }
-      case "systeme_all": {
-        console.log(this.systemesSelectedGridValues)
-        this.selected_systeme = "$all"
-        this.systemesSelectedGridValues = []
+      default: { // TODO : See if there is here a XSS vulnerabilty / Used by the search value filter
+        (this as any)[variableName] = value
       }
     }
+
+    this.searchService.prepareFilterObject(variableName, value, this.filtersPage)
+
     this.updateFilteredData()
   }
 
-  updateFilteredData() {
-    // Add data in the var
-    let data: ItemDataType[] = []
-    if (this.generalService.offlineMode) {
-      data = this.dataService.allItemsData.filter((item) => item.page == "docFct") // Add local data
-      this.loading = false
-    } else if (!this.generalService.offlineMode) {
-      data = this.dataService.allItemsData.filter((item) => item.page == "docFct") // TODO : Ajouter les données du serveur SQL
-      this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite, le temps de reçevoir les données du serveur
+  async updateFilteredData() {
+    let results = await this.searchService.searchDataForPage(this.filtersPage, this.search_value)
+    if (results == undefined) {
+      this.notif.error("Une erreur est survenue dans la recherche...", "Aïe...")
+      return;
     }
-    // use only data for the engin
-    data = data.filter((item) => item.engin == this.enginService.actual_engin)
-
-    switch (this.selected_systeme) {
-      case "$all": { break; } // Do nothing because I want to show all items
-      case "": { // Case to not show any docs
-        data = [];
-        break;
-      }
-      default: {
-        data = data.filter((item) => this.selected_systeme.includes(item.systeme))
-      }
-    }
-    if (this.search_value != "") {} // TODO : Add the filtering by text
-
-    this.filteredDocFctData = data
+    let results_purified: OramaItemDataType[] = this.searchService.purifyObjectIntoOramaItemDataType(results)
+    this.filteredDocFctData = results_purified
   }
-
-  filteredDocFctData: ItemDataType[] = []
 
 }

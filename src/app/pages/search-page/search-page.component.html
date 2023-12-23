@@ -28,63 +28,63 @@
         <wcs-tab header="Tableau" item-key="gridMode" class="tab-content">
 
           <!--Grid pour l'affichage des données des LD-->
-          <wcs-grid row-id-path="id" [data]="searchService.searchedObjects.hits">
+          <wcs-grid row-id-path="id" [data]="searchService.searchedObjects">
             <!--Colonnes de la grid-->
-            <wcs-grid-column name="Désignation" path="document.des" sort="" id="column-designation" width="30vw"></wcs-grid-column>
-            <wcs-grid-column name="Système" path="document.systeme.filter_formatted" sort="" id="column-systeme"></wcs-grid-column>
-            <wcs-grid-column name="Type" path="document.type.filter_formatted" sort="" id="column-type"></wcs-grid-column>
+            <wcs-grid-column name="Désignation" path="des" sort="" id="column-designation" width="30vw"></wcs-grid-column>
+            <wcs-grid-column name="Système" path="systeme.filter_formatted" sort="" id="column-systeme"></wcs-grid-column>
+            <wcs-grid-column name="Type" path="type.filter_formatted" sort="" id="column-type"></wcs-grid-column>
             <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
-            <wcs-grid-column name="Reference" path="document.ref_main" sort="" id="column-ref"></wcs-grid-column>
+            <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref"></wcs-grid-column>
             <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
 
             <!--Cases personalisés pour la colonne "Type Engin"-->
-            <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects.hits; index as i">
+            <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
               <!--Affichage de "Tous" si tous les types sont concernés-->
-              <span *ngIf="item.document.engin_type.length == enginService.types_engin[enginService.actual_engin].length; else elseBlock">
+              <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin].length; else elseBlock">
                 Tous les {{enginService.actual_engin}}
               </span>
               <!--Affichage des types concernés si pas tous les types-->
               <ng-template #elseBlock>
-                {{item.document.engin_type.join(" ; ")}}
+                {{item.engin_type.join(" ; ")}}
               </ng-template>
 
             </wcs-grid-custom-cell>
 
             <!--Cases personalisés pour la colonne "Ouvrir"-->
             <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
-            <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects.hits; index as i">
+            <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
 
               <!--Bouton mode hors-ligne : fichier Principal / DsMat local en utilisant "url_main_file"-->
               <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="generalService.offlineMode && item.document.url_main_file != '' && item.document.url_main_file != undefined"
-                          [href]="item.document.url_main_file"
-                          [class]="item.document.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
+                          *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
+                          [href]="item.url_main_file"
+                          [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
                 Ouvrir LD local 📥
               </wcs-button>
 
               <!--Bouton mode hors-ligne : fichier Auxiliaire / Docmat local en utilisant "url_aux_file"-->
               <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="generalService.offlineMode && item.document.url_aux_file != '' && item.document.url_aux_file != undefined"
-                          [href]="item.document.url_aux_file"
-                          [class]="item.document.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
+                          *ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
+                          [href]="item.url_aux_file"
+                          [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
                 Ouvrir Doc local 📥
               </wcs-button>
 
-              <span *ngIf="generalService.offlineMode && item.document.url_main_file == undefined && item.document.url_aux_file == undefined">Aucun fichiers</span>
+              <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
 
               <!--Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"-->
               <wcs-button mode="clear" size="s" target="_blank"
                           *ngIf="!generalService.offlineMode"
-                          [href]="item.document.url_main"
-                          [class]="item.document.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
+                          [href]="item.url_main"
+                          [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
                 Ouvrir LD sur DsMat 🔗
               </wcs-button>
 
               <!--Bouton mode en ligne : fichier en ligne Auxiliaire / DocMat en utilisant "url_aux"-->
               <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="!generalService.offlineMode && item.document.url_aux != '' && item.document.url_aux != undefined"
-                          [href]="item.document.url_aux"
-                          [class]="item.document.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
+                          *ngIf="!generalService.offlineMode && item.url_aux != '' && item.url_aux != undefined"
+                          [href]="item.url_aux"
+                          [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
                 Ouvrir doc sur Docmat 🔗
               </wcs-button>
 
@@ -98,21 +98,21 @@
 
         <wcs-tab header="Liste" item-key="listMode" class="tab-content">
 
-          <wcs-list-item *ngFor="let result of searchService.searchedObjects.hits">
+          <wcs-list-item *ngFor="let result of searchService.searchedObjects">
             <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
-            <div slot="title">{{result.document.des}}</div>
+            <div slot="title">{{result.des}}</div>
             <div slot="actions">
-              <wcs-button *ngIf="!generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.document.url_main" target="_blank">
+              <wcs-button *ngIf="!generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.url_main" target="_blank">
                 <wcs-mat-icon icon="link"></wcs-mat-icon>
               </wcs-button>
-              <wcs-button *ngIf="generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.document.url_main_file" target="_blank">
+              <wcs-button *ngIf="generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.url_main_file" target="_blank">
                 <wcs-mat-icon icon="download"></wcs-mat-icon>
               </wcs-button>
             </div>
             <wcs-list-item-properties>
-              <wcs-list-item-property *ngIf="result.document.ref_main">Référence : {{result.document.ref_main}}</wcs-list-item-property>
-              <wcs-list-item-property *ngIf="result.document.systeme.filter_formatted">Système : {{result.document.systeme.filter_formatted}}</wcs-list-item-property>
-              <wcs-list-item-property *ngIf="result.document.type.filter_formatted">Type : {{result.document.type.filter_formatted}}</wcs-list-item-property>
+              <wcs-list-item-property *ngIf="result.ref_main">Référence : {{result.ref_main}}</wcs-list-item-property>
+              <wcs-list-item-property *ngIf="result.systeme.filter_formatted">Système : {{result.systeme.filter_formatted}}</wcs-list-item-property>
+              <wcs-list-item-property *ngIf="result.type.filter_formatted">Type : {{result.type.filter_formatted}}</wcs-list-item-property>
             </wcs-list-item-properties>
           </wcs-list-item>
 

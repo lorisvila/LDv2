@@ -14,10 +14,31 @@ export class EnginService {
   @Output() $actual_engin: EventEmitter<string> = new EventEmitter<string>();
 
   actual_engin: string = "";
-  types_engin: {[Name: string]: string[]} = {
-    "AGC": ["XGC", "BGC", "ZGC"],
-    "TER 2N NG": ["2C", "3C", "4C", "5C"],
-  };
+  engins = [
+    {
+      engin: "AGC",
+      types_engin: ["XGC", "BGC", "ZGC"],
+      url_image_engin: "AGC_4C.png"
+    },
+    {
+      engin: "TER 2N NG",
+      types_engin: ["2C", "3C", "4C", "5C"],
+      url_image_engin: "TER2NNG_3C.png"
+    },
+    {
+      engin: "NAT",
+      types_engin: ["7C", "8C"],
+      url_image_engin: "NAT_7C.png"
+
+    },
+    {
+      engin: "Regiolis",
+      types_engin: ["4C", "6C"],
+      url_image_engin: "REGIOLIS_L.png"
+    },
+  ]
+
+  types_engin: {[Name: string]: string[]} = {}; // TODO : Safe delete this station
   actual_type_engin: string[] = [];
   hasDefaultEngin: boolean = false;
 
@@ -31,6 +52,9 @@ export class EnginService {
     public communicationSerice: CommunicationService,
     public notif: ToastrService
   ) {
+    // Populate the "types_engin" variable
+    this.engins.forEach((item) => this.types_engin[item.engin] = item.types_engin)
+
     // Set the basic engin to use when reload
     this.updateBasicEngin()
     // Set the favorites engins when page loads

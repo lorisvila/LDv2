@@ -31,7 +31,7 @@ export class ModulesFormationService {
 
   // Filters and selection
   search_value: string = "";
-  selected_systeme: string = "";
+  systeme: string = "";
   systemes: FilterType[] = this.dataService.filters.filter((item) => item.page == 'modulesFormation' && item.type == 'systeme') // TODO : Rajouter la synchro des systemes quand la var globale des système s'update
   systemesSelectedGridValues: [] = [] // used to reinit values, not used to see what is selected...
 
@@ -47,17 +47,13 @@ export class ModulesFormationService {
         break;
       }
       case "systeme": {
-        if (value.detail.row.selected) { // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
-          this.selected_systeme = value.detail.row.data.filter
-        } else {
-          this.selected_systeme = ""
+        if (value.detail?.row.selected) { // Select 1 item (from grid)
+          // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
+          this.systeme = value.detail.row.data.filter
+        } else { // Select all items (from button)
+          this.systeme = ""
         }
         break;
-      }
-      case "systeme_all": {
-        console.log(this.systemesSelectedGridValues)
-        this.selected_systeme = "$all"
-        this.systemesSelectedGridValues = []
       }
     }
     this.updateFilteredData()
@@ -76,14 +72,13 @@ export class ModulesFormationService {
     // use only data for the engin
     data = data.filter((item) => item.engin == this.enginService.actual_engin)
 
-    switch (this.selected_systeme) {
-      case "$all": { break; } // Do nothing because I want to show all items
+    switch (this.systeme) {
       case "": { // Case to not show any docs
         data = [];
         break;
       }
       default: {
-        data = data.filter((item) => this.selected_systeme.includes(item.systeme))
+        data = data.filter((item) => this.systeme.includes(item.systeme))
       }
     }
     if (this.search_value != "") {} // TODO : Add the filtering by text

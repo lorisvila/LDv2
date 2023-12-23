@@ -127,6 +127,12 @@ export class GeneralService {
   updateDataFromCache() {
     let cachedDataLocalStorage = this.communicationService.getDataFromStorage(this.cachedDataLocalStorageVarName)
     if (cachedDataLocalStorage !== null) {
+      if (cachedDataLocalStorage.length == 0) {
+        this.notif.warning("Les données récupérées du caches sont nulle (une synchronisation  va être réalisée)")
+        console.warn("The list of Data imported from the cache is empty, starting a synchronisation")
+        // TODO : Faire une synchro ici de la base SQL
+        return;
+      }
       this.dataService.allItemsData = cachedDataLocalStorage
       console.log("Data récupérée du cache : ", cachedDataLocalStorage)
     }
