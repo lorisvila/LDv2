@@ -13,7 +13,6 @@ export class SearchService {
   searchDB: undefined | Promise<Orama<any>> = undefined; // I put any in the DB type because it is already checked in the import method
   searchedObjects: any = undefined;
   searchValue: string  | undefined = undefined;
-  currentlySearching: boolean = false;
 
   actual_engin: string | undefined = undefined;
   $actual_engin: EventEmitter<string> = new EventEmitter<string>()
@@ -36,7 +35,7 @@ export class SearchService {
         this.searchDB = this.updateItemDB()
       }
     })
-    this.$actual_engin.subscribe((value) => {
+    this.$actual_engin.subscribe(() => {
       if (this.finishedLoadingDataFromCache && this.searchDB) {
         this.searchDB = this.updateItemDB()
         if (!router.url.startsWith("/recherche")) {return;}
@@ -78,7 +77,7 @@ export class SearchService {
   }
 
   async updateItemDB(data?: ItemDataType[]): Promise<Orama<any>> {
-    let allData: any[] = []
+    let allData: any[]
     if (data) {
       allData = data
     } else {
