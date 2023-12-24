@@ -1,7 +1,7 @@
+const express = require("express");
+const ini = require("ini");
 const sql = require("mssql");
 const fs = require("fs");
-const ini = require("ini");
-const express = require("express");
 
 /*Functions to dialog with the MS SQL Server*/
 async function connectToDB() {
