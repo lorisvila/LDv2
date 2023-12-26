@@ -106,7 +106,8 @@ function sendJSONresponse(res, response) {
   res.set({
     "Host": "LDv2.mt.sncf.fr",
     "Content-Type": "application/json",
-    "User-Agent": "LDv2_API/1.01"
+    "User-Agent": "LDv2_API/1.01",
+    "Access-Control-Allow-Origin": "*"
   })
   res.send(response)
 }
