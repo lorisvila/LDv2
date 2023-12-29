@@ -12,6 +12,9 @@ export class DataService {
   // to convert XML to JSON : https://codebeautify.org/xmltojson
   // The object Data must match the type ItemDataType described in the app.types.ts file
 
+  // Délai de rafraîchissement
+  refreshDelayMinutes = 60
+
   // Data for admin Panel
   webPages: PageType[] = [{
       title: "ld",
@@ -104,303 +107,15 @@ export class DataService {
     {filter_formatted: "Climatisation",                            filter: "Mod.9",   page: "modulesFormation", type: "systeme", engin: "AGC"},
   ]
 
-  // Data for LD Page
-  LDdata: ItemDataType[] = [
-    {
-      "id": 1,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 1 01",
-      "des": "Livret de Dépannage : Définition, Structure",
-      "systeme": "generalites",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200101_D-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200101_D-.pdf"
-    },
-    {
-      "id": 2,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 02 E01",
-      "ref_aux": "05-3 709 829",
-      "des": "Schémas de câblage motrice 1 B81500 jusqu’à la rame B81545 (XAB)",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 829",
-      "url_main_file": "assets/documents/LD/LD5200202E01_A-.pdf"
-    },
-    {
-      "id": 3,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 02 E02",
-      "ref_aux": "05-3 709 830",
-      "des": "Schémas de câblage motrice 1 B81500 à partir de la rame B81547 et B82500 (XAB)",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E02_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 830",
-      "url_main_file": "assets/documents/LD/LD5200202E02_A-.pdf"
-    },
-    {
-      "id": 4,
-      "engin": "AGC",
-      "engin_type": ['XGC'],
-      "ref_main": "LD 5 200 2 03 E01",
-      "ref_aux": "05-3 709 835",
-      "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) jusqu’à la rame X76563",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 835",
-      "url_main_file": "assets/documents/LD/LD5200203E01_A-.pdf"
-    },
-    {
-      "id": 5,
-      "engin": "AGC",
-      "engin_type": ['XGC'],
-      "ref_main": "LD 5 200 2 03 E02",
-      "ref_aux": "05-3 709 836",
-      "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) à partir de la rame X76575",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E02_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 836",
-      "url_main_file": "assets/documents/LD/LD5200203E02_A-.pdf"
-    },
-    {
-      "id": 6,
-      "engin": "AGC",
-      "engin_type": ['XGC'],
-      "ref_main": "LD 5 200 2 04 E01",
-      "ref_aux": "05-3 709 839",
-      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) jusqu’à la rame X76561",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 839",
-      "url_main_file": "assets/documents/LD/LD5200204E01_A-.pdf"
-    },
-    {
-      "id": 7,
-      "engin": "AGC",
-      "engin_type": ['XGC'],
-      "ref_main": "LD 5 200 2 04 E02",
-      "ref_aux": "05-3 709 840",
-      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) à partir de la rame X76565",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E02_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 840",
-      "url_main_file": "assets/documents/LD/LD5200204E02_A-.pdf"
-    },
-    {
-      "id": 8,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 05 E01",
-      "ref_aux": "05-3 712 347",
-      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) rame Z27503",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
-      "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf"
-    },
-    {
-      "id": 9,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 05 E02",
-      "ref_aux": "05-3 712 348",
-      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) à partir de la rame Z27507",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E02_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 348",
-      "url_main_file": "assets/documents/LD/LD4200205E02_A-.pdf"
-    },
-    {
-      "id": 10,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 06 E01",
-      "ref_aux": "05-3 712 349",
-      "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) rames Z27501 et Z27505",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 349",
-      "url_main_file": "assets/documents/LD/\tLD4200206E01_A-.pdf"
-    },
-    {
-      "id": 11,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 06 E02",
-      "ref_aux": "05-3 712 350",
-      "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) à partir de la rame Z27511",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E02_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 350",
-      "url_main_file": "assets/documents/LD/\tLD4200206E02_A-.pdf"
-    },
-    {
-      "id": 12,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 08 E01",
-      "ref_aux": "05-3 709 831",
-      "des": "Schémas de câblage motrice 2 B81500 jusqu’à la rame B81545 (XBB)",
-      "type": "schemas",
-      "systeme": "motrice",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200208E01_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 831",
-      "url_main_file": "assets/documents/LD/LD5200208E01_A-.pdf"
-    },
-    {
-      "id": 24,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 16",
-      "ref_aux": "05-3 712 355",
-      "des": "Schémas de câblage Z27500 remorque 1 (ZRS)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200216_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 355",
-      "url_main_file": "assets/documents/LD/LD4200216_A-.pdf"
-    },
-    {
-      "id": 25,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 17",
-      "ref_aux": "05-3 714 000",
-      "des": "Schémas de câblage B82500 remorque 1 (XRZ)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200217_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 000",
-      "url_main_file": "assets/documents/LD/LD5200217_A-.pdf"
-    },
-    {
-      "id": 26,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 18",
-      "ref_aux": "05-3 709 834",
-      "des": "Schémas de câblage B81500 remorque 2 (XSB)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200218_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 834",
-      "url_main_file": "assets/documents/LD/LD5200218_A-.pdf"
-    },
-    {
-      "id": 27,
-      "engin": "AGC",
-      "engin_type": ['XGC'],
-      "ref_main": "LD 5 200 2 19",
-      "ref_aux": "05-3 709 844",
-      "des": "Schémas de câblage X76500 remorque 1 (XSS)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200219_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 844",
-      "url_main_file": "assets/documents/LD/LD5200219_A-.pdf"
-    },
-    {
-      "id": 28,
-      "engin": "AGC",
-      "engin_type": ['ZGC'],
-      "ref_main": "LD 4 200 2 20",
-      "ref_aux": "05-3 712 356",
-      "des": "Schémas de câblage Z27500 remorque 2 (ZSS)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200220_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 356",
-      "url_main_file": "assets/documents/LD/LD4200220_A-.pdf"
-    },
-    {
-      "id": 29,
-      "engin": "AGC",
-      "engin_type": ['BGC'],
-      "ref_main": "LD 5 200 2 21",
-      "ref_aux": "05-3 714 001",
-      "des": "Schémas de câblage B82500 remorque 2 (XSZ)",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200221_A-.pdf",
-      "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 001",
-      "url_main_file": "assets/documents/LD/LD5200221_A-.pdf"
-    },
-    {
-      "id": 30,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 2 22",
-      "des": "Schémas de câblage aménagement",
-      "type": "schemas",
-      "systeme": "remorque",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200222_A-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200222_A-.pdf"
-    },
-    {
-      "id": 31,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 2 23",
-      "des": "Schémas de câblage pneumatique",
-      "type": "schemas",
-      "systeme": "pneumatique",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200223_A-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200223_A-.pdf"
-    },
-    {
-      "id": 32,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 1 02",
-      "des": "Logiciel « DCU Term »",
-      "type": "logiciel",
-      "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200102_A-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200102_A-.pdf"
-    },
-    {
-      "id": 33,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 1 03",
-      "des": "Logiciel « MAVIS »",
-      "type": "logiciel",
-      "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200103_A-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200103_A-.pdf"
-    },
-    {
-      "id": 34,
-      "engin": "AGC",
-      "engin_type": ['XGC', 'BGC', 'ZGC'],
-      "ref_main": "LD 5 200 1 04",
-      "des": "Logiciel « TDS Uploader »",
-      "type": "logiciel",
-      "systeme": "chaine_trac",
-      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200104_A-.pdf",
-      "url_main_file": "assets/documents/LD/LD5200104_A-.pdf"
-    }
-  ]
-
   // All the data in one list
   allItemsData: ItemDataType[] = [
     {
       "page": "ld",
       "id": 2,
       "engin": "AGC",
-      "engin_type": ['BGC'],
+      "engin_type": [
+        "BGC"
+      ],
       "ref_main": "LD 5 200 2 02 E01",
       "ref_aux": "05-3 709 829",
       "des": "Schémas de câblage motrice 1 B81500 jusqu’à la rame B81545 (XAB)",
@@ -414,7 +129,9 @@ export class DataService {
       "page": "ld",
       "id": 3,
       "engin": "AGC",
-      "engin_type": ['BGC'],
+      "engin_type": [
+        "BGC"
+      ],
       "ref_main": "LD 5 200 2 02 E02",
       "ref_aux": "05-3 709 830",
       "des": "Schémas de câblage motrice 1 B81500 à partir de la rame B81547 et B82500 (XAB)",
@@ -423,6 +140,373 @@ export class DataService {
       "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E02_A-.pdf",
       "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 830",
       "url_main_file": "assets/documents/LD/LD5200202E02_A-.pdf"
+    },
+    {
+      "id": 4,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 1 01",
+      "des": "Livret de Dépannage : Définition, Structure",
+      "systeme": "generalites",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200101_D-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200101_D-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 5,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 02 E01",
+      "ref_aux": "05-3 709 829",
+      "des": "Schémas de câblage motrice 1 B81500 jusqu’à la rame B81545 (XAB)",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 829",
+      "url_main_file": "assets/documents/LD/LD5200202E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 6,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 02 E02",
+      "ref_aux": "05-3 709 830",
+      "des": "Schémas de câblage motrice 1 B81500 à partir de la rame B81547 et B82500 (XAB)",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200202E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 830",
+      "url_main_file": "assets/documents/LD/LD5200202E02_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 7,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC"
+      ],
+      "ref_main": "LD 5 200 2 03 E01",
+      "ref_aux": "05-3 709 835",
+      "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) jusqu’à la rame X76563",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 835",
+      "url_main_file": "assets/documents/LD/LD5200203E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 8,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC"
+      ],
+      "ref_main": "LD 5 200 2 03 E02",
+      "ref_aux": "05-3 709 836",
+      "des": "Schémas de câblage X76500 motrice 1 couplable (XAC) à partir de la rame X76575",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200203E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 836",
+      "url_main_file": "assets/documents/LD/LD5200203E02_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 9,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC"
+      ],
+      "ref_main": "LD 5 200 2 04 E01",
+      "ref_aux": "05-3 709 839",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) jusqu’à la rame X76561",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 839",
+      "url_main_file": "assets/documents/LD/LD5200204E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 10,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC"
+      ],
+      "ref_main": "LD 5 200 2 04 E02",
+      "ref_aux": "05-3 709 840",
+      "des": "Schémas de câblage X76500 motrice 1 standard (XAS) à partir de la rame X76565",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200204E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 840",
+      "url_main_file": "assets/documents/LD/LD5200204E02_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 11,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 05 E01",
+      "ref_aux": "05-3 712 347",
+      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) rame Z27503",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 347",
+      "url_main_file": "assets/documents/LD/LD4200205E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 12,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 05 E02",
+      "ref_aux": "05-3 712 348",
+      "des": "Schémas de câblage Z27500 motrice 1 couplable (ZAC) à partir de la rame Z27507",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200205E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 348",
+      "url_main_file": "assets/documents/LD/LD4200205E02_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 13,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 06 E01",
+      "ref_aux": "05-3 712 349",
+      "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) rames Z27501 et Z27505",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 349",
+      "url_main_file": "assets/documents/LD/\tLD4200206E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 14,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 06 E02",
+      "ref_aux": "05-3 712 350",
+      "des": "Schémas de câblage Z27500 motrice 1 standard (ZAS) à partir de la rame Z27511",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/\tLD4200206E02_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 350",
+      "url_main_file": "assets/documents/LD/\tLD4200206E02_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 15,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 08 E01",
+      "ref_aux": "05-3 709 831",
+      "des": "Schémas de câblage motrice 2 B81500 jusqu’à la rame B81545 (XBB)",
+      "type": "schemas",
+      "systeme": "motrice",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200208E01_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 831",
+      "url_main_file": "assets/documents/LD/LD5200208E01_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 16,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 16",
+      "ref_aux": "05-3 712 355",
+      "des": "Schémas de câblage Z27500 remorque 1 (ZRS)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200216_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 355",
+      "url_main_file": "assets/documents/LD/LD4200216_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 17,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 17",
+      "ref_aux": "05-3 714 000",
+      "des": "Schémas de câblage B82500 remorque 1 (XRZ)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200217_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 000",
+      "url_main_file": "assets/documents/LD/LD5200217_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 18,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 18",
+      "ref_aux": "05-3 709 834",
+      "des": "Schémas de câblage B81500 remorque 2 (XSB)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200218_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 834",
+      "url_main_file": "assets/documents/LD/LD5200218_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 19,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC"
+      ],
+      "ref_main": "LD 5 200 2 19",
+      "ref_aux": "05-3 709 844",
+      "des": "Schémas de câblage X76500 remorque 1 (XSS)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200219_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 709 844",
+      "url_main_file": "assets/documents/LD/LD5200219_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 20,
+      "engin": "AGC",
+      "engin_type": [
+        "ZGC"
+      ],
+      "ref_main": "LD 4 200 2 20",
+      "ref_aux": "05-3 712 356",
+      "des": "Schémas de câblage Z27500 remorque 2 (ZSS)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD4200220_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 712 356",
+      "url_main_file": "assets/documents/LD/LD4200220_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 21,
+      "engin": "AGC",
+      "engin_type": [
+        "BGC"
+      ],
+      "ref_main": "LD 5 200 2 21",
+      "ref_aux": "05-3 714 001",
+      "des": "Schémas de câblage B82500 remorque 2 (XSZ)",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200221_A-.pdf",
+      "url_aux": "https://docmat.sncf.fr/#/search/05-3 714 001",
+      "url_main_file": "assets/documents/LD/LD5200221_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 22,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 2 22",
+      "des": "Schémas de câblage aménagement",
+      "type": "schemas",
+      "systeme": "remorque",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200222_A-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200222_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 23,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 2 23",
+      "des": "Schémas de câblage pneumatique",
+      "type": "schemas",
+      "systeme": "pneumatique",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200223_A-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200223_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 24,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 1 02",
+      "des": "Logiciel « DCU Term »",
+      "type": "logiciel",
+      "systeme": "chaine_trac",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200102_A-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200102_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 25,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 1 03",
+      "des": "Logiciel « MAVIS »",
+      "type": "logiciel",
+      "systeme": "chaine_trac",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200103_A-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200103_A-.pdf",
+      "page": "ld"
+    },
+    {
+      "id": 26,
+      "engin": "AGC",
+      "engin_type": [
+        "XGC",
+        "BGC",
+        "ZGC"
+      ],
+      "ref_main": "LD 5 200 1 04",
+      "des": "Logiciel « TDS Uploader »",
+      "type": "logiciel",
+      "systeme": "chaine_trac",
+      "url_main": "https://dsmat.sncf.fr/ZMediaHandler.ashx?mode=ms&document=documents/LD5200104_A-.pdf",
+      "url_main_file": "assets/documents/LD/LD5200104_A-.pdf",
+      "page": "ld"
     }
   ]
 
