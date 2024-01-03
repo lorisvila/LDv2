@@ -1,6 +1,6 @@
 import {insertMultiple, create, search, Orama, Results, Result} from "@orama/orama";
 import {EventEmitter, Injectable} from '@angular/core';
-import {ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
+import {APIresponseAllTables, ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
 import {DataService} from "./data.service";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
