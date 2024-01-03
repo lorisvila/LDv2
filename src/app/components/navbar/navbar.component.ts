@@ -15,8 +15,8 @@ export class NavbarComponent {
     public enginService: EnginService,
     public generalService: GeneralService,
     public router: Router,
-    public route: ActivatedRoute,
-    public searchService: SearchService
+    public searchService: SearchService,
+    public dataService: DataService
   ) {
   }
 

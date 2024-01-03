@@ -39,6 +39,31 @@ export class DataService {
     }
   ]
 
+  // Engins
+  engins: AppEnginType[] = [
+    {
+      engin: "AGC",
+      types_engin: ["XGC", "BGC", "ZGC"],
+      url_image_engin: "AGC_4C.png"
+    },
+    {
+      engin: "TER 2N NG",
+      types_engin: ["2C", "3C", "4C", "5C"],
+      url_image_engin: "TER2NNG_3C.png"
+    },
+    {
+      engin: "NAT",
+      types_engin: ["7C", "8C"],
+      url_image_engin: "NAT_7C.png"
+
+    },
+    {
+      engin: "Regiolis",
+      types_engin: ["4C", "6C"],
+      url_image_engin: "REGIOLIS_L.png"
+    },
+  ]
+
   // Data for Technicentre engins
   technicentres: Technicentre[] = [
     {
