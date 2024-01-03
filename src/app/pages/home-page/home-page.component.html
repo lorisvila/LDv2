@@ -1,6 +1,6 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
-  <ng-container *ngFor="let engin of enginService.engins">
+  <ng-container *ngFor="let engin of dataService.engins">
     <!--Image de l'engin-->
     <img *ngIf="enginService.actual_engin == engin.engin" [src]="'assets/images/' + engin.url_image_engin">
   </ng-container>

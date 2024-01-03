@@ -63,7 +63,7 @@
             <wcs-label>Engin <span class="required-star">*</span></wcs-label>
             <wcs-select #selectEnginModPage [value]="administrationService.selectedDocumentModPage.engin"
                         (wcsChange)="administrationService.valueEnginModPage = selectEnginModPage.value">
-              <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+              <wcs-select-option *ngFor="let engin of dataService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
 
             </wcs-select>
           </div>
@@ -71,7 +71,7 @@
             <wcs-label>Type d'engin <span class="required-star">*</span></wcs-label>
             <wcs-select multiple="true" #selectTypeEnginModPage [value]="administrationService.selectedDocumentModPage.engin_type"
                         (wcsChange)="administrationService.valueTypeEnginModPage = selectTypeEnginModPage.value">
-              <ng-container *ngFor="let engin of enginService.engins">
+              <ng-container *ngFor="let engin of dataService.engins">
                 <ng-container *ngIf="engin.engin == selectEnginModPage.value">
                   <wcs-select-option *ngFor="let type of engin.types_engin" [value]="type">{{type}}</wcs-select-option>
                 </ng-container>

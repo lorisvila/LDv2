@@ -41,7 +41,7 @@
           <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type"
                       (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
             <wcs-select-option value="" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let type of enginService.actual_type_engin" [value]="type">{{type}}</wcs-select-option>
+            <wcs-select-option *ngFor="let type of enginService.actual_types_engin" [value]="type">{{type}}</wcs-select-option>
           </wcs-select>
         </div>
 

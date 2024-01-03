@@ -44,7 +44,7 @@
             <wcs-label>Engin <span class="required-star">*</span></wcs-label>
             <wcs-select #selectEngin_SystemeFilterPage [value]="administrationService.enginSelectedFilterPage"
                         (wcsChange)="administrationService.enginSelectedFilterPage = selectEngin_SystemeFilterPage.value">
-              <wcs-select-option *ngFor="let engin of enginService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+              <wcs-select-option *ngFor="let engin of dataService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
             </wcs-select>
           </div>
         </div>
