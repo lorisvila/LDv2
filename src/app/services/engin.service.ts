@@ -1,4 +1,4 @@
-import {AfterContentInit, EventEmitter, Injectable, Output} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {EnginType} from "../app.types";
 import {GeneralService} from "./general.service";
 import {CommunicationService} from "./communication.service";

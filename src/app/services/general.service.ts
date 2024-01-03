@@ -1,6 +1,11 @@
-import {EventEmitter, Injectable, Output} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {DataService} from "./data.service";
-import {Technicentre} from "../app.types";
+import {
+  APIresponseAllTables, AppEnginType,
+  CacheDataObjectType,
+  LocalStorageDataType,
+  Technicentre
+} from "../app.types";
 import {CommunicationService} from "./communication.service";
 import {ToastrService} from "ngx-toastr";
 import {SearchService} from "./search.service";
