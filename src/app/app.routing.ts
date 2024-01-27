@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'livretDepannage', component: LDPageComponent},
   {path: 'documentationParFonction', component: DocFctPageComponent},
   {path: 'modulesDeFormation', component: ModulesFormationPageComponent},
-  {path: 'localisationDesOrganes', component: LocOrgaPageComponent},
+  {path: 'localisationDesOrganes', component: StillInDevPageComponent},
   {path: 'codesDefauts', component: CodesDefPageComponent},
   {path: 'administration', component: AdministrationPageComponent},
   {path: 'recherche', component: SearchPageComponent},
