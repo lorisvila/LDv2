@@ -24,6 +24,8 @@ import { GestFiltresComponent } from './pages/administration-page/gest-filtres/g
 import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { SearchPageComponent } from './pages/search-page/search-page.component';
+import { StillInDevPageComponent } from './pages/templates/still-in-dev-page/still-in-dev-page.component';
+import { NotFoundPageComponent } from './pages/templates/not-found-page/not-found-page.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -46,14 +48,17 @@ import { SearchPageComponent } from './pages/search-page/search-page.component';
     DonneesComponent,
     GestFiltresComponent,
     SearchPageComponent,
+    StillInDevPageComponent,
+    NotFoundPageComponent,
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     WcsAngularModule,
     appRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-      timeOut: 5000,
+      timeOut: 8000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
       progressBar: true,
