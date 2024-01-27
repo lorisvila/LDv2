@@ -21,11 +21,11 @@ export class NavbarComponent {
   ) {
   }
 
-  // Set the variables
-  actual_engin: string = this.enginService.actual_engin
-
   changeEngin(engin: string) {
-    this.enginService.changeActualEngin(engin)
+    let selectedEnginsObject = this.enginService.returnAppEnginObjectFromString(engin)
+    if (selectedEnginsObject) {
+      this.enginService.changeActualEngin(selectedEnginsObject)
+    }
   }
 
 }

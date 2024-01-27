@@ -29,8 +29,8 @@ export class ModalsComponent {
   // Modal choix Technicentre + Rajout engin
   setTechnicentre(technicentre: string) {
     this.generalService.toggleModal("technicentreEnginModal", false)
-    let selectedTechnicentre = this.dataService.technicentres.filter((item) => item.technicentre == technicentre)[0]
-    if (selectedTechnicentre === undefined) {
+    let selectedTechnicentre = this.dataService.technicentres.find((item) => item.technicentre == technicentre)
+    if (!selectedTechnicentre) {
       this.generalService.notif.error("Problème dans la récupération du Technicentre", "Aïe...")
       return;
     }

@@ -2,7 +2,7 @@
   <h1>Bienvenue sur le LD Interactif v2</h1>
   <ng-container *ngFor="let engin of dataService.engins">
     <!--Image de l'engin-->
-    <img *ngIf="enginService.actual_engin == engin.engin" [src]="'assets/images/' + engin.url_image_engin">
+    <img *ngIf="enginService.actual_engin.engin == engin.engin" [src]="'assets/images/' + engin.url_image_engin">
   </ng-container>
   <div id="pageContainer">
 
@@ -42,10 +42,6 @@
     <!--Card Engins Fav-->
     <wcs-card mode="flat" class="card" id="favEnginsCard">
       <h3>Engins Favoris</h3>
-      <ng-container *ngIf="generalService.actualTechnicentre">
-        Technicentre sélectionné : <i><b>{{generalService.actualTechnicentre.technicentre_formatted}}</b></i>
-      </ng-container>
-      <br>
       <div id="favEnginContainer">
         <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins">
           <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
@@ -57,6 +53,11 @@
         <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('technicentreEnginModal', true)">Editer Technicentre</wcs-button>
         <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
       </div>
+      <br>
+      <ng-container *ngIf="generalService.actualTechnicentre">
+        <h3>Technicentre sélectionné :</h3>
+        <i>{{generalService.actualTechnicentre.technicentre_formatted}}</i>
+      </ng-container>
     </wcs-card>
 
   </div>

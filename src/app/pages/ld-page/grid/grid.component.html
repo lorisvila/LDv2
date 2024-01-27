@@ -9,8 +9,8 @@
   <!--Cases personalisés pour la colonne "Type Engin"-->
   <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata; index as i">
     <!--Affichage de "Tous" si tous les types sont concernés-->
-    <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin].length; else elseBlock">
-      Tous les {{enginService.actual_engin}}
+    <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin.engin].length; else elseBlock">
+      Tous les {{enginService.actual_engin.engin}}
     </span>
     <!--Affichage des types concernés si pas tous les types-->
     <ng-template #elseBlock>

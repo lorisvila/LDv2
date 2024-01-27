@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ItemDataType, NewsType, PageType, FilterType, Technicentre, AppEnginType} from "../app.types";
+import {ItemDataType, NewsType, PageType, FilterType, TechnicentreType, AppEnginType} from "../app.types";
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +65,7 @@ export class DataService {
   ]
 
   // Data for Technicentre engins
-  technicentres: Technicentre[] = [
+  technicentres: TechnicentreType[] = [
     {
       technicentre: "TI_BHM",
       technicentre_formatted: "Technicentre Industriel de Bischheim",
@@ -541,6 +541,7 @@ export class DataService {
       title: "Mise en ligne !",
       subtitle: "Le LD v2 vient d'être lancé",
       article_content: "Le LD Interactif v2 vient d'arriver en ligne :), il reste toujours en cours de développement mais est désormais utilisable",
+      date: new Date(2023, 12, 23)
     },
     {
       title: "En cours de développement",
@@ -550,7 +551,8 @@ export class DataService {
           title: "Contactez-moi",
           url: "mailto:loris.vila@sncf.fr"
         }
-      ]
+      ],
+      date: new Date(2023, 12, 25)
     }
   ]
 

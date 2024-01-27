@@ -4,10 +4,10 @@
   <div slot="title" id="navbar-title">
     <h1 (click)="router.navigate([''])">LD Interactif v2</h1>
     <!--Select permettant de choisir l'engin-->
-    <wcs-select #enginSelect [value]="actual_engin" size="m" id="enginSelect" (wcsChange)="changeEngin(enginSelect.value)" >
+    <wcs-select #enginSelect [value]="enginService.actual_engin.engin" size="m" id="enginSelect" (wcsChange)="changeEngin(enginSelect.value)" >
       <wcs-select-option *ngFor="let engin of dataService.engins" [value]="engin.engin" (click)="this.enginService.changeActualEngin(enginSelect.value)">{{engin.engin}}</wcs-select-option>
     </wcs-select>
-    <wcs-tooltip for="enginSelect" position="right" *ngIf="!enginService.hasDefaultEngin">
+    <wcs-tooltip for="enginSelect" position="right">
       Si vous souhaitez sélectionner un engin par défaut, veuillez vous rendre dans les paramètres
     </wcs-tooltip>
   </div>
@@ -60,6 +60,9 @@
       <wcs-dropdown-header>Connexion</wcs-dropdown-header>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDsMat, '_blank')">Connexion à DsMat</wcs-dropdown-item>
       <wcs-dropdown-item (wcsDropdownItemClick)="generalService.openURL(generalService.URLconnectDocMat, '_blank')">Connexion à DocMat</wcs-dropdown-item>
+
+      <wcs-dropdown-header>Données</wcs-dropdown-header>
+      <wcs-dropdown-item (wcsDropdownItemClick)="generalService.forceUpdateData()">Rafraîchir les données</wcs-dropdown-item>
 
       <wcs-dropdown-header>Admin</wcs-dropdown-header>
       <wcs-dropdown-item (wcsDropdownItemClick)="router.navigateByUrl('/administration')">Panel d'admninistration</wcs-dropdown-item>

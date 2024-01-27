@@ -70,7 +70,7 @@ export class ModulesFormationService {
       this.loading = false // TODO : A passer a true quand l'implémentation SQL sera faite
     }
     // use only data for the engin
-    data = data.filter((item) => item.engin == this.enginService.actual_engin)
+    data = data.filter((item) => item.engin == this.enginService.actual_engin.engin)
 
     switch (this.systeme) {
       case "": { // Case to not show any docs

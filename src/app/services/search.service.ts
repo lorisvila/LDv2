@@ -1,6 +1,6 @@
 import {insertMultiple, create, search, Orama, Results, Result} from "@orama/orama";
 import {EventEmitter, Injectable} from '@angular/core';
-import {APIresponseAllTables, ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
+import {AppEnginType, EnginType, ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
 import {DataService} from "./data.service";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
@@ -14,11 +14,11 @@ export class SearchService {
   searchedObjects: any = undefined;
   searchValue: string  | undefined = undefined;
 
-  actual_engin: string | undefined = undefined;
-  $actual_engin: EventEmitter<string> = new EventEmitter<string>()
-
   $finishedLoadingDataFromCache: EventEmitter<boolean> = new EventEmitter<boolean>();
   finishedLoadingDataFromCache: boolean = false;
+
+  actualEngin: AppEnginType = this.dataService.engins[0] // TODO : Try to find a way to set the default to the same "Basic choice" of engin as the engin service class
+  $actualEngin: EventEmitter<AppEnginType> = new EventEmitter<AppEnginType>();
 
   constructor(
     public dataService: DataService,
@@ -35,7 +35,8 @@ export class SearchService {
         this.searchDB = this.updateItemDB()
       }
     })
-    this.$actual_engin.subscribe(() => {
+    this.$actualEngin.subscribe((engin) => {
+      this.actualEngin = engin
       if (this.finishedLoadingDataFromCache && this.searchDB) {
         this.searchDB = this.updateItemDB()
         if (!router.url.startsWith("/recherche")) {return;}
@@ -78,34 +79,41 @@ export class SearchService {
 
   async updateItemDB(data?: ItemDataType[]): Promise<Orama<any>> {
     let allData: any[]
-    if (data) {
-      allData = data
-    } else {
-      allData = JSON.parse(JSON.stringify(this.dataService.allItemsData)) // Copy the list instead of linking it, not the best way but it works
-    }
+
     // Filter only actual engin
-    allData = allData.filter((item) => item.engin === this.actual_engin)
+    if (data) {
+      allData = (JSON.parse(JSON.stringify(data)) as ItemDataType[]).filter((item) => item.engin === this.actualEngin.engin)
+    } else {
+      allData = (JSON.parse(JSON.stringify(this.dataService.allItemsData)) as ItemDataType[]).filter((item) => item.engin === this.actualEngin.engin)
+    }
 
     // Convert the id of the item to a string because Orama doesn't like it as a number..., DONT ASK WHY !!!
     allData.forEach((item: any) => item.id = item.id.toString())
 
     // Add the human formatted filter to the object systeme and type to be able to search it
-    allData.forEach((objectItem) => objectItem.systeme
-      ? objectItem.systeme = {
-        filter: objectItem.systeme,
-        filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.systeme)?.filter_formatted}
-      : objectItem.systeme = {
-        filter: "",
-        filter_formatted: ""
-      })
-    allData.forEach((objectItem) => objectItem.type
-      ? objectItem.type = {
-        filter: objectItem.type,
-        filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.type)?.filter_formatted}
-      : objectItem.type = {
-        filter: "",
-        filter_formatted: ""
-      })
+    allData.forEach((objectItem) => {
+      objectItem.systeme
+        ? objectItem.systeme = {
+          filter: objectItem.systeme,
+          filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.systeme)?.filter_formatted}
+        : objectItem.systeme = {
+          filter: "",
+          filter_formatted: ""
+        };
+      objectItem.type
+        ? objectItem.type = {
+          filter: objectItem.type,
+          filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.type)?.filter_formatted}
+        : objectItem.type = {
+          filter: "",
+          filter_formatted: ""
+        };
+      for (let key of Object.keys(objectItem)) {
+        if (objectItem[key] === null) {
+          objectItem[key] = ''
+        }
+      };
+    })
 
     let db: Promise<Orama<any>> = this.createSearchDB()
     await insertMultiple(await db, allData).catch((error) => {
@@ -153,7 +161,7 @@ export class SearchService {
     } else { // If any of the other options are completed (normally not used...)
       (filterObject as any)[variableName] = value
     }
-    filterObject.engin = this.actual_engin
+    filterObject.engin = this.actualEngin.engin
   }
 
   async searchIntoWebSite(search: string | number | null | undefined) {
@@ -162,7 +170,7 @@ export class SearchService {
     let data: any = undefined
 
     if (typeof search == "string" && this.searchDB) {
-      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actual_engin})
+      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actualEngin.engin})
       this.searchValue = search
     } else {
       this.notif.error("Erreur lors de la recherche", "Aïe...")

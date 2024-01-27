@@ -1,5 +1,5 @@
 <wcs-action-bar gutter="">
-  Recherche - <span id="title-engin-field">{{enginService.actual_engin}}</span>
+  Recherche - <span id="title-engin-field">{{enginService.actual_engin.engin}}</span>
   <div slot="actions">
     <p class="label-search-action-bar" *ngIf="searchService.searchValue !== ''">Résultats pour : <span class="ft-w-500">{{searchService.searchValue}}</span></p>
     <p class="label-search-action-bar" *ngIf="searchService.searchValue === ''">Résultats pour : <span class="ft-w-500">Tout afficher</span></p>
@@ -40,8 +40,8 @@
             <!--Cases personalisés pour la colonne "Type Engin"-->
             <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
               <!--Affichage de "Tous" si tous les types sont concernés-->
-              <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin].length; else elseBlock">
-                Tous les {{enginService.actual_engin}}
+              <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin.engin].length; else elseBlock">
+                Tous les {{enginService.actual_engin.engin}}
               </span>
               <!--Affichage des types concernés si pas tous les types-->
               <ng-template #elseBlock>
