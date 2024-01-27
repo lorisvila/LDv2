@@ -39,6 +39,24 @@ async function updateAllData() {
       cachedData[key] = queryResults
     }
   }
+  // Technicentre purify
+  cachedData.technicentres.forEach((technicentre) => {
+    technicentre.engins = []
+    cachedData.engins_technicentre.filter((engin) => engin.technicentre == technicentre.technicentre).forEach((engin) => technicentre.engins.push({engin: engin.engin, engin_type:engin.engin_type, engin_numero: engin.num_engin}))
+  })
+  // Documents purify
+  cachedData.documents.forEach((item) => item['engin_type'] && typeof item['engin_type'] == "string" ? item['engin_type'] = JSON.parse(item['engin_type']) : null) // Convert JSON stored as text in DB
+  // News purify
+  cachedData.news.forEach((item) => item['urls'] && typeof item['urls'] == "string"  ? item['urls'] = JSON.parse(item['urls']) : null) // Convert JSON stored as text in DB
+  // Engins purify
+  let newEngins = []
+  cachedData.engins.forEach((engin) => {
+    let found_types = []
+    cachedData.engins_types.forEach((engin_type) => engin_type.engin == engin.engin ? found_types.push(engin_type.engin_type) : null)
+    newEngins.push({engin: engin.engin, types_engin: found_types, url_image_engin: engin.url_image_engin})
+  })
+  cachedData.engins = newEngins
+
   lastRefreshAllData = new Date()
 }
 
@@ -166,6 +184,7 @@ const log = function (text) {
   logger.info(text)
   console.log(text)
 }
+
 var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
 var pool = undefined
 var cachedData = {}
