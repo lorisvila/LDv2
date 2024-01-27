@@ -79,7 +79,8 @@ export type NewsType = {
   urls?: {
     title: string
     url: string
-  }[]
+  }[],
+  date: Date
 }
 
 // Type for page
