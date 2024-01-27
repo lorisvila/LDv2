@@ -58,7 +58,7 @@ export type PageFilters = {
 }
 
 //Type for Technicentres and their engins
-export type Technicentre = {
+export type TechnicentreType = {
   technicentre_formatted: string,
   technicentre: string,
   engins: EnginType[]
