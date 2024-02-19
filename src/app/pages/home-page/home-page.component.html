@@ -4,7 +4,7 @@
   <ng-container *ngFor="let engin of dataService.engins">
     <!--Image de l'engin-->
     <img id="trainImage" *ngIf="enginService.actual_engin.engin == engin.engin && !trainImageHideAfterBadImport"
-         ngSrc="'assets/images/' + engin.url_image_engin"
+         [src]="'assets/images/' + engin.url_image_engin"
          (load)="trainImageLoaded = true" (error)="handleMissingImage($event)">
   </ng-container>
   <div id="blankEngin" *ngIf="!trainImageLoaded"> <!--*ngIf="!trainImageLoaded"-->
@@ -16,6 +16,61 @@
   </div>
 
   <div id="pageContainer">
+
+    <!--Card Versions-->
+    <wcs-card mode="flat" class="card" id="raccourcisCard">
+      <h3>Liens rapide</h3>
+      <div id="raccourcisContainer">
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://dsmat.sncf.fr/">
+          <img src="assets/images/logoDsMat.png" class="raccourcisLinkImage">
+          DsMat
+        </wcs-button>
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://docmat.sncf.fr/">
+          <img src="assets/sncf-logo.png" class="raccourcisLinkImage">
+          DocMat
+        </wcs-button>
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://epri.prod.st.sncf.fr/">
+          <img src="assets/images/logoEPRi.png" class="raccourcisLinkImage">
+          EPRi
+        </wcs-button>
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://mytraindata.mt.sncf.fr/">
+          <img src="assets/images/logoMTD.png" class="raccourcisLinkImage">
+          MyTrainData
+        </wcs-button>
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://eureka.sncf.fr/">
+          <img src="assets/images/logoEureka.ico" class="raccourcisLinkImage">
+          Eurêka
+        </wcs-button>
+        <wcs-button mode="stroked" class="raccourciItem" target="_blank" href="https://iteminfo.pmm.sncf.fr/">
+          <img src="assets/images/logoItemInfo.png" class="raccourcisLinkImage">
+          ItemInfo
+        </wcs-button>
+      </div>
+    </wcs-card>
+
+    <!--Card Engins Fav-->
+    <wcs-card mode="flat" class="card" id="favEnginsCard">
+      <h3>Engins Favoris</h3>
+      <div id="favEnginContainer">
+        <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins" *ngIf="enginService.favoriteEngins.length > 0; else elseNoFavEngin">
+          <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
+          <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
+          <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
+        </wcs-grid>
+        <ng-template #elseNoFavEngin>
+          <p style="text-align: center">Vous n'avez pas d'engins favoris</p>
+        </ng-template>
+      </div>
+      <div id="buttonsEditContainer">
+        <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
+        <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('technicentreEnginModal', true)">Editer Technicentre</wcs-button>
+      </div>
+      <br>
+      <ng-container *ngIf="generalService.actualTechnicentre">
+        <h3>Technicentre sélectionné :</h3>
+        <i>{{generalService.actualTechnicentre.technicentre_formatted}}</i>
+      </ng-container>
+    </wcs-card>
 
     <!--Card dernières Infos-->
     <wcs-card mode="flat" class="card" id="newsCard">
@@ -34,42 +89,23 @@
       </div>
     </wcs-card>
 
-    <!--Card Versions-->
-    <wcs-card mode="flat" class="card" id="versionsCard">
-      <h3>Mise à jour</h3>
-      <div id="versionsContainer">
-        <div class="versionItem">
-          Mise à jour <b>Application</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_applicatif_string}}</wcs-badge>
-        </div>
-        <div class="versionItem">
-          Mise à jour données <b>AGC</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_AGC_string}}</wcs-badge>
-        </div>
-        <div class="versionItem">
-          Mise à jour données <b>TER 2N NG</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_TER2NNG_string}}</wcs-badge>
-        </div>
-      </div>
-    </wcs-card>
-
-    <!--Card Engins Fav-->
-    <wcs-card mode="flat" class="card" id="favEnginsCard">
-      <h3>Engins Favoris</h3>
-      <div id="favEnginContainer">
-        <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins">
-          <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
-          <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
-          <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
-        </wcs-grid>
-      </div>
-      <div id="buttonsEditContainer">
-        <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('technicentreEnginModal', true)">Editer Technicentre</wcs-button>
-        <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
-      </div>
-      <br>
-      <ng-container *ngIf="generalService.actualTechnicentre">
-        <h3>Technicentre sélectionné :</h3>
-        <i>{{generalService.actualTechnicentre.technicentre_formatted}}</i>
-      </ng-container>
-    </wcs-card>
-
   </div>
 </div>
+
+
+<!--Card Versions-->
+<!--
+<wcs-card mode="flat" class="card" id="versionsCard">
+  <h3>Mise à jour</h3>
+  <div id="versionsContainer">
+    <div class="versionItem">
+      Mise à jour <b>Application</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_applicatif_string}}</wcs-badge>
+    </div>
+    <div class="versionItem">
+      Mise à jour données <b>AGC</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_AGC_string}}</wcs-badge>
+    </div>
+    <div class="versionItem">
+      Mise à jour données <b>TER 2N NG</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_TER2NNG_string}}</wcs-badge>
+    </div>
+  </div>
+</wcs-card>-->
