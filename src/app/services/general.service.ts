@@ -1,8 +1,9 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {DataService} from "./data.service";
 import {
-  APIresponseAllTables, AppEnginType,
-  CacheDataObjectType, EnginType,
+  API_ResponseType,
+  AppEnginType, CachedDataTableType,
+  EnginType,
   LocalStorageDataType,
   TechnicentreType
 } from "../app.types";
@@ -27,15 +28,6 @@ export class GeneralService {
       this.synchroniseDataOnLaunch()
     })
 
-    // Set the technicentre Object when loading the page
-    this.updateActualTechnicentre()
-
-    // Gather the cached data if there is from Local Storage
-    //this.updateDataFromCache()
-
-    // Gather the filters if there is from Local Storage
-    this.updateFiltersFromCache()
-
     // Tell that setup is finished
     this.searchService.$finishedLoadingDataFromCache.emit(true) // TODO : Delete this emit and put it in the function that gather data
   }
@@ -50,7 +42,7 @@ export class GeneralService {
   app_version: string = "V 2.2.0";
   app_build: string = "dev";
 
-  date_maj_applicatif: Date = new Date("11/22/2023"); // /!\ Format de date US /!\
+  date_maj_applicatif: Date = new Date("01/27/2024"); // /!\ Format de date US /!\
   date_maj_data_AGC: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
   date_maj_data_TER2NNG: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
 
@@ -63,17 +55,6 @@ export class GeneralService {
   URLDocMat: string = "https://docmat.sncf.fr/#/"
   URLconnectDsMat: string = this.URLDsMat + "Login.aspx";
   URLconnectDocMat: string = this.URLDocMat
-
-  //API endpoints
-  allTablesEndpoint: string = "/allTables"
-  singleTableEndpoint: string = "/table/{table}" // ! Rajouter une table derrière l'endpoint
-
-  // TODO : Remove methods using theses localStorage endpoints
-  basicEnginLocalStorageVarName: string = "defaultEngin";
-  enginFavLocalStorageVarName: string = "enginFav";
-  technicentreLocalStorageVarName: string = "technicentre";
-  cachedDataLocalStorageVarName: string = "cachedData";
-  filtersLocalStorageVarName: string = "filters";
 
   // Variables pour les modals
   showDefaultEnginModal: boolean = false;
@@ -151,7 +132,7 @@ export class GeneralService {
       let timeElapsedSinceLastCache = (new Date().getTime() - new Date(localStorageRecoveredData.lastCacheDate).getTime())/1000/60
       // CACHE - Si date de cache > au délai ou pas de cache dans l'objet dans le localStorage
       if (timeElapsedSinceLastCache > this.dataService.refreshDelayMinutes || !localStorageRecoveredData.cachedData) { // Cache data because too old or not here
-        this.importDataFromAPI().subscribe((data: APIresponseAllTables) => {
+        this.importDataFromAPI().subscribe((data: API_ResponseType) => {
           this.writeCacheToLocalStorage(localStorageRecoveredData, data)
         })
       }
@@ -162,7 +143,7 @@ export class GeneralService {
     }
     // Si pas de JSON dans le localStorage, contacter API et le mettre dans cache
     else {
-      this.importDataFromAPI().subscribe((data: APIresponseAllTables) => {
+      this.importDataFromAPI().subscribe((data: API_ResponseType) => {
         this.writeCacheToLocalStorage(localStorageRecoveredData, data) // LocalStorageRecoveredData is at null here
       })
     }
@@ -171,31 +152,31 @@ export class GeneralService {
 
   // Forcer à rafraîchir les données depuis API
   forceUpdateData() {
-    let localStorageRecoveredData: LocalStorageDataType = this.communicationService.getDataFromStorage('app')
-    this.importDataFromAPI(true).subscribe((data: APIresponseAllTables) => {
+    let localStorageRecoveredData: LocalStorageDataType = this.communicationService.getDataFromStorage(this.communicationService.appLocalStorageVarName)
+    this.importDataFromAPI(true).subscribe((data: API_ResponseType) => {
       this.writeCacheToLocalStorage(localStorageRecoveredData, data)
     })
   }
 
   // Importer les données depuis l'API
   importDataFromAPI(forceReload?: boolean) {
-    let endpoint = '/allTables'
+    let endpoint = this.communicationService.API_Endpoint_allTables
     if (forceReload) {
-      endpoint = '/allTables?reload=true'
+      endpoint.searchParams.append('reload', 'true')
     }
-    let returnValue: EventEmitter<APIresponseAllTables> = new EventEmitter<APIresponseAllTables>()
-    this.communicationService.getDataFromDB(endpoint).subscribe(
+    let returnValue: EventEmitter<API_ResponseType> = new EventEmitter<API_ResponseType>()
+    this.communicationService.requestToAPI("GET", endpoint).subscribe(
       (response) => {
-        let responseObject = (response as APIresponseAllTables)
+        let responseObject = (response as API_ResponseType)
         // Si erreur dans la requête
-        if (!responseObject.success) {
-          this.notif.warning(responseObject.message, "",{
+        if (responseObject.status.code != 200) {
+          this.notif.warning(responseObject.status.message, "",{
             closeButton: false,
             disableTimeOut: true
           })
         }
         // Si la réponse contient des données
-        else if (responseObject.data) {
+        else if (responseObject.status.code == 200) {
           this.notif.success("Données mise à jour depuis le serveur", "C'est bon !")
           this.writeDataToVariables(responseObject.data)
           returnValue.emit(responseObject)
@@ -216,24 +197,52 @@ export class GeneralService {
       })
     return returnValue
   }
-  writeDataToVariables(cacheData: CacheDataObjectType) {
-    this.dataService.allItemsData = cacheData.documents
-    this.dataService.filters = cacheData.filters
-    this.dataService.homePageNews = cacheData.news
-    this.dataService.allItemsData = cacheData.documents
-    this.dataService.engins = cacheData.engins
+  writeDataToVariables(cacheData: CachedDataTableType[]) {
+    cacheData.forEach((tableObject: CachedDataTableType) => {
+      switch (tableObject.tableName) {
+        case "documents": {
+          this.dataService.allItemsData = tableObject.tableData
+          break
+        }
+        case "news": {
+          this.dataService.homePageNews = tableObject.tableData
+          break
+        }
+        case "filters": {
+          this.dataService.filters = tableObject.tableData
+          break
+        }
+        case "engins": {
+          this.dataService.engins = tableObject.tableData
+          break
+        }
+        case "technicentres": {
+          this.dataService.technicentres = tableObject.tableData
+          this.updateTechnicentreInLocalStorage(tableObject.tableData)
+          break
+        }
+      }
+    })
   }
 
-  writeCacheToLocalStorage(oldObject: LocalStorageDataType | null, data: APIresponseAllTables) {
+  // User Technicentre appartenance can be outdated when new engin come in the Technicentre, this function will update it to the last version
+  updateTechnicentreInLocalStorage(latestTechnicentresObject: TechnicentreType[]) {
+    let userNewTechnicentre = latestTechnicentresObject.find((technicentre) => technicentre.technicentre == this.actualTechnicentre?.technicentre)
+    if (userNewTechnicentre) {
+      this.communicationService.updateDataToStorage(this.communicationService.technicentreLocalStorageVarName, userNewTechnicentre)
+    }
+  }
+
+  writeCacheToLocalStorage(oldObject: LocalStorageDataType | null, data: API_ResponseType) {
     let newObject: LocalStorageDataType
     if (oldObject) {
       newObject = oldObject
       newObject.cachedData = data.data
-      newObject.lastCacheDate = data.lastRefreshTime
+      newObject.lastCacheDate = data.data ? (data.data as CachedDataTableType[])[0].tableLastRefresh : 0
       newObject.refreshDelayMinutes = this.dataService.refreshDelayMinutes
     } else {
       newObject = {
-        lastCacheDate: data.lastRefreshTime,
+        lastCacheDate: data.data ? (data.data as CachedDataTableType[])[0].tableLastRefresh : 0,
         refreshDelayMinutes: this.dataService.refreshDelayMinutes,
         cachedData: data.data
       }
@@ -241,33 +250,9 @@ export class GeneralService {
     this.communicationService.updateDataToStorage('app', newObject)
   }
 
-  // Function to update the actual Technicentre
-  updateActualTechnicentre() {
-    let technicentreLocalStorage = this.communicationService.getDataFromStorage(this.technicentreLocalStorageVarName)
-    if (technicentreLocalStorage !== null) {
-      if (!(technicentreLocalStorage.hasOwnProperty("technicentre") && technicentreLocalStorage.hasOwnProperty("technicentre_formatted") && technicentreLocalStorage.hasOwnProperty("engins"))) {
-        this.notif.error("L'importation du Technicentre d'affectation a échoué", "Aïe...")
-        console.error("L'importation du Technicentre d'affectation a échoué")
-        this.communicationService.deleteDataFromStorage(this.technicentreLocalStorageVarName)
-        return;
-      }
-      this.actualTechnicentre = technicentreLocalStorage
-      console.log("Technicentre par défaut : ", this.actualTechnicentre)
-    }
-  }
-
-  // Function to update the Filters from the Local Storage
-  updateFiltersFromCache() {
-    let filtersLocalStorage = this.communicationService.getDataFromStorage(this.filtersLocalStorageVarName)
-    if (filtersLocalStorage !== null) {
-      this.dataService.filters = filtersLocalStorage
-      console.log("Filtres récupérés : ", filtersLocalStorage)
-    }
-  }
-
   // Function to change the actual Technicentre
   changeTechnicentre(technicentre: TechnicentreType) {
-    this.communicationService.updateDataToStorage(this.technicentreLocalStorageVarName, technicentre)
+    this.communicationService.updateDataToStorage(this.communicationService.technicentreLocalStorageVarName, technicentre)
     this.actualTechnicentre = technicentre
     // this.$updateTechnicentre.emit() // Juste dire que j'ai changé de Technicentre
     this.notif.success(technicentre.technicentre_formatted + " ajouté !", "C'est bon !")

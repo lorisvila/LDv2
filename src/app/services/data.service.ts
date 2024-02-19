@@ -92,7 +92,7 @@ export class DataService {
     {filter_formatted: "ATESS",                     filter: "ATESS",       page: "docFct", type: "systeme", engin: "AGC"},
     {filter_formatted: "Boucle inductive",          filter: "BI",          page: "docFct", type: "systeme", engin: "AGC"},
     {filter_formatted: "Chaîne de traction",        filter: "CT",          page: "docFct", type: "systeme", engin: "AGC"},
-    {filter_formatted: "Climatisation",             filter: "CLM",         page: "docFct", type: "systeme", engin: "AGC"},
+    {filter_formatted: "Climatisation",             filter: "CLIM",         page: "docFct", type: "systeme", engin: "AGC"},
     {filter_formatted: "Comble lacune",             filter: "CL",          page: "docFct", type: "systeme", engin: "AGC"},
     {filter_formatted: "Coupleur",                  filter: "CMCF",        page: "docFct", type: "systeme", engin: "AGC"},
     {filter_formatted: "Détection incendie",        filter: "DI",          page: "docFct", type: "systeme", engin: "AGC"},

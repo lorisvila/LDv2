@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {FilterType, ItemDataType} from "../app.types";
+import {createNgModuleRef, Injectable} from '@angular/core';
+import {API_ResponseType, FilterType, ItemDataType} from "../app.types";
 import {DataService} from "./data.service";
 import {CommunicationService} from "./communication.service";
 import {GeneralService} from "./general.service";
 import {ToastrService} from "ngx-toastr";
-import {filter} from "rxjs";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -16,15 +16,91 @@ export class AdministrationService {
     public communicationService: CommunicationService,
     public generalService: GeneralService,
     public notif: ToastrService
-  ) {}
+  ) {
+    this.checkToken()
+  }
 
   // ################################### GLOBAL ###################################
+  auth_user: string | undefined  = ""
+  auth_password: string | undefined = ""
+  auth_message: string | undefined = ""
+  auth_status: boolean = false
+
+  // Function to check the token in localStorage
+  checkToken() {
+    let token = this.communicationService.getDataFromStorage('token')
+    if (token) {
+      let requestObject = {"token": token}
+      let endpoint = this.communicationService.API_Endpoint_checkToken
+      let request = this.communicationService.requestToAPI("POST", endpoint, requestObject)
+      request.subscribe((response) => {
+        let responseObject = (response as API_ResponseType)
+        if (responseObject.status.code == 200) {
+          this.auth_status = true
+          this.auth_user = responseObject.data.username
+        } else {
+          this.notif.warning(responseObject.status.message)
+          this.communicationService.deleteDataFromStorage("token")
+        }
+      }, (error) => {
+        let responseObject = (error.error as API_ResponseType)
+        this.notif.warning(responseObject.status.message)
+        this.communicationService.deleteDataFromStorage("token")
+      })
+    }
+  }
+
+  // Function to authentificate user from the API
+  authentificateUser(user: string | number | null | undefined, password: string | number | null | undefined) {
+    if (user && password && typeof user == "string" && typeof password == "string") {
+      this.auth_user = user
+      this.auth_password = password
+      let requestObject = {"username": user, "password": password}
+      let endpoint = this.communicationService.API_Endpoint_authConnect
+      let request = this.communicationService.requestToAPI("POST", endpoint, requestObject)
+      request.subscribe((response) => {
+        let responseObject = (response as API_ResponseType)
+        if (responseObject.status.code == 200) {
+          this.communicationService.updateDataToStorage('token', responseObject.token)
+          this.generalService.toggleModal('authConnect', false)
+          this.auth_status = true
+          this.auth_message = undefined
+        }
+      }, (error) => {
+        error = error as HttpErrorResponse
+        let responseObject = (error.error as API_ResponseType)
+        if (responseObject.status) {
+          this.auth_message = responseObject.status.message
+        } else {
+          this.auth_message = "Une erreur est survenue lors de la requête..."
+        }
+      })
+    } else {
+      this.notif.warning("Veuillez remplir le champ utilisateur et mot de passe...")
+    }
+  }
+  disconnectUser() {
+    this.auth_status = false
+    this.auth_password = undefined
+    this.auth_user = undefined
+    this.communicationService.deleteDataFromStorage('token')
+  }
+
   // Functions data element
   writeCachedDataToLocalStorage(fullData: ItemDataType[]) {
-    this.communicationService.updateDataToStorage(this.generalService.cachedDataLocalStorageVarName, fullData)
+    this.communicationService.updateDataToStorage(this.communicationService.cachedDataLocalStorageVarName, fullData)
     this.dataService.allItemsData = fullData
   }
-  addElementToCacheLocalStorage(element: ItemDataType) {
+
+  addElementToSQLDB(element: ItemDataType) {
+
+    let requestObject = {
+      token: "hello",
+      table: "documents",
+
+    }
+
+    /*
     let data: ItemDataType[] = this.dataService.allItemsData
     // TODO : Add check if Object type is wright
     if (data !== null && data.length > 0){ // If the object is not empty
@@ -47,12 +123,13 @@ export class AdministrationService {
     this.writeCachedDataToLocalStorage(data)
     console.log(data)
     this.dataService.allItemsData = data
+     */
   }
 
-  createObject(id:number, page: any, engin: any, typeEngin: string[],
-               mainRef: any, auxRef: any, mainURL: any,
-               auxURL: any, mainPath: any, auxPath: any,
-               des: any, type: any, systeme: any) {
+  createDocumentObject(id:number, page: any, engin: any, typeEngin: string[],
+                       mainRef: any, auxRef: any, mainURL: any,
+                       auxURL: any, mainPath: any, auxPath: any,
+                       des: any, type: any, systeme: any) {
     // See if there is a missing value
     if (typeof mainURL  !== "string" || mainURL == "") {return null;} // TODO : Show a popup saying not correct...
     if (typeof des      !== "string" || des     == "") {return null;}
@@ -87,13 +164,14 @@ export class AdministrationService {
 
     return element;
   }
+
   updateAllPagesData() {
     this.changeActualPageSelectedPageMod(this.actualPageSelectedModPage)
   }
 
   // Functions filter elements
   writeFiltersToLocalStorage(fullData: FilterType[]) {
-    this.communicationService.updateDataToStorage(this.generalService.filtersLocalStorageVarName, fullData)
+    this.communicationService.updateDataToStorage(this.communicationService.filtersLocalStorageVarName, fullData)
     this.dataService.filters = fullData
   }
   addFilterLocalStorage(filter: FilterType) {
@@ -171,7 +249,7 @@ export class AdministrationService {
       return ;
     }
     let index = this.dataService.allItemsData.indexOf(this.dataService.allItemsData.filter((item) => item.id == id)[0])
-    let new_element = this.createObject(id ,page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
+    let new_element = this.createDocumentObject(id ,page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
     if (new_element !== null) {
       this.dataService.allItemsData.splice(index, 1, new_element)
       this.writeCachedDataToLocalStorage(this.dataService.allItemsData)
@@ -214,9 +292,9 @@ export class AdministrationService {
                  auxURL: any, mainPath: any, auxPath: any,
                  des: any, type: any, systeme: any) {
 
-    let element = this.createObject(0, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
+    let element = this.createDocumentObject(0, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
     if (element !== null) {
-      this.addElementToCacheLocalStorage(element)
+      this.addElementToSQLDB(element)
       this.notif.success("Le document " + element.ref_main + " a bien été crée", "C'est bon !")
     }
     this.updateAllPagesData()

@@ -51,6 +51,9 @@ export class ModulesFormationService {
           // Bug on the wcs-core grid element, return a state selected to "true" even when deselect
           this.systeme = value.detail.row.data.filter
         } else { // Select all items (from button)
+          // Déselectionner le grid si "Tout afficher"
+          if (value == ""){this.systemesSelectedGridValues = []}
+
           this.systeme = ""
         }
         break;

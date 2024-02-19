@@ -3,6 +3,7 @@ import {GeneralService} from "../../services/general.service";
 import {EnginService} from "../../services/engin.service";
 import {DataService} from "../../services/data.service";
 import {EnginType} from "../../app.types";
+import {AdministrationService} from "../../services/administration.service";
 
 @Component({
   selector: 'app-modals',
@@ -13,7 +14,8 @@ export class ModalsComponent {
   constructor(
     public generalService: GeneralService,
     public enginService: EnginService,
-    public dataService: DataService
+    public dataService: DataService,
+    public administrationService: AdministrationService
   ) { }
 
   // Var for the selected values of the fav engin grid

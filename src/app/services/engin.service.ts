@@ -94,8 +94,8 @@ export class EnginService {
 
     // Si l'engin est valide alors l'ajouter
     this.favoriteEngins.push(engin)
-    this.communicationSerice.updateDataToStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
-    //this.updateFavEngin() TODO : Fix / see if this statement which originally fetched from the localStorage the favEngins has a problem...
+    location.reload()
+    this.communicationSerice.updateDataToStorage(this.communicationSerice.favEnginLocalStorageVarName, this.favoriteEngins)
     this.notif.success("L'engin " + engin.engin + " " + engin.engin_type + " " + engin.engin_numero + " a bien été ajouté !", "C'est bon !")
   }
 
@@ -117,8 +117,8 @@ export class EnginService {
 
     // Si l'engin est valide alors supprimer
     this.favoriteEngins.splice(this.favoriteEngins.indexOf(engin), 1)
-    this.communicationSerice.updateDataToStorage(this.generalService.enginFavLocalStorageVarName, this.favoriteEngins)
-    //this.updateFavEngin() TODO : Fix / see if this statement which originally fetched from the localStorage the favEngins has a problem...
+    this.communicationSerice.updateDataToStorage(this.communicationSerice.favEnginLocalStorageVarName, this.favoriteEngins)
+    location.reload()
     this.notif.success("L'engin " + engin.engin + " " + engin.engin_type + " " + engin.engin_numero + " a bien été supprimé !", "C'est bon !")
   }
 

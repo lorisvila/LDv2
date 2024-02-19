@@ -31,6 +31,10 @@ export class LdService {
     this.enginService.$actual_engin.subscribe((value) => {
       this.updateFilteredData()
     })
+    // Subscribe to search DB initialized
+    this.searchService.$finishedLoadingDataFromCache.subscribe((value) => {
+      this.updateFilteredData()
+    })
 
   };
 
@@ -69,7 +73,6 @@ export class LdService {
       case "fav_engin": {
         let num_engin = value.split("_")[1]
         this.fav_engin = value;
-        console.log(value)
         if (value.split("_")[0] === "fav") { // If user select a favorite engin from his list
           this.favEnginObject = this.enginService.combinedTechFavEngins.engins_fav.find((item) =>
             item.engin_numero == num_engin)
@@ -97,7 +100,7 @@ export class LdService {
       this.filtersPage.engin_type = [this.engin_type]
     }
 
-    this.searchService.prepareFilterObject(variableName, value, this.filtersPage)
+    this.searchService.prepareFilterObject(variableName, value, this.filtersPage, "ld")
 
     this.updateFilteredData()
   }

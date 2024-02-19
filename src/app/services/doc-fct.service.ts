@@ -65,7 +65,7 @@ export class DocFctService {
       }
     }
 
-    this.searchService.prepareFilterObject(variableName, value, this.filtersPage)
+    this.searchService.prepareFilterObject(variableName, value, this.filtersPage, "docFct")
 
     this.updateFilteredData()
   }

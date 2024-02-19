@@ -48,13 +48,13 @@
         <wcs-spinner class="wcs-primary" mode="border" *ngIf="docFctService.loading"></wcs-spinner>
 
         <!--Span no categories selected-->
-        <span *ngIf="docFctService.filteredDocFctData && docFctService.systeme == '' && !docFctService.loading"
+        <span *ngIf="docFctService.filteredDocFctData?.length == 0 && docFctService.systeme == '' && !docFctService.loading"
               class="document-textbox">
           Veuillez sélectionner une catégorie pour voir les documents associés
         </span>
 
         <!--Span no doc in categorie-->
-        <span *ngIf="docFctService.filteredDocFctData && docFctService.systeme != '' && !docFctService.loading"
+        <span *ngIf="docFctService.filteredDocFctData?.length == 0 && docFctService.systeme != '' && !docFctService.loading"
               class="document-textbox">
           Cette catégorie ne contient aucun documents
         </span>

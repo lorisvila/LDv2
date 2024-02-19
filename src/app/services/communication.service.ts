@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {ToastrService} from "ngx-toastr";
-import {LocalStorageDataType} from "../app.types";
+import {API_RequestType} from "../app.types";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommunicationService {
 
-  adminAuth: boolean = true;
-  API_url: string = "http://localhost:5000"
+  API_url: URL =  new URL("http://localhost:8080/")
+
+  API_Section_Data: string = "/data"
+  API_Section_Auth: string = "/auth"
+  API_Section_DataManage: string = "/manage"
 
   // Name of localStorage variables
   appLocalStorageVarName: string = "app"
@@ -19,6 +22,15 @@ export class CommunicationService {
   technicentreLocalStorageVarName: string = "technicentre";
   cachedDataLocalStorageVarName: string = "cachedData";
   filtersLocalStorageVarName: string = "filters";
+
+  //API endpoints
+  API_Endpoint_allTables: URL = new URL( this.API_Section_Data + "/allTables", this.API_url)
+  API_Endpoint_singleTable: URL = new URL(this.API_Section_Data + "/table", this.API_url)
+  API_Endpoint_authConnect: URL = new URL(this.API_Section_Auth + "/connect", this.API_url)
+  API_Endpoint_checkToken: URL = new URL(this.API_Section_Auth + "/checkToken", this.API_url)
+
+  // API Token
+  API_token: string | undefined = undefined
 
   constructor(
     private http: HttpClient,
@@ -52,7 +64,15 @@ export class CommunicationService {
     localStorage.removeItem(key)
   }
 
-  getDataFromDB(endpoint: string) {
-    return this.http.get(this.API_url + endpoint, {responseType:'json'})
+  requestToAPI(method: "GET" | "POST" | "PUT" | "DELETE", endpoint: URL, data?: any) {
+    let requestObjectBody = new API_RequestType()
+    if (this.API_token) {
+      requestObjectBody.token = this.API_token
+    }
+    if (data) {
+      requestObjectBody.data = data
+    }
+    return this.http.request(method, endpoint.href, {responseType: 'json', body: requestObjectBody})
   }
+
 }

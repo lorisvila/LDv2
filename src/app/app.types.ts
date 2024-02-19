@@ -90,39 +90,35 @@ export type PageType = {
   url: string
 }
 
-export type CacheDataObjectType = {
-  documents: ItemDataType[],
-  filters: FilterType[],
-  engins: AppEnginType[],
-  engins_types: {id: number, engin: string, engin_type: string}[], // not used in app
-  engins_technicentre: {id: number, num_engin: string, engin: string, engin_type: string, technicentre: string}[], // not used in app
-  technicentres: TechnicentreType[],
-  news: NewsType[]
-}
-
-export type APIresponseAllTables = {
-  code: number,
-  success: boolean,
-  message: string,
-  requestTime: string,
-  lastRefreshTime: string,
-  endpoint: string,
-  data: CacheDataObjectType
+export type CachedDataTableType = {
+  tableName: string
+  tableData: any
+  tableLastRefresh: number
 }
 
 export type LocalStorageDataType = {
-  lastCacheDate: string,
+  lastCacheDate: number,
   refreshDelayMinutes: number,
-  cachedData?: CacheDataObjectType,
-  preferences?: {
-    defaultEngin: AppEnginType,
-    favEngins: EnginType[],
-    technicentre: TechnicentreType,
-  }
+  cachedData?: CachedDataTableType[]
 }
 
 export type AppEnginType = {
   engin: string,
   types_engin: string[],
   url_image_engin: string
+}
+
+export class API_RequestType {
+  token?: string
+  data?: any
+}
+
+export type API_ResponseType = {
+  date: number // Time as the 32 bits value of time
+  data: any
+  status: {
+    code: number,
+    message?: string
+  }
+  token?: string
 }

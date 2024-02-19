@@ -80,28 +80,36 @@
 
 <!--Modal d'Authentification pour page d'administration-->
 <wcs-modal [show]="generalService.showAuthConnectModal" size="m">
-  <div slot="header">Connexion à la base SQL</div>
+  <div slot="header">Connexion à l'API</div>
   <div class="modal-content">
 
     <!--Input utilisateur-->
     <div class="modal-line-element">
       <wcs-label>Utilisateur</wcs-label>
-      <wcs-input id="auth-user-input" icon="person" type=""></wcs-input>
+      <wcs-input #auth_user id="auth-user-input" icon="person" type=""
+                 [value]="administrationService.auth_user"
+                 (keyup.enter)="administrationService.authentificateUser(auth_user.value, auth_password.value)">
+      </wcs-input>
     </div>
 
     <!--Input mot de passe-->
     <div class="modal-line-element">
-      <wcs-label>Utilisateur</wcs-label>
-      <wcs-input id="auth-password-input" icon="key" type="password"></wcs-input>
+      <wcs-label>Mot de passe</wcs-label>
+      <wcs-input #auth_password id="auth-password-input" icon="key" type="password"
+                 [value]="administrationService.auth_password"
+                 (keyup.enter)="administrationService.authentificateUser(auth_user.value, auth_password.value)">
+      </wcs-input>
     </div>
 
     <p class="modal-line-element">
-      Authentification auprès de la base de donnée SQL.<br>Identifiants différents du SI SNCF
+      Authentification auprès de l'API LD Intéractif V2.<br>Identifiants différents du SI SNCF
     </p>
   </div>
+
   <div slot="actions" class="slot-action">
+    <wcs-badge class="wcs-warning" *ngIf="administrationService.auth_message">{{administrationService.auth_message}}</wcs-badge>
     <wcs-button mode="stroked" (click)="generalService.toggleModal('authConnect', false)">Annuler</wcs-button>
-    <wcs-button>Se connecter</wcs-button>
+    <wcs-button (click)="administrationService.authentificateUser(auth_user.value, auth_password.value)">Se connecter</wcs-button>
   </div>
 </wcs-modal>
 

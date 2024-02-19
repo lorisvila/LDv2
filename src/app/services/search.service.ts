@@ -125,12 +125,12 @@ export class SearchService {
   }
 
   async searchInDB(db: Orama<any>, searchValue?: string, filters?: {}): Promise<Results<any>> {
-
     let searchParams: any = {}
     if (searchValue) {searchParams.term = searchValue}
     if (filters) {searchParams.where = filters}
-    searchParams.limit = 400
-    return await search(await db, searchParams);
+    searchParams.limit = 1200
+    let data = await search(await db, searchParams);
+    return data
   }
 
   purifyObjectIntoOramaItemDataType(results: Results<any>): OramaItemDataType[] {
@@ -145,10 +145,10 @@ export class SearchService {
     }
   }
 
-  prepareFilterObject(variableName: string, value: string, filterObject: PageFilters) {
+  prepareFilterObject(variableName: string, value: string, filterObject: PageFilters, page: string) {
     // Handle the different cases for preparing the filter object for Orama search
     if (variableName == "reset") { // If I want to reset the search
-      filterObject = {page: "ld"}
+      filterObject = {page: page}
     } else if (["enginNum_value", "search_value", "fav_engin"].includes(variableName)) { // Do nothing if it is a search, engin num or fav_engin
     } else if (["systeme", "type"].includes(variableName)) { // If the filter is systeme or type --> nest it into the filter parameter
       if (value !== "") {
