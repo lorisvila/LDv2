@@ -52,3 +52,4 @@ Thumbs.db
 # Documents folder in the assets --> Sensible + big files
 /src/assets/documents
 /API/config.ini
+/API/config.json
