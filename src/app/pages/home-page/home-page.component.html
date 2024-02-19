@@ -1,9 +1,20 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
+
   <ng-container *ngFor="let engin of dataService.engins">
     <!--Image de l'engin-->
-    <img *ngIf="enginService.actual_engin.engin == engin.engin" [src]="'assets/images/' + engin.url_image_engin">
+    <img id="trainImage" *ngIf="enginService.actual_engin.engin == engin.engin && !trainImageHideAfterBadImport"
+         ngSrc="'assets/images/' + engin.url_image_engin"
+         (load)="trainImageLoaded = true" (error)="handleMissingImage($event)">
   </ng-container>
+  <div id="blankEngin" *ngIf="!trainImageLoaded"> <!--*ngIf="!trainImageLoaded"-->
+    <div class="trainWindow"></div>
+    <div class="trainWindow"></div>
+    <div class="trainWindow"></div>
+    <div class="trainWindow"></div>
+    <div class="trainWindow"></div>
+  </div>
+
   <div id="pageContainer">
 
     <!--Card dernières Infos-->

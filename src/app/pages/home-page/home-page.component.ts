@@ -15,6 +15,17 @@ export class HomePageComponent {
     public dataService: DataService,
     public enginService: EnginService
     ) {
+    this.enginService.$actual_engin.subscribe(engin => {
+      this.trainImageLoaded = false
+      this.trainImageHideAfterBadImport = false
+    })
   }
+
+
+  handleMissingImage(event: Event) {
+    this.trainImageHideAfterBadImport = true
+  }
+  trainImageHideAfterBadImport: boolean = false;
+  trainImageLoaded: boolean = false;
 
 }
