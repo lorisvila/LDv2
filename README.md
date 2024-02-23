@@ -15,7 +15,7 @@
     <img src="docs/images/LDv2-logo.jpg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Livret de Dépannages V2</h3>
+<h3 align="center">Livrets de Dépannage Interactif V2</h3>
 
   <p align="center">
     A advanced documentary platform
