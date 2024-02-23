@@ -1,0 +1,4 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit(formModel)" id="form-group-wrapper">
+  <formly-form [form]="formGroup" [fields]="fields" [model]="formModel" id="form-group-elements"></formly-form>
+  <wcs-button type="submit" class="wcs-primary">Ajouter</wcs-button>
+</form>

@@ -1,0 +1,7 @@
+#form-group-wrapper {
+  margin: 1em 1em;
+  display: flex;
+  flex-flow: column wrap;
+  align-content: center;
+  gap: 1em;
+}
