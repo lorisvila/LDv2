@@ -5,9 +5,12 @@
 /tmp
 /out-tsc
 /bazel-out
+/electron/dist
+/electron/electronLDv2_Angular-win32-x64
 
 # Node
 /API/node_modules
+/electron/node_modules
 /node_modules
 npm-debug.log
 yarn-error.log
