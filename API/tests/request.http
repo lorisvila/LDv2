@@ -1,0 +1,20 @@
+POST http://localhost:8080/auth/connect
+Content-Type: application/json
+
+{"data": {"username":"TI_BHM_loris", "password":"VILA"}}
+
+
+###
+POST http://localhost:8080/auth/checkToken
+Content-Type: application/json
+
+{"data": {"token":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRJX0JITV9sb3JpcyIsImlhdCI6MTcwNzUxODg5OSwiZXhwIjoxNzA3OTUwODk5fQ.jzoTq-IF-RbO8XiadklkPOHv48-khoukut810Sb22Lk"}}
+
+
+###
+GET http://localhost:8080/manage/refreshData
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRJX0JITV9sb3JpcyIsImlhdCI6MTcwNzM4NDI3NCwiZXhwIjoxNzA3ODE2Mjc0fQ.1eK0VVevoYzWZhE28xg7Hk8gHoDtNouF8Z6zmtUIBIE"
+}
