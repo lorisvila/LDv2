@@ -1,4 +1,7 @@
 /* Page items*/
+h1 {
+  margin-bottom: 0.2em;
+}
 .page-content {
   display: flex;
   flex-direction: column;
@@ -26,6 +29,7 @@
 }
 #trainImage {
   max-width: 100vw;
+  margin-bottom: 1.5em;
 }
 #blankEngin {
   max-width: 55vw;
@@ -78,7 +82,7 @@
   margin-top: 0.5em;
 }
 
-/*Versions card*/
+/*Raccourcis card*/
 #raccourcisContainer {
   display: flex;
   flex-flow: column nowrap;
@@ -93,7 +97,7 @@
 .raccourciItem {
   display: flex;
   flex-flow: row nowrap;
-  gap: 100 px;
+  gap: 100px;
   /*display: flex;
   flex-direction: row;
   align-items: baseline;

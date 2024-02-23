@@ -26,8 +26,10 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { SearchPageComponent } from './pages/search-page/search-page.component';
 import { StillInDevPageComponent } from './pages/templates/still-in-dev-page/still-in-dev-page.component';
 import { NotFoundPageComponent } from './pages/templates/not-found-page/not-found-page.component';
-import {NgOptimizedImage} from "@angular/common";
-
+import { AddElemFormlyComponent } from './pages/administration-page/add-elem-formly/add-elem-formly.component';
+import {WcsFormlyModule} from "wcs-formly";
+import {FormlyModule} from "@ngx-formly/core";
+import {ReactiveFormsModule} from "@angular/forms";
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
@@ -51,11 +53,15 @@ import {NgOptimizedImage} from "@angular/common";
     SearchPageComponent,
     StillInDevPageComponent,
     NotFoundPageComponent,
+    AddElemFormlyComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     WcsAngularModule,
+    WcsFormlyModule,
+    ReactiveFormsModule,
+    FormlyModule.forRoot(),
     appRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({

@@ -17,7 +17,7 @@ const routes: Routes = [
   {path: 'documentationParFonction', component: DocFctPageComponent},
   {path: 'modulesDeFormation', component: ModulesFormationPageComponent},
   {path: 'localisationDesOrganes', component: StillInDevPageComponent},
-  {path: 'codesDefauts', component: CodesDefPageComponent},
+  {path: 'codesDefauts', component: StillInDevPageComponent},
   {path: 'administration', component: AdministrationPageComponent},
   {path: 'recherche', component: SearchPageComponent},
   {path: '**', component: NotFoundPageComponent}

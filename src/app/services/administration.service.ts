@@ -1,4 +1,4 @@
-import {createNgModuleRef, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {API_ResponseType, FilterType, ItemDataType} from "../app.types";
 import {DataService} from "./data.service";
 import {CommunicationService} from "./communication.service";
@@ -38,6 +38,7 @@ export class AdministrationService {
         if (responseObject.status.code == 200) {
           this.auth_status = true
           this.auth_user = responseObject.data.username
+          this.communicationService.API_token = token
         } else {
           this.notif.warning(responseObject.status.message)
           this.communicationService.deleteDataFromStorage("token")
@@ -62,6 +63,7 @@ export class AdministrationService {
         let responseObject = (response as API_ResponseType)
         if (responseObject.status.code == 200) {
           this.communicationService.updateDataToStorage('token', responseObject.token)
+          this.communicationService.API_token = responseObject.token
           this.generalService.toggleModal('authConnect', false)
           this.auth_status = true
           this.auth_message = undefined
@@ -130,13 +132,21 @@ export class AdministrationService {
                        mainRef: any, auxRef: any, mainURL: any,
                        auxURL: any, mainPath: any, auxPath: any,
                        des: any, type: any, systeme: any) {
+
     // See if there is a missing value
-    if (typeof mainURL  !== "string" || mainURL == "") {return null;} // TODO : Show a popup saying not correct...
-    if (typeof des      !== "string" || des     == "") {return null;}
-    if (typeEngin.length == 0) {return null;}
-    if (page == "") {return null;}
-    if (engin == "") {return null;}
-    if (systeme == "") {return null;}
+    let missingFields = []
+    if (typeof mainURL  !== "string" || mainURL == "") {missingFields.push("URL Principale")}
+    if (typeof mainPath  !== "string" || mainPath == "") {missingFields.push("Chemin Local Principal")}
+    if (typeof des      !== "string" || des     == "") {missingFields.push("Designation")}
+    if (typeof mainRef  !== "string" || mainRef == "") {missingFields.push("Ref Principale")}
+    if (typeEngin.length == 0) {missingFields.push("Type d'engin")}
+    if (page == "") {missingFields.push("Page")}
+    if (engin == "") {missingFields.push("Engin")}
+    if (systeme == "") {missingFields.push("Systeme")}
+    if (missingFields.length > 0) {
+      this.notif.error(`Il manque une / des  valeur(s) dans le formulaire : ${Array(missingFields).toString()}`)
+      return null
+    }
 
     // Create the item Object
     let element: ItemDataType = {
@@ -156,11 +166,11 @@ export class AdministrationService {
     }
 
     // Add the optional values if given
-    if (typeof type     === "string" && type      != "") { element["type"] = type }
-    if (typeof auxRef   === "string" && auxRef    != "") { element["ref_aux"] = auxRef }
-    if (typeof auxURL   === "string" && auxURL    != "") { element["url_aux"] = auxURL }
-    if (typeof mainPath === "string" && mainPath  != "") { element["url_main_file"] = mainPath }
-    if (typeof auxPath  === "string" && auxPath   != "") { element["url_aux_file"] = auxPath }
+    if (typeof type     === "string" && type      != "") { element.type = type }
+    if (typeof auxRef   === "string" && auxRef    != "") { element.ref_aux = auxRef }
+    if (typeof auxURL   === "string" && auxURL    != "") { element.url_aux = auxURL }
+    if (typeof mainPath === "string" && mainPath  != "") { element.url_main_file = mainPath }
+    if (typeof auxPath  === "string" && auxPath   != "") { element.url_aux_file = auxPath }
 
     return element;
   }
@@ -294,16 +304,45 @@ export class AdministrationService {
 
     let element = this.createDocumentObject(0, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
     if (element !== null) {
-      this.addElementToSQLDB(element)
-      this.notif.success("Le document " + element.ref_main + " a bien été crée", "C'est bon !")
+      let requestObject = {
+        action: "create",
+        object: element
+      }
+      let endpoint = this.communicationService.API_Endpoint_addDoc
+      this.communicationService.requestToAPI("POST", endpoint, requestObject).subscribe(
+        (response) => {
+          let responseObject = (response as API_ResponseType)
+          // Si erreur dans la requête
+          if (responseObject.status.code != 200) {
+            this.notif.warning(responseObject.status.message, "Aïe",{
+              closeButton: false,
+              disableTimeOut: true
+            })
+          }
+          // Si la réponse contient des données
+          else if (responseObject.status.code == 200) {
+            this.notif.success(responseObject.status.message)
+          }
+          // Si les données sont corrompues
+          else {
+            this.notif.error("La réponse fournie par le serveur est corrompue...")
+          }
+        },
+
+        (error) => {
+          this.notif.warning("Un problème est survenue lors de la requête...", "Aïe...", {
+            closeButton: false,
+            disableTimeOut: true
+          })
+        })
     }
     this.updateAllPagesData()
   }
   reinitFieldsPageAdd() {
-    this.valueEnginAddPage = "";
-    this.valueTypeEnginAddPage = "";
-    this.valueSystemeAddPage = "";
-    this.valueTypeAddPage= "";
+    /*this.valueEnginAddPage = "";*/
+    /*this.valueTypeEnginAddPage = "";*/
+    /*this.valueSystemeAddPage = "";*/
+    /*this.valueTypeAddPage= "";*/
     this.valueDesignationAddPage= "";
     this.valueRefPrincipaleAddPage= "";
     this.valueRefAuxiliaireAddPage= "";

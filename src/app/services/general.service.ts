@@ -262,4 +262,9 @@ export class GeneralService {
   openURL(URL: string, target: string) {
     window.open(URL, target)
   }
+
+  copyObject(object: {} | []) {
+    return JSON.parse(JSON.stringify(object))
+  }
+
 }
