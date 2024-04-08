@@ -41,6 +41,7 @@ export class EnginService {
     })
     // Populate the "types_engin" variable
     this.dataService.engins.forEach((item) => this.types_engin[item.engin] = item.types_engin)
+    this.changeActualEngin(this.actual_engin)
 
     this.generalService.$enginServiceInitialized.emit(true)
 
