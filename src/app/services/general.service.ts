@@ -42,7 +42,7 @@ export class GeneralService {
   app_version: string = "V 2.2.0";
   app_build: string = "dev";
 
-  date_maj_applicatif: Date = new Date("01/27/2024"); // /!\ Format de date US /!\
+  date_maj_applicatif: Date = new Date("04/08/2024"); // /!\ Format de date US /!\
   date_maj_data_AGC: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
   date_maj_data_TER2NNG: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
 
