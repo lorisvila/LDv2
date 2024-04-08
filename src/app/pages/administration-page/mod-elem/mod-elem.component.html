@@ -95,6 +95,7 @@
             <wcs-label>Type</wcs-label>
             <wcs-select #selectTypeModPage [value]="administrationService.selectedDocumentModPage.type"
                         (wcsChange)="administrationService.valueTypeModPage = selectTypeModPage.value">
+              <wcs-select-option value="" *ngIf="administrationService.valueTypeModPage"><b>Aucun</b></wcs-select-option>
               <ng-container *ngFor="let filter of dataService.filters">
                 <wcs-select-option *ngIf="filter.page === administrationService.valuePageModPage && filter.type === 'type'"
                                    [value]="filter.filter">{{filter.filter_formatted}}</wcs-select-option>
