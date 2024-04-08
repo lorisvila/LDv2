@@ -106,8 +106,8 @@ export class AdministrationService {
   createDocumentObject(id:number, page: any, engin: any, typeEngin: string[],
                        mainRef: any, auxRef: any, mainURL: any,
                        auxURL: any, mainPath: any, auxPath: any,
-                       des: any, type: any, systeme: any) {
-
+                       des: any, type: any, systeme: any,
+                       AddEmptyValuesFields: boolean = false) {
     // See if there is a missing value
     let missingFields = []
     if (typeof mainURL  !== "string" || mainURL == "") {missingFields.push("URL Principale")}
@@ -140,12 +140,21 @@ export class AdministrationService {
       //url_aux_file: auxPath     OPTIONAL VALUE
     }
 
-    // Add the optional values if given
+    // Add the optional values if given and wanted
     if (typeof type     === "string" && type      != "") { element.type = type }
+    else if (AddEmptyValuesFields) {element.type = undefined}
+
     if (typeof auxRef   === "string" && auxRef    != "") { element.ref_aux = auxRef }
+    else if (AddEmptyValuesFields) {element.ref_aux = undefined}
+
     if (typeof auxURL   === "string" && auxURL    != "") { element.url_aux = auxURL }
+    else if (AddEmptyValuesFields) {element.url_aux = undefined}
+
     if (typeof mainPath === "string" && mainPath  != "") { element.url_main_file = mainPath }
+    else if (AddEmptyValuesFields) {element.url_main_file = undefined}
+
     if (typeof auxPath  === "string" && auxPath   != "") { element.url_aux_file = auxPath }
+    else if (AddEmptyValuesFields) {element.url_aux_file = undefined}
 
     return element;
   }
