@@ -30,6 +30,7 @@ export class AdministrationService {
   auth_password: string | undefined = ""
   auth_message: string | undefined = ""
   auth_status: boolean = false
+  auth_pending: boolean = false // True when the auth request is up
 
   // Function to check the token in localStorage
   checkToken() {
@@ -61,6 +62,7 @@ export class AdministrationService {
     if (user && password && typeof user == "string" && typeof password == "string") {
       this.auth_user = user
       this.auth_password = password
+      this.auth_pending = true
       let requestObject = {"username": user, "password": password}
       let endpoint = this.communicationService.API_Endpoint_authConnect
       let request = this.communicationService.requestToAPI("POST", endpoint, requestObject)
@@ -72,6 +74,7 @@ export class AdministrationService {
           this.generalService.toggleModal('authConnect', false)
           this.auth_status = true
           this.auth_message = undefined
+          this.auth_pending = false
         }
       }, (error) => {
         error = error as HttpErrorResponse
@@ -81,6 +84,7 @@ export class AdministrationService {
         } else {
           this.auth_message = "Une erreur est survenue lors de la requête..."
         }
+        this.auth_pending = false
       })
     } else {
       this.notif.warning("Veuillez remplir le champ utilisateur et mot de passe...")

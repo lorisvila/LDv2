@@ -101,6 +101,8 @@
       </wcs-input>
     </div>
 
+    <wcs-spinner class="wcs-primary" mode="border" *ngIf="administrationService.auth_pending"></wcs-spinner>
+
     <p class="modal-line-element">
       Authentification auprès de l'API LD Intéractif V2.<br>Identifiants différents du SI SNCF
     </p>
