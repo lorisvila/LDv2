@@ -103,40 +103,6 @@ export class AdministrationService {
     this.dataService.allItemsData = fullData
   }
 
-  addElementToSQLDB(element: ItemDataType) {
-
-    let requestObject = {
-      token: "hello",
-      table: "documents",
-
-    }
-
-    /*
-    let data: ItemDataType[] = this.dataService.allItemsData
-    // TODO : Add check if Object type is wright
-    if (data !== null && data.length > 0){ // If the object is not empty
-      if (data.filter((item) => // Check if item not already exist for type of engin
-        (item.ref_main == element.ref_main ||
-        item.url_main == element.url_main ||
-        item.des == element.des) &&
-        (item.engin == element.engin && item.engin_type == element.engin_type)).length > 0) {
-        this.notif.warning("L'élement que vous essayer de créer existe déjà", "Aïe...")
-        return;
-      }
-      let lastId = data[data.length - 1].id // Put the ID of the last element + 1
-      let elementMod = element
-      elementMod.id = lastId + 1
-      data.push(elementMod)
-    } else {
-      this.notif.warning("La liste de data était vide ou corrompue, ajout de cet élement dans la liste", "Oups....")
-      data = [element] // Si liste vide ou corrompue --> écraser par le nouvel élement seulement
-    }
-    this.writeCachedDataToLocalStorage(data)
-    console.log(data)
-    this.dataService.allItemsData = data
-     */
-  }
-
   createDocumentObject(id:number, page: any, engin: any, typeEngin: string[],
                        mainRef: any, auxRef: any, mainURL: any,
                        auxURL: any, mainPath: any, auxPath: any,

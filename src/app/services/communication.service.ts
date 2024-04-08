@@ -28,6 +28,7 @@ export class CommunicationService {
   API_Endpoint_refreshData: URL = new URL( this.API_Section_DataManage + "/refreshData", this.API_url)
   API_Endpoint_singleTable: URL = new URL(this.API_Section_Data + "/table", this.API_url)
   API_Endpoint_addDoc: URL = new URL(this.API_Section_DataManage + "/addDoc", this.API_url)
+  API_Endpoint_modifyDoc: URL = new URL(this.API_Section_DataManage + "/modifyDoc", this.API_url)
   API_Endpoint_authConnect: URL = new URL(this.API_Section_Auth + "/connect", this.API_url)
   API_Endpoint_checkToken: URL = new URL(this.API_Section_Auth + "/checkToken", this.API_url)
 
