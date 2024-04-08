@@ -36,7 +36,12 @@
 ### Built With
 
 - `wcs-core` - [![npm version](https://badge.fury.io/js/wcs-core.svg)](https://badge.fury.io/js/wcs-core)
-- `angular` - [![npm version](https://badge.fury.io/js/angular.svg)](https://badge.fury.io/js/angular)
+- `wcs-formly` - [![npm version](https://badge.fury.io/js/wcs-formly.svg)](https://badge.fury.io/js/wcs-formly)
+- `ngx-toastr` - [![npm version](https://badge.fury.io/js/ngx-toastr.svg)](https://badge.fury.io/js/ngx-toastr)
+- `@angular/cli` - [![npm version](https://badge.fury.io/js/@angular%2Fcli.svg)](https://badge.fury.io/js/@angular%2Fcli)
+- `@angular/forms` - [![npm version](https://badge.fury.io/js/@angular%2Fforms.svg)](https://badge.fury.io/js/@angular%2Fforms)
+- `@ngx-formly/core` - [![npm version](https://badge.fury.io/js/@ngx-formly%2Fcore.svg)](https://badge.fury.io/js/@ngx-formly%2Fcore)
+- `@orama/orama` - [![npm version](https://badge.fury.io/js/@orama%2Forama.svg)](https://badge.fury.io/js/@orama%2Forama)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
