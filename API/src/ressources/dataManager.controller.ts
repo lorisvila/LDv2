@@ -27,7 +27,7 @@ export class DataManagerController {
       }
     })
 
-    this.router.get('/refreshData', (req, res) => {
+    this.router.post('/refreshData', (req, res) => {
       let auth: AuthResponseType = this.App.AuthModule.checkUserToken(req, res)
       if (auth.code == 200) {
         this.App.DataModule.updateAllTable()
