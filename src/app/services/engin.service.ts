@@ -87,6 +87,10 @@ export class EnginService {
       this.notif.error("Erreur dans le numéro d'engin...", "Aïe...")
       return;
     }
+    if (!engin.engin || !engin.engin_type) {
+      this.notif.error("Il manque une donnée dans votre engin...")
+      return;
+    }
     if (engin.engin_numero?.toString().length < 5) {
       this.notif.warning("Votre numéro d'engin n'est pas assez long pour un numéro SNCF...", "Aïe...")
       return;
