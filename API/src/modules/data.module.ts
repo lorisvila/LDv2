@@ -108,6 +108,36 @@ export class DataModule {
     }
   }
 
+  async modDocFromDB(id: number, document: any) {
+    let queryString = 'UPDATE documents SET '
+    try {
+      let valuesSQL = []
+      for (let element of Object.keys(document)) {
+        if (document[element] && element != 'id') {
+          if (element == 'engin_type') {
+            valuesSQL.push(`${element} = '["${(document[element] as []).join('","')}"]'`)
+          } else {
+            valuesSQL.push(`${element} = '${document[element]}'`)
+          }
+        } else if (document[element] == null && element != 'id') {
+          valuesSQL.push(`${element} = NULL`)
+        }
+      }
+      queryString += valuesSQL.join(', ')
+      queryString += ` WHERE id=${id}`
+    } catch {
+      return null
+    }
+    // Make the request
+    try {
+      let results = (await this.SQLpool.request().query(queryString)).recordset
+      return await results
+    } catch (error) {
+      console.error(`Une erreur est survenue sur la requête ${queryString}`, error)
+      return null // TODO : See if there is not a better way to return this Promise in case of a error instead of returning a null...
+    }
+  }
+
   purifyTables() {
 
     console.log("Purifying data")
