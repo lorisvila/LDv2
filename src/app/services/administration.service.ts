@@ -227,20 +227,51 @@ export class AdministrationService {
                    mainRef: any, auxRef: any, mainURL: any,
                    auxURL: any, mainPath: any, auxPath: any,
                    des: any, systeme: any, type: any) {
+    let id: number // get the actual document id (because id is not inserted into webpage)
+    if (this.selectedDocumentModPage) {
+      id = this.selectedDocumentModPage?.id
+      let newElement = this.createDocumentObject(id, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme, true)
+      if (newElement !== null) {
+        Object.keys(newElement).forEach((key) => {
+          if (newElement && newElement[(key as keyof typeof newElement)] == undefined) {
+            (newElement as any)[(key as keyof typeof newElement)] = null
+          }
+        })
+        let requestObject = {
+          action: "modify",
+          object: newElement
+        }
+        let endpoint = this.communicationService.API_Endpoint_modifyDoc
+        this.communicationService.requestToAPI("POST", endpoint, requestObject).subscribe(
+          (response) => {
+            let responseObject = (response as API_ResponseType)
+            // Si erreur dans la requête
+            if (responseObject.status.code != 200) {
+              this.notif.warning(responseObject.status.message, "Aïe",{
+                closeButton: false,
+                disableTimeOut: true
+              })
+            }
+            // Si la réponse contient des données
+            else if (responseObject.status.code == 200) {
+              this.notif.success(responseObject.status.message)
+              this.generalService.forceUpdateData()
+              this.notif.info('Pour voir la modification, il est nécessaire de rafraîchir ou de changer de page...')
+            }
+            // Si les données sont corrompues
+            else {
+              this.notif.error("La réponse fournie par le serveur est corrompue...")
+            }
+          },
 
-    let id = this.selectedDocumentModPage?.id
-    if (id == undefined) {
-      this.notif.error("Un problème avec l'id de l'élement est survenu...")
-      return ;
-    }
-    let index = this.dataService.allItemsData.indexOf(this.dataService.allItemsData.filter((item) => item.id == id)[0])
-    let new_element = this.createDocumentObject(id ,page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
-    if (new_element !== null) {
-      this.dataService.allItemsData.splice(index, 1, new_element)
-      this.writeCachedDataToLocalStorage(this.dataService.allItemsData)
-      this.notif.success("Document " + new_element.ref_main + " a bien été modifié", "C'est bon !")
-    } else { // Catch error
-      this.notif.error("Un problème avec l'élément crée dans la fonction est survenu...")
+          (error) => {
+            let responseObject = (error.error as API_ResponseType)
+            this.notif.warning(responseObject.status.message, "Aïe...", {
+              closeButton: false,
+              disableTimeOut: true
+            })
+          })
+      }
     }
     this.updateAllPagesData()
   }
