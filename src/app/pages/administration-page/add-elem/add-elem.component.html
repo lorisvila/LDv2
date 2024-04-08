@@ -57,12 +57,12 @@
       </div>
       <div class="form-element">
         <wcs-label>Système (Manuellement)</wcs-label>
-        <wcs-input placeholder="ex: LD 5 200 ..." #inputSystemeAddPage [value]="administrationService.valueSystemeAddPage"
+        <wcs-input #inputSystemeAddPage [value]="administrationService.valueSystemeAddPage"
                    (wcsChange)="administrationService.valueSystemeAddPage = inputSystemeAddPage.value"></wcs-input>
       </div>
       <div class="form-element">
         <wcs-label>Type (Manuellement)</wcs-label>
-        <wcs-input placeholder="ex: 05-3 709 829" #inputTypeAddPage [value]="administrationService.valueTypeAddPage"
+        <wcs-input #inputTypeAddPage [value]="administrationService.valueTypeAddPage"
                    (wcsChange)="administrationService.valueTypeAddPage = inputTypeAddPage.value"></wcs-input>
       </div>
     </div>
