@@ -5,6 +5,7 @@
   <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
+  <wcs-grid-column *ngIf="administrationService.auth_status" name="Edit" id="edit" custom-cells="true"></wcs-grid-column>
 
   <!--Cases personalisés pour la colonne "Type Engin"-->
   <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata; index as i">
@@ -59,6 +60,12 @@
     </wcs-button>
 
   </wcs-grid-custom-cell>
+
+  <ng-container *ngIf="administrationService.auth_status">
+    <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
+    <wcs-button shape="round" routerLink="/administration"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+    </wcs-grid-custom-cell>
+  </ng-container>
 
   <!--Pagination element at the bottom of the grid-->
   <wcs-grid-pagination id="grid-pagination" [pageSize]="ldService.pageSize" [availablePageSizes]="ldService.availablePageSizes"></wcs-grid-pagination>
