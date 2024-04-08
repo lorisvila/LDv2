@@ -91,7 +91,7 @@ export class LdService {
         this.engin_type = this.favEnginObject.engin_type
         break;
       }
-      default: { // TODO : See if there is here a XSS vulnerabilty
+      default: { // TODO : See if there is here a XSS vulnerabilty or a usage
         (this as any)[variableName] = value
       }
     }

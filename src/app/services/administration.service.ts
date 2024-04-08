@@ -226,7 +226,7 @@ export class AdministrationService {
   // Functions
   changeActualPageSelectedPageMod(page: string) {
     this.actualPageSelectedModPage = page;
-    this.dataGridDocumentsModPage = this.dataService.allItemsData.filter((item) => item.page == page);
+    this.dataGridDocumentsModPage = this.dataService.allItemsData.filter((item) => item.page == page && item.engin == this.enginService.actual_engin.engin);
     this.selectedDocumentModPage = undefined; // TODO : Remettre à null le document sélectionné car le choix page à changé donc doc dans la grid aussi
   }
   selectDocumentPageMod(event: any) {

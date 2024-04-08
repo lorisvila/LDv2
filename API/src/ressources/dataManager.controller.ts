@@ -40,13 +40,33 @@ export class DataManagerController {
       let auth = this.App.AuthModule.checkUserToken(req, res)
       if (auth.code == 200) {
         let reqObject: RequestType = req.body as RequestType
-        if (!reqObject.data.action || !reqObject.data.action) {
+        if (!reqObject.data.action) {
           this.App.sendResponse(res, undefined, {code: 400, message: "Il manque des élements dans ta requête..."})
           return
         }
+        console.log(reqObject.data)
         let response = this.App.DataModule.addDocToDB(reqObject.data.object)
         if (response != null) {
           this.App.sendResponse(res, undefined, {code: 200, message: "Le document a bien été ajouté dans la base de données"})
+        }
+        else {
+          this.App.sendResponse(res, undefined, {code: 500, message: "Une erreur est survenue lors de l'ajout du document dans la BDD"})
+        }
+      }
+    })
+
+    this.router.post('/modifyDoc', (req, res) => {
+      let auth = this.App.AuthModule.checkUserToken(req, res)
+      if (auth.code == 200) {
+        let reqObject: RequestType = req.body as RequestType
+        if (!reqObject.data.action) {
+          this.App.sendResponse(res, undefined, {code: 400, message: "Il manque des élements dans ta requête..."})
+          return
+        }
+        console.log(reqObject.data)
+        let response = this.App.DataModule.modDocFromDB(reqObject.data.object.id, reqObject.data.object)
+        if (response != null) {
+          this.App.sendResponse(res, undefined, {code: 200, message: "Le document a bien été modifié dans la BDD"})
         }
         else {
           this.App.sendResponse(res, undefined, {code: 500, message: "Une erreur est survenue lors de l'ajout du document dans la BDD"})

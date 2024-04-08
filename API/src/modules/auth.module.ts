@@ -43,7 +43,16 @@ export class AuthModule {
   checkUserToken(req: Request, res: Response): AuthResponseType { // true if authentificated and false if not
     let reqObject: RequestType = req.body
     let authResponseObject: AuthResponseType = new AuthResponseType()
-    if (!reqObject || (!reqObject.data.token && !reqObject.token)) {
+
+    if (!reqObject) {
+      authResponseObject.code = 401
+      authResponseObject.message = "Il manque du contenu dans la requête"
+      this.App.sendResponse(res, undefined, authResponseObject)
+      return authResponseObject
+    }
+    try {
+      let token = reqObject.data.token
+    } catch(err) {
       authResponseObject.code = 401
       authResponseObject.message = "Il manque le token dans votre requête..."
       this.App.sendResponse(res, undefined, authResponseObject)

@@ -83,7 +83,7 @@ export class DataModule {
   async addDocToDB(document: any) {
     let queryString = 'INSERT INTO documents VALUES ('
     try {
-      queryString += `'${document.engin}', `
+      queryString += `'${document.engin}', ` // TODO : Modify this horrible += list with a for loop as in the modDocFromDB method underneath
       queryString += document.type ? `'${document.type}', ` : ' NULL, '
       queryString += `'${document.systeme}', `
       queryString += `'${document.ref_main}', `
