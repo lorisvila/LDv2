@@ -5,6 +5,7 @@ import {CommunicationService} from "./communication.service";
 import {GeneralService} from "./general.service";
 import {ToastrService} from "ngx-toastr";
 import {HttpErrorResponse} from "@angular/common/http";
+import {EnginService} from "./engin.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +16,13 @@ export class AdministrationService {
     public dataService: DataService,
     public communicationService: CommunicationService,
     public generalService: GeneralService,
-    public notif: ToastrService
+    public notif: ToastrService,
+    public enginService: EnginService
   ) {
     this.checkToken()
+
+    // Refresh the documents in the mod elem page when engin changes
+    this.enginService.$actual_engin.subscribe((engin) => this.changeActualPageSelectedPageMod(this.actualPageSelectedModPage))
   }
 
   // ################################### GLOBAL ###################################
