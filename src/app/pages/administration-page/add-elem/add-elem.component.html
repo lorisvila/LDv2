@@ -48,6 +48,7 @@
         <wcs-label>Type</wcs-label>
         <wcs-select #selectTypeAddPage [value]="administrationService.valueTypeAddPage"
                     (wcsChange)="administrationService.valueTypeAddPage = selectTypeAddPage.value">
+          <wcs-select-option value="" *ngIf="administrationService.valueTypeAddPage"><b>Aucun</b></wcs-select-option>
           <ng-container *ngFor="let filter of dataService.filters">
             <wcs-select-option *ngIf="filter.page === administrationService.valuePageAddPage && filter.type === 'type'"
                                [value]="filter.filter">{{filter.filter_formatted}}</wcs-select-option>
