@@ -25,6 +25,7 @@ export class CommunicationService {
 
   //API endpoints
   API_Endpoint_allTables: URL = new URL( this.API_Section_Data + "/allTables", this.API_url)
+  API_Endpoint_refreshData: URL = new URL( this.API_Section_DataManage + "/refreshData", this.API_url)
   API_Endpoint_singleTable: URL = new URL(this.API_Section_Data + "/table", this.API_url)
   API_Endpoint_addDoc: URL = new URL(this.API_Section_DataManage + "/addDoc", this.API_url)
   API_Endpoint_authConnect: URL = new URL(this.API_Section_Auth + "/connect", this.API_url)
@@ -67,7 +68,6 @@ export class CommunicationService {
 
   requestToAPI(method: "GET" | "POST" | "PUT" | "DELETE", endpoint: URL, data?: any) {
     let requestObjectBody = new API_RequestType()
-    console.log(this.API_token)
     if (this.API_token) {
       requestObjectBody.token = this.API_token
     }

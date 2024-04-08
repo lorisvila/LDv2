@@ -153,17 +153,17 @@ export class GeneralService {
   // Forcer à rafraîchir les données depuis API
   forceUpdateData() {
     let localStorageRecoveredData: LocalStorageDataType = this.communicationService.getDataFromStorage(this.communicationService.appLocalStorageVarName)
-    this.importDataFromAPI(true).subscribe((data: API_ResponseType) => {
-      this.writeCacheToLocalStorage(localStorageRecoveredData, data)
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_refreshData, {token: this.communicationService.API_token}).subscribe((response) => {
+      this.importDataFromAPI().subscribe((data: API_ResponseType) => {
+        console.log(data)
+        this.writeCacheToLocalStorage(localStorageRecoveredData, data)
+      })
     })
   }
 
   // Importer les données depuis l'API
-  importDataFromAPI(forceReload?: boolean) {
+  importDataFromAPI() {
     let endpoint = this.communicationService.API_Endpoint_allTables
-    if (forceReload) {
-      endpoint.searchParams.append('reload', 'true')
-    }
     let returnValue: EventEmitter<API_ResponseType> = new EventEmitter<API_ResponseType>()
     this.communicationService.requestToAPI("GET", endpoint).subscribe(
       (response) => {
