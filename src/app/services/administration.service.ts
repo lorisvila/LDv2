@@ -336,7 +336,8 @@ export class AdministrationService {
         },
 
         (error) => {
-          this.notif.warning("Un problème est survenue lors de la requête...", "Aïe...", {
+          let responseObject = (error.error as API_ResponseType)
+          this.notif.warning(responseObject.status.message, "Aïe...", {
             closeButton: false,
             disableTimeOut: true
           })
