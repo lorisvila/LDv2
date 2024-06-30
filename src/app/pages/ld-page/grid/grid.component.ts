@@ -20,4 +20,6 @@ export class GridComponent {
 
   }
 
+  protected readonly Number = Number;
+  protected readonly parseInt = parseInt;
 }

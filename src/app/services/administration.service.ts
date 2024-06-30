@@ -6,6 +6,7 @@ import {GeneralService} from "./general.service";
 import {ToastrService} from "ngx-toastr";
 import {HttpErrorResponse} from "@angular/common/http";
 import {EnginService} from "./engin.service";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AdministrationService {
     public communicationService: CommunicationService,
     public generalService: GeneralService,
     public notif: ToastrService,
-    public enginService: EnginService
+    public enginService: EnginService,
+    public router: Router
   ) {
     this.checkToken()
 
@@ -296,6 +298,14 @@ export class AdministrationService {
     this.updateAllPagesData()
   }
 
+  showDocFromOtherPage(docId: number) {
+    let doc = this.dataService.allItemsData.find((item) => docId === item.id)
+    if (doc) {
+      this.router.navigate(["administration"], {fragment: "modif"})
+      this.selectedDocumentModPage = doc
+    }
+  }
+
   // ################################### Add Doc FORM ###################################
   // Variables
   valuePageAddPage: string = "";
@@ -317,11 +327,16 @@ export class AdministrationService {
                  auxURL: any, mainPath: any, auxPath: any,
                  des: any, type: any, systeme: any) {
 
-    let element = this.createDocumentObject(0, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme)
-    if (element !== null) {
+    let newElement = this.createDocumentObject(0, page, engin, typeEngin, mainRef, auxRef, mainURL, auxURL, mainPath, auxPath, des, type, systeme, true)
+    if (newElement !== null) {
+      Object.keys(newElement).forEach((key) => {
+        if (newElement && newElement[(key as keyof typeof newElement)] == undefined) {
+          (newElement as any)[(key as keyof typeof newElement)] = null
+        }
+      })
       let requestObject = {
         action: "create",
-        object: element
+        object: newElement
       }
       let endpoint = this.communicationService.API_Endpoint_addDoc
       this.communicationService.requestToAPI("POST", endpoint, requestObject).subscribe(

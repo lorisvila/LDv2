@@ -81,30 +81,40 @@ export class DataModule {
   }
 
   async addDocToDB(document: any) {
-    let queryString = 'INSERT INTO documents VALUES ('
+    let queryString = 'INSERT INTO documents'
     try {
-      queryString += `'${document.engin}', ` // TODO : Modify this horrible += list with a for loop as in the modDocFromDB method underneath
-      queryString += document.type ? `'${document.type}', ` : ' NULL, '
-      queryString += `'${document.systeme}', `
-      queryString += `'${document.ref_main}', `
-      queryString += document.ref_aux ? `'${document.ref_aux}', ` : 'NULL, '
-      queryString += `'${document.engin_type}', `
-      queryString += `'${document.des}', `
-      queryString += `'${document.url_main_file}', `
-      queryString += document.url_aux_file ? `'${document.url_aux_file}', ` : 'NULL, '
-      queryString += `'${document.url_main}', `
-      queryString += document.url_aux ? `'${document.url_aux}', ` : 'NULL, '
-      queryString += `'${document.page}')`
+      let keysSQL = []
+      for (let element of Object.keys(document)) {
+        if (element != "id") {
+          keysSQL.push(element)
+        }
+      }
+      queryString += ` (${keysSQL.join(', ')})`
+      let valuesSQL = []
+      for (let element of Object.keys(document)) {
+        if (document[element] && element != "id") {
+          if (element == 'engin_type') {
+            valuesSQL.push(`'["${(document[element] as []).join('","')}"]'`)
+          } else {
+            valuesSQL.push(`'${document[element]}'`)
+          }
+        } else if (document[element] == null && element != "id") {
+          valuesSQL.push(`NULL`)
+        }
+      }
+      queryString += ` VALUES (${valuesSQL.join(', ')})`
     } catch {
-      return null
+      throw new Error("")
     }
     // Make the request
     try {
       let results = (await this.SQLpool.request().query(queryString)).recordset
+      console.log("SQL Query : ", queryString)
       return await results
     } catch (error) {
-      console.error(`Une erreur est survenue sur la requête ${queryString}`, error)
-      return null // TODO : See if there is not a better way to return this Promise in case of a error instead of returning a null...
+      let errorMsg = `Une erreur est survenue sur la requête : ${queryString}`
+      console.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -125,16 +135,20 @@ export class DataModule {
       }
       queryString += valuesSQL.join(', ')
       queryString += ` WHERE id=${id}`
-    } catch {
-      return null
+    } catch (error) {
+      let errorMsg = `Une erreur est survenue sur la génération de la query SQL : ${queryString}`
+      console.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
     // Make the request
     try {
       let results = (await this.SQLpool.request().query(queryString)).recordset
+      console.log("SQL Query : ", queryString)
       return await results
     } catch (error) {
-      console.error(`Une erreur est survenue sur la requête ${queryString}`, error)
-      return null // TODO : See if there is not a better way to return this Promise in case of a error instead of returning a null...
+      let errorMsg = `Une erreur est survenue sur la query SQL : ${queryString}`
+      console.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 

@@ -8,14 +8,14 @@ import {API_RequestType} from "../app.types";
 })
 export class CommunicationService {
 
-  API_url: URL =  new URL("http://localhost:8080/")
+  API_url: URL =  new URL("http://localhost:8080/");
 
-  API_Section_Data: string = "/data"
-  API_Section_Auth: string = "/auth"
-  API_Section_DataManage: string = "/manage"
+  API_Section_Data: string = "/data";
+  API_Section_Auth: string = "/auth";
+  API_Section_DataManage: string = "/manage";
 
   // Name of localStorage variables
-  appLocalStorageVarName: string = "app"
+  appLocalStorageVarName: string = "app";
 
   defaultEnginLocalStorageVarName: string = "defaultEngin";
   favEnginLocalStorageVarName: string = "enginFav";

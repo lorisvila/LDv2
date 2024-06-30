@@ -45,6 +45,11 @@ export class App {
     this.app.use(this.AuthController.mainEndpoint, this.AuthController.router)
     this.app.use(this.DataManagerController.mainEndpoint, this.DataManagerController.router)
 
+    this.app.use((req, res, next) => {
+      let endpoint = req.url
+      this.sendResponse(res, {}, {code: 404, message: `Endpoint '${endpoint}' not found...`})
+    })
+
     this.DataModule.$dataReady.on('finished', () => {
       if (!this.httpServerRunning) { // The event may be called multiple time so do not try to launch another instance when it is called again
         this.httpServerRunning = true
@@ -52,7 +57,6 @@ export class App {
         this.app.listen(this.config.webserver.port, this.config.webserver.host)
       }
     })
-
   }
 
   logRequest(req: Request, res: Response, next: NextFunction) {
@@ -70,7 +74,7 @@ export class App {
       status: status,
     }
     if (token) {
-      responseObject.token = token;
+      responseObject.token = token
       res.cookie(this.config.auth.cookieName, token)
     }
     res.status(responseObject.status.code )

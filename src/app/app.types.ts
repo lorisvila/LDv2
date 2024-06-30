@@ -1,3 +1,35 @@
+//------------------------------
+// New type to implement into the Postgres Database
+export type NewItemDataType = {
+  id: number,
+  page: string,
+  des: string,
+  engin: string,
+  engin_type: string[],
+  meta: MetaLD | MetaDocFct | MetaModuleForm,
+  ref_aux?: string, // Paramètres optionnels
+  url_aux?: string,
+  url_main_file?: string,
+  url_aux_file?: string,
+}
+export type MetaLD = {
+  systeme: string,
+  type: string
+}
+export type MetaDocFct = {
+  systeme: string,
+  sous_systeme: string,
+  fonction: string,
+  type: string
+}
+export type MetaModuleForm = {
+  full_name: string,
+  short_name: string,
+  systeme: string
+}
+
+//------------------------------
+
 // Type for data in LD Dict
 export type ItemDataType = {
   page?: string,

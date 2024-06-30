@@ -61,9 +61,11 @@
 
   </wcs-grid-custom-cell>
 
+
+  <!--Bouton editer en tant que systémier / admin-->
   <ng-container *ngIf="administrationService.auth_status">
     <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
-    <wcs-button shape="round" routerLink="/administration"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+    <wcs-button shape="round" (click)="administrationService.showDocFromOtherPage(parseInt(item.id))"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
     </wcs-grid-custom-cell>
   </ng-container>
 

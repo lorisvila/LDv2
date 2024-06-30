@@ -12,10 +12,10 @@ export class DataController {
     this.router = Router()
     this.App = mainClass
 
-    this.router.get('/', (req, res) => {
+    /*this.router.get('/', (req, res) => {
       this.App.DataModule.checkIfDataIsUpToDate()
       this.App.sendResponse(res, undefined, {code: 200})
-    })
+    })*/
 
     this.router.get('/rawTable/:table', (req, res) => {
       this.App.DataModule.checkIfDataIsUpToDate()

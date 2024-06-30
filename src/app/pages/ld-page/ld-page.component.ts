@@ -3,6 +3,7 @@ import { EnginService } from "../../services/engin.service";
 import {LdService} from "../../services/ld.service";
 import {GeneralService} from "../../services/general.service";
 import {DataService} from "../../services/data.service";
+import {AdministrationService} from "../../services/administration.service";
 
 @Component({
   selector: 'app-ld-page',
@@ -15,7 +16,8 @@ export class LDPageComponent {
     public enginService: EnginService,
     public ldService: LdService,
     public generalService: GeneralService,
-    public dataService: DataService
+    public dataService: DataService,
+    public administrationService: AdministrationService
   ) {}
 
   protected readonly open = open;

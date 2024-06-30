@@ -38,9 +38,14 @@ wcs-accordion-content {
 #button-close-card {
   cursor: pointer;
 }
-#homeButton {
+.headerButton {
   cursor: pointer;
   user-select: none;
+}
+.actionsSlot {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1em;
 }
 #filters-card-body {
   display: flex;
