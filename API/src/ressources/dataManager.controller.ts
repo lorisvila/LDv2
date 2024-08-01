@@ -39,10 +39,42 @@ export class DataManagerController {
 
     this.router.post('/editDocument', (req: Request, res: Response) => {
       try {
+        let reqObject: RequestType = req.body as RequestType
         let user: UserType = this.App.AuthModule.checkUserTokenFromGET(req, res)
-        this.App.AuthModule.checkRole('admin', user)
+        this.App.AuthModule.checkRole('systemier', user)
 
-        this.App.sendResponse(res, undefined)
+        if (!reqObject.data.oldDocument || !reqObject.data.newDocument) {
+          throw new API_Error('REQUEST_VALUES_MISSING', `Il manque l ${reqObject.data.newDocument ? "'ancien" : "e nouveau"} document dans votre requête...`, {code: 401})
+        }
+        let newDocument = reqObject.data.newDocument as ItemDataType
+        let oldDocument = reqObject.data.oldDocument as ItemDataType
+
+        this.App.DataModule.modifyEntry(oldDocument,newDocument, "documents", "id").then(() => {
+          this.App.sendResponse(res, undefined)
+        }).catch((error) => {
+          this.App.handleError(res, error)
+        })
+      } catch (error) {
+        this.App.handleError(res, error)
+      }
+    })
+
+    this.router.post('/deleteDocument', (req: Request, res: Response) => {
+      try {
+        let reqObject: RequestType = req.body as RequestType
+        let user: UserType = this.App.AuthModule.checkUserTokenFromGET(req, res)
+        this.App.AuthModule.checkRole('systemier', user)
+
+        if (!reqObject.data.document) {
+          throw new API_Error('REQUEST_VALUES_MISSING', `Il manque le document dans votre requête...`, {code: 401})
+        }
+        let document = reqObject.data.document as ItemDataType
+
+        this.App.DataModule.deleteEntry(document, "documents", "id").then(() => {
+          this.App.sendResponse(res, undefined)
+        }).catch((error) => {
+          this.App.handleError(res, error)
+        })
       } catch (error) {
         this.App.handleError(res, error)
       }

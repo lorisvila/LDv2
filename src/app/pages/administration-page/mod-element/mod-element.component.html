@@ -136,6 +136,7 @@
     <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendModifiedDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
       Envoyer la modification
     </wcs-button>
+    <wcs-button class="wcs-danger" (click)="administrationService.sendDeleteDocument(forms)">Supprimer le document</wcs-button>
   } @else if (administrationService.editingCreatingDocument == "CREATING") {
     <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendCreateDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
       Créer le document

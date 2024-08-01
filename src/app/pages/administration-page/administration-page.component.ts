@@ -31,7 +31,7 @@ export class AdministrationPageComponent {
   changeUrlToTab(event: any) {
     let new_tab = event.detail.selectedKey
     if (new_tab == 'ajout') {
-      this.administrationService.resetFieldsForCreateDoc()
+      this.administrationService.prepareUIcreateDoc()
     }
     this.selectedPageFromUrl = new_tab
     this.router.navigate( [ '/administration' ], { fragment: new_tab } )

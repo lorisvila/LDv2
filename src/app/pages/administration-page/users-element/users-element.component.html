@@ -17,8 +17,8 @@
         Créer un utilisateur
       </wcs-button>
       <wcs-grid [data]="administrationService.users" rowIdPath="username">
-        <wcs-grid-column path="username" name="Nom d'utilisateur"></wcs-grid-column>
-        <wcs-grid-column path="role" name="Rôle"></wcs-grid-column>
+        <wcs-grid-column path="username" name="Nom d'utilisateur" sort=""></wcs-grid-column>
+        <wcs-grid-column path="role" name="Rôle" sort=""></wcs-grid-column>
         <wcs-grid-column name="Dernière connexion" customCells="" id="lastConnectUserCell"></wcs-grid-column>
         <wcs-grid-column name="Hash mot de passe" customCells="" id="passwordUserCell"></wcs-grid-column>
         <wcs-grid-column name="Editer" customCells="" id="editUserCell"></wcs-grid-column>

@@ -8,6 +8,7 @@ import {EnginService} from "../../../services/engin.service";
 import {NgForOf} from "@angular/common";
 import {FilterType, ItemDataType, LinkType} from "../../../app.types";
 import * as _ from "lodash";
+import {WcsCellFormatter} from "wcs-core";
 
 @Component({
   selector: 'app-mod-element',

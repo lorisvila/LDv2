@@ -6,6 +6,7 @@ import {Client, connect, DatabaseError, ResultRecord} from "ts-postgres";
 import {API_Error} from "~/types/errors";
 import * as process from "node:process";
 import _ from "lodash";
+import * as repl from "node:repl";
 
 export class DataModule {
 
@@ -115,12 +116,128 @@ export class DataModule {
   }
 
   async createEntry(newObject: any, tableName: TableName): Promise<void> {
+
+    let [keysString, valuesString] = this.getKeysAndValuesFormatted(tableName, newObject)
+
+    let checkQuery = `
+        SELECT EXISTS(
+            SELECT FROM "${tableName}"
+            WHERE (engin = '${newObject.engin}' AND (name = '${newObject.name}' OR ref_main = '${newObject.ref_main}'))
+        )
+    `
+    let checkValue
+    try {
+      checkValue = await this.dbClient.query(checkQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, checkQuery)
+    }
+
+    let checkBool = checkValue?.rows[0][0]
+    if (checkBool == true || checkBool == undefined) {
+      throw new API_Error('ENTRY_ALREADY_EXISTS', "L'objet que vous souhaitez ajouter existe déjà...", {code: 409})
+    }
+
+    let addQuery = `
+      INSERT INTO "${tableName}" (${keysString})
+      VALUES (${valuesString});
+    `
+
+    try {
+      await this.dbClient.query(addQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, addQuery)
+    }
+
+  }
+
+  async modifyEntry(oldObject: any, newObject: any, tableName: TableName, objectIdKey: string): Promise<void> {
+
+    let [keysString, valuesString] = this.getKeysAndValuesFormatted(tableName, newObject, oldObject)
+    if (!oldObject[objectIdKey]) {
+      throw new API_Error('API_INTERN_ERROR', "ID de l'objet à modifier non trouvé dans votre requête...")
+    }
+
+    let checkQuery = `
+        SELECT EXISTS(
+            SELECT FROM "${tableName}"
+            WHERE (${objectIdKey} = '${oldObject[objectIdKey]}')
+        )
+    `
+    let checkValue
+    try {
+      checkValue = await this.dbClient.query(checkQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, checkQuery)
+    }
+
+    let checkBool = checkValue?.rows[0][0]
+    if (checkBool == false || checkBool == undefined) {
+      throw new API_Error('ENTRY_ALREADY_EXISTS', "L'objet que vous souhaitez éditer n'existe pas...", {code: 409})
+    }
+
+    let replaceQuery = `
+      UPDATE "${tableName}"
+      SET (${keysString}) = (${valuesString})
+      WHERE (${objectIdKey} = ${oldObject[objectIdKey]})
+    `
+
+    try {
+      await this.dbClient.query(replaceQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, replaceQuery)
+    }
+
+  }
+
+  async deleteEntry(object: any, tableName: TableName, objectIdKey: string): Promise<void> {
+
+    if (!object[objectIdKey]) {
+      throw new API_Error('API_INTERN_ERROR', "ID de l'objet à modifier non trouvé dans votre requête...")
+    }
+
+    let checkQuery = `
+        SELECT EXISTS(
+            SELECT FROM "${tableName}"
+            WHERE (${objectIdKey} = '${object[objectIdKey]}')
+        )
+    `
+    let checkValue
+    try {
+      checkValue = await this.dbClient.query(checkQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, checkQuery)
+    }
+
+    let checkBool = checkValue?.rows[0][0]
+    if (checkBool == false || checkBool == undefined) {
+      throw new API_Error('ENTRY_ALREADY_EXISTS', "L'objet que vous souhaitez supprimer n'existe pas...", {code: 409})
+    }
+
+    let deleteQuery = `
+      DELETE FROM "${tableName}"
+      WHERE (${objectIdKey} = ${object[objectIdKey]})
+    `
+
+    try {
+      await this.dbClient.query(deleteQuery)
+    } catch (error) {
+      this.catchDataBaseErrror(error, deleteQuery)
+    }
+
+  }
+
+  getKeysAndValuesFormatted(tableName: string, newObject: any, otherObject?: any) {
     let keys = this.App.config.data.tablesNecessaryKeys.find(table => table.tableName == tableName)?.keys
     if (!keys) {
-      throw new API_Error('API_INTERN_ERROR', `La config pour insérer un document dans la table ${tableName} n'a pas été trouvée...`)
+      throw new API_Error('API_INTERN_ERROR', `La config pour insérer un objet dans la table ${tableName} n'a pas été trouvée...`)
     }
     if (!_.every(keys, _.partial(_.has, newObject))) {
-      throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre document est / sont manquantes dans votre requête...', {code: 401})
+      throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 401})
+    }
+    if (otherObject) {
+      if (!_.every(keys, _.partial(_.has, otherObject))) {
+        throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 401})
+      }
     }
 
     let values: string[] = []
@@ -135,45 +252,14 @@ export class DataModule {
     let keysString = '"' + keys.join("\", \"") + '"'
     let valuesString = "'" + values.join("', '") + "'"
 
-    let checkQuery = `
-        SELECT EXISTS(
-            SELECT FROM "documents"
-            WHERE (engin = '${newObject.engin}' AND (name = '${newObject.name}' OR ref_main = '${newObject.ref_main}'))
-        )
-    `
-    let addQuery = `
-      INSERT INTO "documents" (${keysString})
-      VALUES (${valuesString});
-    `
-
-    let checkValue
-    try {
-      checkValue = await this.dbClient.query(checkQuery)
-    } catch (error) {
-      this.catchDataBaseErrror(error)
-    }
-
-    let checkBool = checkValue?.rows[0][0]
-    if (checkBool == true || checkBool == undefined) {
-      throw new API_Error('ENTRY_ALREADY_EXISTS', "Le document que vous souhaitez renseigner existe déjà...", {code: 409})
-    }
-
-    try {
-      await this.dbClient.query(addQuery)
-    } catch (error) {
-      this.catchDataBaseErrror(error)
-    }
+    return [keysString, valuesString]
   }
 
-  async modifyEntrey(oldObject: any, newObject: any, tableName: TableName): Promise<void> {
-
-  }
-
-  catchDataBaseErrror(error: any) {
+  catchDataBaseErrror(error: any, queryString: string) {
     if (error instanceof DatabaseError) {
-      throw new API_Error('DATABASE_ERROR', `Erreur base de donnée : ${error.detail}`, {code: 400})
+      throw new API_Error('DATABASE_ERROR', `Erreur base de donnée : ${error.detail} | Requête : ${queryString}`, {code: 400})
     } else {
-      console.log(error)
+      console.error(error)
       throw new API_Error('API_INTERN_ERROR', 'Une erreur interne est survenue...')
     }
   }

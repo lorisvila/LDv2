@@ -34,6 +34,7 @@ export class CommunicationService {
   API_Endpoint_EditUser: URL = new URL(this.API_Section_Auth + "/editUser", this.API_url)
   API_Endpoint_EditDocument: URL = new URL(this.API_Section_DataManage + "/editDocument", this.API_url)
   API_Endpoint_CreateDocument: URL = new URL(this.API_Section_DataManage + "/createDocument", this.API_url)
+  API_Endpoint_DeleteDocument: URL = new URL(this.API_Section_DataManage + "/deleteDocument", this.API_url)
 
   // API Token
   API_token: string | undefined = undefined

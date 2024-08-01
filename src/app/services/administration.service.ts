@@ -275,9 +275,13 @@ export class AdministrationService {
     }
   }
 
-  resetFieldsForCreateDoc() {
+  resetFieldsEditDoc() {
     this.documentEditFormModel = JSON.parse(JSON.stringify(this.emptyModel))
     this.documentEditBackup = undefined
+  }
+
+  prepareUIcreateDoc() {
+    this.resetFieldsEditDoc()
     this.editingCreatingDocument = 'CREATING'
   }
 
@@ -287,20 +291,10 @@ export class AdministrationService {
     })
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_EditDocument, {oldDocument: this.documentEditBackup, newDocument: this.documentEditFormModel}).subscribe(
       (response) => {
-        const check = this.communicationService.handleResponse(response)
-        if (check) {
-          this.notif.success('Le document a été modifié avec succès')
-        }
-        forms.forEach(form => {
-          form.enable()
-        })
+        this.handleResponseDocument(response, forms, 'Le document a été modifié avec succès')
       },
       (error) => {
-        this.communicationService.handleErrorResponse(error)
-        this.documentEditForm.enable()
-        forms.forEach(form => {
-          form.enable()
-        })
+        this.handleErrorResponseDocument(error, forms)
       }
     )
   }
@@ -311,22 +305,46 @@ export class AdministrationService {
     })
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_CreateDocument, {document: this.documentEditFormModel}).subscribe(
       (response) => {
-        const check = this.communicationService.handleResponse(response)
-        if (check) {
-          this.notif.success('Le document a été crée avec succès')
-        }
-        forms.forEach(form => {
-          form.enable()
-        })
+        this.handleResponseDocument(response, forms, 'Le document a été crée avec succès')
       },
       (error) => {
-        this.communicationService.handleErrorResponse(error)
-        this.documentEditForm.enable()
-        forms.forEach(form => {
-          form.enable()
-        })
+        this.handleErrorResponseDocument(error, forms)
       }
     )
+  }
+
+  sendDeleteDocument(forms: UntypedFormGroup[]) {
+    forms.forEach(form => {
+      form.disable()
+    })
+    console.log(this.documentEditBackup)
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteDocument, {document: this.documentEditBackup}).subscribe(
+      (response) => {
+        this.handleResponseDocument(response, forms, 'Le document a été modifié avec succès')
+      },
+      (error) => {
+        this.handleErrorResponseDocument(error, forms)
+      }
+    )
+  }
+
+  handleResponseDocument(response: Object, forms: UntypedFormGroup[], successMessage: string) {
+    const check = this.communicationService.handleResponse(response)
+    if (check) {
+      this.notif.success(successMessage)
+    }
+    forms.forEach(form => {
+      form.enable()
+    })
+    this.resetFieldsEditDoc()
+  }
+
+  handleErrorResponseDocument(error: any, forms: UntypedFormGroup[]) {
+    this.communicationService.handleErrorResponse(error)
+    this.documentEditForm.enable()
+    forms.forEach(form => {
+      form.enable()
+    })
   }
 
 }
