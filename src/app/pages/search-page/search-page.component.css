@@ -7,19 +7,12 @@
 }
 
 /*Title / Action bar*/
-#title-engin-field {
-  font-size: 0.8em;
-}
 .label-search-action-bar {
   margin: 0 1em;
   max-height: 1.5em;
   max-width: 20em;
   overflow: hidden;
   align-self: center;
-}
-#homeButton {
-  cursor: pointer;
-  user-select: none;
 }
 
 /*Tabs common elements*/
@@ -40,4 +33,12 @@ h4 {
   text-align: left;
 }
 
-/*Tab listMode*/
+/*Grid styling*/
+.grid-filter-div {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.2em;
+}
+.grid-filter-div > * {
+  text-align: start;
+}

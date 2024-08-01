@@ -24,15 +24,6 @@
   }
 }
 
-/*Title*/
-#title-engin-field {
-  font-size: 0.8em;
-}
-#homeButton {
-  cursor: pointer;
-  user-select: none;
-}
-
 /*Cards common elements*/
 h4 {
   margin: 0 0 1em;

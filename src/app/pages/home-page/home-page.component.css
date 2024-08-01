@@ -18,7 +18,7 @@ h1 {
 /* Card common items*/
 .card {
   padding: 1em;
-  width: 400px;
+  width: 25em;
   display: flex;
   flex-direction: column;
   align-items: center;

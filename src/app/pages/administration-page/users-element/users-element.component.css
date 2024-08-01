@@ -1,0 +1,18 @@
+wcs-card-body {
+  text-align: start;
+}
+.property-value {
+  font-weight: 200;
+}
+.password {
+  color: transparent;
+  border: solid 0.1em;
+  border-color: var(--wcs-blue);
+  border-radius: 0.2em;
+  font-size: 0.8em;
+}
+.password:hover {
+  color: white;
+  border-color: transparent;
+  background: var(--wcs-orange);
+}

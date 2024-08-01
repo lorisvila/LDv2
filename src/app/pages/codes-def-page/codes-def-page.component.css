@@ -6,15 +6,6 @@
   gap: var(--wcs-margin-l);
 }
 
-/*Title*/
-#title-engin-field {
-  font-size: 0.8em;
-}
-#homeButton {
-  cursor: pointer;
-  user-select: none;
-}
-
 /*Cards common elements*/
 .ft-w-400 {
   font-weight: 400;

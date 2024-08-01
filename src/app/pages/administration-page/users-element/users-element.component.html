@@ -1,0 +1,47 @@
+<wcs-card>
+  <wcs-card-body class="card-header">
+    <wcs-mat-icon icon="group"></wcs-mat-icon>
+    <h2>Utilisateurs</h2>
+  </wcs-card-body>
+  <wcs-divider></wcs-divider>
+  <wcs-card-body class="card-content">
+    <wcs-button (click)="administrationService.getUsers()" class="wcs-primary">
+      @if(administrationService.users.length == 0) {
+        Afficher les données
+      } @else {
+        Rafraîchir les données
+      }
+    </wcs-button>
+    @if(administrationService.users.length != 0) {
+      <wcs-button class="wcs-secondary" (click)="administrationService.openModalCreateUser()">
+        Créer un utilisateur
+      </wcs-button>
+      <wcs-grid [data]="administrationService.users" rowIdPath="username">
+        <wcs-grid-column path="username" name="Nom d'utilisateur"></wcs-grid-column>
+        <wcs-grid-column path="role" name="Rôle"></wcs-grid-column>
+        <wcs-grid-column name="Dernière connexion" customCells="" id="lastConnectUserCell"></wcs-grid-column>
+        <wcs-grid-column name="Hash mot de passe" customCells="" id="passwordUserCell"></wcs-grid-column>
+        <wcs-grid-column name="Editer" customCells="" id="editUserCell"></wcs-grid-column>
+
+        @for (user of administrationService.users; track user.username) {
+          <wcs-grid-custom-cell columnId="lastConnectUserCell" [rowId]="user.username">
+            Dernière connexion :
+            @if(user.lastConnect) {
+              {{user.lastConnect | date:'medium':'gmt+2'}}
+            } @else {
+              <b>Jamais</b>
+            }
+          </wcs-grid-custom-cell>
+          <wcs-grid-custom-cell columnId="passwordUserCell" [rowId]="user.username">
+            <span class="password">{{user.password}}</span>
+          </wcs-grid-custom-cell>
+          <wcs-grid-custom-cell columnId="editUserCell" [rowId]="user.username" class="flex-row flex-align-center flex-justify-center">
+            <wcs-button class="wcs-secondary" shape="round" (click)="administrationService.openModalEditUser(user)">
+              <wcs-mat-icon icon="manage_accounts"></wcs-mat-icon>
+            </wcs-button>
+          </wcs-grid-custom-cell>
+        }
+      </wcs-grid>
+    }
+  </wcs-card-body>
+</wcs-card>

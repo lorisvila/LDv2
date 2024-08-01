@@ -19,12 +19,6 @@
 }
 
 /*Title*/
-#actionBarActions {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2em;
-}
 #homeButton {
   cursor: pointer;
   user-select: none;
@@ -32,14 +26,9 @@
 wcs-tabs {
   user-select: none;
 }
-wcs-tabs > * {
+wcs-tab {
   user-select: text;
-}
-.authContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 0.5em;
+  padding: 1em;
 }
 .button {
   cursor: pointer;

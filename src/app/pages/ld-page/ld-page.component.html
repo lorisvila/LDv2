@@ -1,22 +1,6 @@
-<wcs-action-bar gutter="">
-  Livrets de dépannages - <span id="title-engin-field">{{enginService.actual_engin.engin}}</span>
-  <div slot="actions" class="actionsSlot">
-    <wcs-mat-icon icon="home" slot="actions" class="headerButton" size="l" routerLink="/"></wcs-mat-icon>
-  </div>
-</wcs-action-bar>
+<app-action-bar pageName="Livrets de dépannages"></app-action-bar>
 
 <div class="page-content">
-
-  <!--Card d'avertissement plateformes DsMat et DocMat-->
-  <wcs-card mode="flat" id="card-connect-services" *ngIf="!generalService.offlineMode && generalService.connectMessageStatus"
-            slot="actions">
-    <wcs-card-body id="body-card-connect-services">
-      <span>Pour ouvrir les schémas électrique sur DsMat ou DocMat, il est nécessaire de s'authentifier auparavant</span>
-      <wcs-button mode="stroked" size="s" [href]="generalService.URLconnectDsMat" target="_blank">Se connecter à DsMat</wcs-button>
-      <wcs-button mode="stroked" size="s" [href]="generalService.URLconnectDocMat" target="_blank">Se connecter à DocMat</wcs-button>
-      <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.hideConnectMessage()"></wcs-mat-icon>
-    </wcs-card-body>
-  </wcs-card>
 
   <!--Card pour les filtres-->
   <wcs-card mode="raised">
@@ -27,6 +11,7 @@
           <wcs-label>N° enregistrés</wcs-label>
           <wcs-select #selectFavEngin placeholder="Choisir un engin" [value]="ldService.fav_engin"
                       (wcsChange)="ldService.changeValueFilter('fav_engin', selectFavEngin.value)">
+            <wcs-select-option disabled="true" *ngIf="enginService.combinedTechFavEngins.engins_technicentre.length == 0">Vide...</wcs-select-option>
             <wcs-select-option value="" *ngIf="ldService.fav_engin"><b>Aucun</b></wcs-select-option>
             <wcs-select-option disabled="true" *ngIf="enginService.combinedTechFavEngins.engins_technicentre.length > 0">Technicentre</wcs-select-option>
             <wcs-select-option *ngFor="let engin of enginService.combinedTechFavEngins.engins_technicentre" [value]="'technicentre_' + engin.engin_numero">{{engin.engin}} {{engin.engin_type}} {{engin.engin_numero}}</wcs-select-option>
@@ -41,7 +26,7 @@
           <wcs-select #selectTypeEngin placeholder="Choisir un type" [value]="ldService.engin_type"
                       (wcsChange)="ldService.changeValueFilter('engin_type', selectTypeEngin.value)">
             <wcs-select-option value="" *ngIf="ldService.engin_type"><b>Tous</b></wcs-select-option>
-            <wcs-select-option *ngFor="let type of enginService.actual_types_engin" [value]="type">{{type}}</wcs-select-option>
+            <wcs-select-option *ngFor="let type of enginService.actual_engin.types_engin" [value]="type">{{type}}</wcs-select-option>
           </wcs-select>
         </div>
 

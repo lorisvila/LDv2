@@ -1,0 +1,144 @@
+<div class="div-header">
+  <wcs-mat-icon icon="edit_note"></wcs-mat-icon>
+  @if (administrationService.editingCreatingDocument == "EDITING") {
+    <h2>Modififcation de documents</h2>
+  } @else if (administrationService.editingCreatingDocument == "CREATING") {
+    <h2>Création de documents</h2>
+  }
+  @if (formUnchanged) {
+    <wcs-badge class="badge-status-edition wcs-success">Original<wcs-mat-icon icon="draft"></wcs-mat-icon></wcs-badge>
+  } @else {
+    <wcs-badge class="badge-status-edition wcs-warning">Brouillon<wcs-mat-icon icon="draft"></wcs-mat-icon></wcs-badge>
+  }
+</div>
+
+<div class="div-content">
+  <wcs-card mode="flat">
+    <wcs-card-body>
+      <h4 style="margin: 0">Informations générales</h4>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body>
+      <!--Main Form-->
+      <form [formGroup]="administrationService.documentEditForm">
+        <formly-form [form]="administrationService.documentEditForm" [fields]="documentEditFormFields"
+                     [model]="administrationService.documentEditFormModel"></formly-form>
+      </form>
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Grid filtres-->
+  <wcs-card mode="flat">
+    <wcs-card-body>
+      <h4 style="margin: 0">Filtres</h4>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="form-grid-container">
+      @if (administrationService.documentEditFormModel.meta?.length !== 0) {
+        <wcs-grid [data]="administrationService.documentEditFormModel.meta" id="grid-filter" row-id-path="filter">
+          <wcs-grid-column name="Type" path="type" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Filtre" path="filter_formatted" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Supprimer" customCells="" id="filtersDeleteCell" width="4em"></wcs-grid-column>
+
+          @for (filter of administrationService.documentEditFormModel.meta; track filter.filter) {
+            <wcs-grid-custom-cell column-Id="filtersDeleteCell" [rowId]="filter.filter" class="flex-row flex-justify-center flex-align-center">
+              <wcs-button class="wcs-danger" mode="stroked" shape="round" (click)="deleteFilter(filter)" size="s">
+                <wcs-mat-icon icon="delete"></wcs-mat-icon>
+              </wcs-button>
+            </wcs-grid-custom-cell>
+          }
+        </wcs-grid>
+        <wcs-divider></wcs-divider>
+      } @else {
+        <wcs-badge class="wcs-warning">Ce document ne comporte pas de filtres</wcs-badge>
+      }
+      <div class="flex-row add-grid-container">
+        <form [formGroup]="documentEditFormFilters">
+          <formly-form [form]="documentEditFormFilters" [fields]="documentEditFormFilterFields"
+                       [model]="documentEditFormFiltersModel"></formly-form>
+        </form>
+        <wcs-button (click)="addFilter()" [disabled]="!readyAddFilter">Rajouter</wcs-button>
+      </div>
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Grid tags-->
+  <wcs-card mode="flat">
+    <wcs-card-body>
+      <h4 style="margin: 0">Tags</h4>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="form-grid-container">
+      @if (administrationService.documentEditFormModel.tags?.length !== 0) {
+        <wcs-grid [data]="tagsFormattedData" id="grid-tags" row-id-path="tag">
+          <wcs-grid-column name="Tag" path="tag" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Supprimer" customCells="" id="tagsDeleteCell" width="4em"></wcs-grid-column>
+
+          @for (tag of tagsFormattedData; track tag.tag) {
+            <wcs-grid-custom-cell column-Id="tagsDeleteCell" [rowId]="tag.tag" class="flex-row flex-justify-center flex-align-center">
+              <wcs-button class="wcs-danger" mode="stroked" shape="round" (click)="removeTag(tag.tag)" size="s">
+                <wcs-mat-icon icon="delete"></wcs-mat-icon>
+              </wcs-button>
+            </wcs-grid-custom-cell>
+          }
+        </wcs-grid>
+        <wcs-divider></wcs-divider>
+      } @else {
+        <wcs-badge class="wcs-warning">Ce document ne comporte pas de tags</wcs-badge>
+      }
+      <div class="flex-row add-grid-container">
+        <form [formGroup]="documentEditFormTags">
+          <formly-form [form]="documentEditFormTags" [fields]="documentEditFormTagsFields"
+                       [model]="documentEditFormTagsModel"></formly-form>
+        </form>
+        <wcs-button (click)="addTag()" [disabled]="!readyAddTag">Rajouter</wcs-button>
+      </div>
+    </wcs-card-body>
+  </wcs-card>
+
+  <!--Grid links-->
+  <wcs-card mode="flat">
+    <wcs-card-body>
+      <h4 style="margin: 0">Liens</h4>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="form-grid-container">
+      @if (administrationService.documentEditFormModel.links?.length !== 0) {
+        <wcs-grid [data]="administrationService.documentEditFormModel.links" id="grid-links" row-id-path="name">
+          <wcs-grid-column name="Nom" path="name" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Type" path="type" sort=""></wcs-grid-column>
+          <wcs-grid-column name="URL" path="url" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Supprimer" customCells="" id="linksDeleteCell" width="4em"></wcs-grid-column>
+
+          @for (link of administrationService.documentEditFormModel.links; track link.name) {
+            <wcs-grid-custom-cell column-Id="linksDeleteCell" [rowId]="link.name" class="flex-row flex-justify-center flex-align-center">
+              <wcs-button class="wcs-danger" mode="stroked" shape="round" (click)="removeUrl(link.url)" size="s">
+                <wcs-mat-icon icon="delete"></wcs-mat-icon>
+              </wcs-button>
+            </wcs-grid-custom-cell>
+          }
+        </wcs-grid>
+        <wcs-divider></wcs-divider>
+      } @else {
+        <wcs-badge class="wcs-warning">Ce document ne comporte pas de liens</wcs-badge>
+      }
+      <div class="flex-row add-grid-container">
+        <form [formGroup]="documentEditFormLinks">
+          <formly-form [form]="documentEditFormLinks" [fields]="documentEditFormLinksFields"
+                       [model]="documentEditFormLinksModel"></formly-form>
+        </form>
+        <wcs-button (click)="addUrl()" [disabled]="!readyAddUrl">Rajouter</wcs-button>
+      </div>
+    </wcs-card-body>
+  </wcs-card>
+
+  @if (administrationService.editingCreatingDocument == "EDITING") {
+    <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendModifiedDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
+      Envoyer la modification
+    </wcs-button>
+  } @else if (administrationService.editingCreatingDocument == "CREATING") {
+    <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendCreateDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
+      Créer le document
+    </wcs-button>
+  }
+</div>

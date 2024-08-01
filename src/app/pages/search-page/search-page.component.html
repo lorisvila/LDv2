@@ -1,124 +1,72 @@
-<wcs-action-bar gutter="">
-  Recherche - <span id="title-engin-field">{{enginService.actual_engin.engin}}</span>
-  <div slot="actions">
-    <p class="label-search-action-bar" *ngIf="searchService.searchValue !== ''">Résultats pour : <span class="ft-w-500">{{searchService.searchValue}}</span></p>
-    <p class="label-search-action-bar" *ngIf="searchService.searchValue === ''">Résultats pour : <span class="ft-w-500">Tout afficher</span></p>
-    <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" routerLink="/"></wcs-mat-icon>
-  </div>
-</wcs-action-bar>
+<app-action-bar pageName="Recherche">
+  <p class="label-search-action-bar" *ngIf="searchService.searchValue !== ''">Résultats pour : <span class="ft-w-500">{{searchService.searchValue}}</span></p>
+  <p class="label-search-action-bar" *ngIf="searchService.searchValue === ''">Résultats pour : <span class="ft-w-500">Tout afficher</span></p>
+</app-action-bar>
 
 <div class="page-content">
 
   <!--Error message -> Database not correctly initialized-->
-  <ng-container *ngIf="!searchService.searchedObjects">
+  @if (!searchService.searchedObjects) {
     <p>Un problème de chargement de la base de donnée est survenue, retentez de l'initialiser ci-dessous</p>
     <wcs-button class="wcs-warning" (click)="searchService.searchIntoWebSite('')">Initialiser la base de donnée</wcs-button>
-  </ng-container>
-
-  <ng-container *ngIf="searchService.searchedObjects">
+  } @else {
     <!--Error message -> no item found-->
-    <ng-container *ngIf="searchService.searchedObjects.count === 0">
+    @if (searchService.searchedObjects.length === 0) {
       <p>Aucun document trouvé pour "<i>{{searchService.searchValue}}</i>"</p>
-    </ng-container>
+    }
 
     <!--Results Tab-->
-    <ng-container *ngIf="searchService.searchedObjects && searchService.searchedObjects.count !== 0">
-      <wcs-tabs align="center">
+    @if (searchService.searchedObjects && searchService.searchedObjects.length !== 0) {
 
-        <wcs-tab header="Tableau" item-key="gridMode" class="tab-content">
+        <!--Grid pour l'affichage des données des LD-->
+        <wcs-grid row-id-path="id" [data]="searchService.searchedObjects">
+          <!--Colonnes de la grid-->
+          <wcs-grid-column name="Désignation" path="name" sort="" id="column-designation" width="30vw"></wcs-grid-column>
+          <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
+          <wcs-grid-column name="Filtres" id="filters" customCells="true" width="10vw"></wcs-grid-column>
+          <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref"></wcs-grid-column>
+          <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
 
-          <!--Grid pour l'affichage des données des LD-->
-          <wcs-grid row-id-path="id" [data]="searchService.searchedObjects">
-            <!--Colonnes de la grid-->
-            <wcs-grid-column name="Désignation" path="des" sort="" id="column-designation" width="30vw"></wcs-grid-column>
-            <wcs-grid-column name="Système" path="systeme.filter_formatted" sort="" id="column-systeme"></wcs-grid-column>
-            <wcs-grid-column name="Type" path="type.filter_formatted" sort="" id="column-type"></wcs-grid-column>
-            <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
-            <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref"></wcs-grid-column>
-            <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
-
-            <!--Cases personalisés pour la colonne "Type Engin"-->
-            <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
+          <!--Cases personalisés pour la colonne "Type Engin"-->
+          @for (item of searchService.searchedObjects; track item.id) {
+            <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id">
               <!--Affichage de "Tous" si tous les types sont concernés-->
-              <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin.engin].length; else elseBlock">
-                Tous les {{enginService.actual_engin.engin}}
-              </span>
-              <!--Affichage des types concernés si pas tous les types-->
-              <ng-template #elseBlock>
-                {{item.engin_type.join(" ; ")}}
-              </ng-template>
-
+              @if (item.engin_type.length == enginService.actual_engin.types_engin.length) {
+                <span>Tous les {{enginService.actual_engin.engin}}</span>
+              } @else {
+                <span>{{item.engin_type.join(" ; ")}}</span>
+              }
             </wcs-grid-custom-cell>
+          }
 
-            <!--Cases personalisés pour la colonne "Ouvrir"-->
-            <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
-            <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
-
-              <!--Bouton mode hors-ligne : fichier Principal / DsMat local en utilisant "url_main_file"-->
-              <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
-                          [href]="item.url_main_file"
-                          [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
-                Ouvrir LD local 📥
-              </wcs-button>
-
-              <!--Bouton mode hors-ligne : fichier Auxiliaire / Docmat local en utilisant "url_aux_file"-->
-              <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
-                          [href]="item.url_aux_file"
-                          [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
-                Ouvrir Doc local 📥
-              </wcs-button>
-
-              <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
-
-              <!--Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"-->
-              <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="!generalService.offlineMode"
-                          [href]="item.url_main"
-                          [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
-                Ouvrir LD sur DsMat 🔗
-              </wcs-button>
-
-              <!--Bouton mode en ligne : fichier en ligne Auxiliaire / DocMat en utilisant "url_aux"-->
-              <wcs-button mode="clear" size="s" target="_blank"
-                          *ngIf="!generalService.offlineMode && item.url_aux != '' && item.url_aux != undefined"
-                          [href]="item.url_aux"
-                          [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
-                Ouvrir doc sur Docmat 🔗
-              </wcs-button>
-
+          <!--Cases personalisés pour la colonne "Filtres"-->
+          @for (item of searchService.searchedObjects; track item.id) {
+            <wcs-grid-custom-cell column-Id="filters" [rowId]="item.id">
+              <div class="grid-filter-div">
+                @for (filter of getKeys(item.meta); track filter) {
+                  <wcs-badge class="wcs-primary"><b>{{filter}}</b> : {{returnFilterObject(item.meta, filter).filter_formatted}}</wcs-badge>
+                }
+              </div>
             </wcs-grid-custom-cell>
+          }
 
-            <!--Pagination element at the bottom of the grid-->
-            <wcs-grid-pagination id="grid-pagination" [pageSize]="20" [availablePageSizes]="[20, 40, 60]"></wcs-grid-pagination>
-          </wcs-grid>
+          <!--Cases personalisés pour la colonne "Ouvrir"-->
+          <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
+          <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
 
-        </wcs-tab>
+            <wcs-button mode="clear" size="s" target="_blank"
+                        *ngFor="let link of item.links"
+                        [href]="link.url"
+                        class="wcs-primary">
+              🔗 {{link.type}} - {{link.name}}
+            </wcs-button>
 
-        <wcs-tab header="Liste" item-key="listMode" class="tab-content">
+          </wcs-grid-custom-cell>
 
-          <wcs-list-item *ngFor="let result of searchService.searchedObjects">
-            <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
-            <div slot="title">{{result.des}}</div>
-            <div slot="actions">
-              <wcs-button *ngIf="!generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.url_main" target="_blank">
-                <wcs-mat-icon icon="link"></wcs-mat-icon>
-              </wcs-button>
-              <wcs-button *ngIf="generalService.offlineMode" shape="square" mode="stroked" class="wcs-secondary" [href]="result.url_main_file" target="_blank">
-                <wcs-mat-icon icon="download"></wcs-mat-icon>
-              </wcs-button>
-            </div>
-            <wcs-list-item-properties>
-              <wcs-list-item-property *ngIf="result.ref_main">Référence : {{result.ref_main}}</wcs-list-item-property>
-              <wcs-list-item-property *ngIf="result.systeme.filter_formatted">Système : {{result.systeme.filter_formatted}}</wcs-list-item-property>
-              <wcs-list-item-property *ngIf="result.type.filter_formatted">Type : {{result.type.filter_formatted}}</wcs-list-item-property>
-            </wcs-list-item-properties>
-          </wcs-list-item>
+          <!--Pagination element at the bottom of the grid-->
+          <wcs-grid-pagination id="grid-pagination" [pageSize]="20" [availablePageSizes]="[20, 40, 60]"></wcs-grid-pagination>
+        </wcs-grid>
+    }
+  }
 
-        </wcs-tab>
-
-      </wcs-tabs>
-    </ng-container>
-  </ng-container>
 </div>

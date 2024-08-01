@@ -1,16 +1,16 @@
 <!--Grid pour l'affichage des données des LD-->
 <wcs-grid id="grid-simple-1" row-id-path="id" [data]="ldService.filteredLDdata" [loading]="ldService.loading">
   <!--Colonnes de la grid-->
-  <wcs-grid-column name="Désignation" path="des" sort="" id="column-designation" width="40vw"></wcs-grid-column>
+  <wcs-grid-column name="Désignation" path="name" sort="" id="column-designation" width="40vw"></wcs-grid-column>
   <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
   <wcs-grid-column *ngIf="administrationService.auth_status" name="Edit" id="edit" custom-cells="true"></wcs-grid-column>
 
   <!--Cases personalisés pour la colonne "Type Engin"-->
-  <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata; index as i">
+  <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
     <!--Affichage de "Tous" si tous les types sont concernés-->
-    <span *ngIf="item.engin_type.length == enginService.types_engin[enginService.actual_engin.engin].length; else elseBlock">
+    <span *ngIf="item.engin_type.length == enginService.actual_engin.types_engin.length; else elseBlock">
       Tous les {{enginService.actual_engin.engin}}
     </span>
     <!--Affichage des types concernés si pas tous les types-->
@@ -24,39 +24,11 @@
   <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
   <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
 
-    <!--Bouton mode hors-ligne : fichier Principal / DsMat local en utilisant "url_main_file"-->
     <wcs-button mode="clear" size="s" target="_blank"
-                *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
-                [href]="item.url_main_file"
-                [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
-      Ouvrir LD local 📥
-    </wcs-button>
-
-    <!--Bouton mode hors-ligne : fichier Auxiliaire / Docmat local en utilisant "url_aux_file"-->
-    <wcs-button mode="clear" size="s" target="_blank"
-                *ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
-                [href]="item.url_aux_file"
-                [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
-      Ouvrir Doc local 📥
-    </wcs-button>
-
-    <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
-    <!--TODO : Reste à styliser le texte aucun fichiers dispo...-->
-
-    <!--Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"-->
-    <wcs-button mode="clear" size="s" target="_blank"
-                *ngIf="!generalService.offlineMode"
-                [href]="item.url_main"
-                [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
-      Ouvrir LD sur DsMat 🔗
-    </wcs-button>
-
-    <!--Bouton mode en ligne : fichier en ligne Auxiliaire / DocMat en utilisant "url_aux"-->
-    <wcs-button mode="clear" size="s" target="_blank"
-                *ngIf="!generalService.offlineMode && item.url_aux != '' && item.url_aux != undefined"
-                [href]="item.url_aux"
-                [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
-      Ouvrir doc sur Docmat 🔗
+                *ngFor="let link of item.links"
+                [href]="link.url"
+                class="wcs-primary">
+      🔗 {{link.type}} - {{link.name}}
     </wcs-button>
 
   </wcs-grid-custom-cell>
@@ -65,7 +37,7 @@
   <!--Bouton editer en tant que systémier / admin-->
   <ng-container *ngIf="administrationService.auth_status">
     <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
-    <wcs-button shape="round" (click)="administrationService.showDocFromOtherPage(parseInt(item.id))"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+    <wcs-button shape="round" (click)="administrationService.selectDocFromId(item.id)"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
     </wcs-grid-custom-cell>
   </ng-container>
 

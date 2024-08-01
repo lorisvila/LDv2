@@ -56,7 +56,7 @@ export class LdService {
   pageSize: number = 15
 
   // Data for grid
-  filteredLDdata: OramaItemDataType[] | undefined = undefined;
+  filteredLDdata: OramaItemDataType[] = [];
 
   // Function executed when a event is triggered on a filter element (the element call it in the DOM)
   changeValueFilter(variableName: string, value: any) {
@@ -91,7 +91,7 @@ export class LdService {
         this.engin_type = this.favEnginObject.engin_type
         break;
       }
-      default: { // TODO : See if there is here a XSS vulnerabilty or a usage
+      default: { // TODO : See if there is here a vulnerabilty
         (this as any)[variableName] = value
       }
     }

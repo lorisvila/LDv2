@@ -1,9 +1,13 @@
 // App Types
+import {ItemDataType} from "../../../src/app/app.types";
+
 export type UserType = {
-  lastConnect: number,
   username: string,
   password: string
+  lastConnect?: number,
+  role: RoleType
 }
+export type RoleType = "admin" | "systemier"
 
 export type ConfigType = {
   auth: {
@@ -12,17 +16,13 @@ export type ConfigType = {
     cookieName: string
   }
 
-  database: {
-    user: string,
-      password: string,
-      server: string,
-      database: string,
-      port: number
-      tables: string[]
-  },
+  database: DBconfigType,
 
   data: {
     refreshRate: number
+    refreshLimit: number
+    allTableResponse: string[]
+    tablesNecessaryKeys: TableParams[]
   }
 
   webserver: {
@@ -30,7 +30,8 @@ export type ConfigType = {
       host: string
   },
 
-  adminUsers: UserType[]
+  roles: {[role: string]: number}
+  users: UserType[]
 }
 
 export type DBconfigType = {
@@ -39,31 +40,22 @@ export type DBconfigType = {
   server: string
   database: string
   port: number
-  options: {
-    trustedConnection: boolean
-    encrypt: boolean
-    enableArithAbort: boolean
-    trustServerCertificate: boolean
-  }
+  tables: string[]
 }
-export class AuthResponseType { // Class used as a return object in Auth Module
-  code: number = 200 // De base = 200
-  message?: string
-  username?: string
+
+export type TableParams = {
+  tableName: TableName
+  keys: string[]
 }
-export class RawDataTables {
-  documents: []
-  filters: []
-  engins_types: []
-  engins_technicentre: []
-  technicentres: []
-  news: []
-}
-export type TableObjectType = {
-  tableName: string
-  tableData: any
-  tableLastRefresh: number
-}
+export type TableName = string
+
+// Data Types
+
+export const UP_TO_DATE = true
+export const NOT_TO_DATE = false
+
+// Auth Types
+export type AuthUsername = string
 
 // Requests Types
 export type ResponseType = {
@@ -84,4 +76,10 @@ export type RequestType = {
 export type AuthConnectRequestType = {
   username: string,
   password: string
+}
+
+export type TableObjectType = {
+  tableName: string
+  tableData: any
+  tableLastRefresh: number
 }

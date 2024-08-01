@@ -1,61 +1,62 @@
-import {Router} from "express";
+import {NextFunction, Request, Response, Router} from "express";
 import {App} from "~/server";
-import {TableObjectType} from "~/types/types";
-
+import {NOT_TO_DATE, UP_TO_DATE} from "~/types/types";
+import {API_Error} from "~/types/errors";
+import * as console from "node:console";
 export class DataController {
 
   App: App
   router: Router
   mainEndpoint: string = "/data"
 
+  lastRefreshRequest: Date = new Date();
+
   constructor(mainClass: App) {
     this.router = Router()
     this.App = mainClass
 
-    /*this.router.get('/', (req, res) => {
-      this.App.DataModule.checkIfDataIsUpToDate()
-      this.App.sendResponse(res, undefined, {code: 200})
-    })*/
-
-    this.router.get('/rawTable/:table', (req, res) => {
-      this.App.DataModule.checkIfDataIsUpToDate()
-      let tableResult = this.App.DataModule.rawTablesData.get(req.params.table)
-      if (!tableResult) {
-        this.App.sendResponse(res, undefined, {code: 404, message: "Table not found"})
+    this.router.use((req: Request, res: Response, next: NextFunction) => {
+      if (this.App.DataModule.dbConnected) {
+        next()
       } else {
-        let responseObject =  {
-          tableName: req.params.table,
-          tableLastRefresh: this.App.DataModule.lastRefresh.getTime(),
-          tableData: tableResult
-        }
-        this.App.sendResponse(res, responseObject, {code: 200})
+        this.App.sendResponse(res, undefined, {code: 500, message: "Le serveur n'est pas connecté à la BDD. Veuillez réessayer plus tard"})
       }
     })
 
-    this.router.get('/table/:table', (req, res) => {
-      this.App.DataModule.checkIfDataIsUpToDate()
-      let tableResult = this.App.DataModule.purifiedTablesData.get(req.params.table)
-      if (!tableResult) {
-        this.App.sendResponse(res, undefined, {code: 404, message: "Table not found"})
-      } else {
-        let responseObject: TableObjectType =  {
-          tableName: req.params.table,
-          tableLastRefresh: this.App.DataModule.lastRefresh.getTime(),
-          tableData: tableResult
+    this.router.get('/getTable/:tableName', (req: Request, res: Response) => {
+      let tableName = req.params.tableName
+      if (this.App.DataModule.checkIfDataIsUpToDate() === UP_TO_DATE) {
+        let data = this.App.DataModule.allTables.get(tableName)
+        if (!data) {
+          this.App.handleError(res, new API_Error('TABLE_NOT_FOUND', `La table ${tableName} n'a pas été trouvée`))
+          return
         }
-        this.App.sendResponse(res, responseObject, {code: 200})
+        this.App.sendResponse(res, data)
+      } else if (this.App.DataModule.checkIfDataIsUpToDate() === NOT_TO_DATE) {
+        this.App.DataModule.getTable(tableName).then((data) => {
+          this.App.sendResponse(res, data)
+        }).catch((error) => {
+          this.App.handleError(res, error)
+        })
       }
     })
 
-    this.router.get('/allRawTables', (req, res) => {
-      this.App.DataModule.checkIfDataIsUpToDate()
-      let responseObject = Array.from(this.App.DataModule.rawTablesData.keys())
-      this.App.sendResponse(res, responseObject, {code: 200})
+    this.router.get('/getAllTables', (req: Request, res: Response) => {
+      this.App.DataModule.getAllTables().then((data) => {
+        this.App.sendResponse(res, data)
+      }).catch((error) => {
+        this.App.handleError(res, error)
+      })
     })
 
-    this.router.get('/allTables', (req, res) => {
-      let responseObject = this.App.DataModule.alltablePurified
-      this.App.sendResponse(res, responseObject, {code: 200})
+    this.router.get('/refresh', (req: Request, res: Response) => {
+      this.App.DataModule.cacheData().then(() => {
+        this.App.DataModule.getAllTables().then((data) => {
+          this.App.sendResponse(res, data)
+        })
+      }).catch((error) => {
+        this.App.handleError(res, error)
+      })
     })
 
   }

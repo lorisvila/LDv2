@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import {EnginService} from "../../services/engin.service";
 import {GeneralService} from "../../services/general.service";
 import {DataService} from "../../services/data.service";
-import {CommunicationService} from "../../services/communication.service";
 import {AdministrationService} from "../../services/administration.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {ItemDataType} from "../../app.types";
 
 @Component({
   selector: 'app-administration-page',
@@ -17,7 +17,6 @@ export class AdministrationPageComponent {
     public enginService: EnginService,
     public generalService: GeneralService,
     public dataService: DataService,
-    public communicationService: CommunicationService,
     public administrationService: AdministrationService,
     public route: ActivatedRoute,
     public router: Router
@@ -31,6 +30,9 @@ export class AdministrationPageComponent {
 
   changeUrlToTab(event: any) {
     let new_tab = event.detail.selectedKey
+    if (new_tab == 'ajout') {
+      this.administrationService.resetFieldsForCreateDoc()
+    }
     this.selectedPageFromUrl = new_tab
     this.router.navigate( [ '/administration' ], { fragment: new_tab } )
   }

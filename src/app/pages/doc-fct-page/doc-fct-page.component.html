@@ -1,10 +1,4 @@
-<!--Action bar title + actual engin-->
-<wcs-action-bar gutter="">
-  Documentation par fonction - <span id="title-engin-field">{{enginService.actual_engin.engin}}</span>
-  <div slot="actions">
-    <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" routerLink="/"></wcs-mat-icon>
-  </div>
-</wcs-action-bar>
+<app-action-bar pageName="Documentation par fonction"></app-action-bar>
 
 <div class="page-content">
 
@@ -60,51 +54,51 @@
         </span>
 
         <!--List item of results-->
-        <wcs-list-item *ngFor="let item of docFctService.filteredDocFctData">
+        <!--<wcs-list-item *ngFor="let item of docFctService.filteredDocFctData">
           <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
           <div slot="title"><span class="ft-w-500">{{item.des}}</span></div>
           <wcs-list-item-properties>
             <wcs-list-item-property><span class="ft-w-400">{{item.ref_main}}</span></wcs-list-item-property>
-            <wcs-list-item-property><span class="ft-w-400">{{item.type}}</span></wcs-list-item-property> <!--TODO : Replace the type by the translated / "humanized" one-->
+            <wcs-list-item-property><span class="ft-w-400">{{item.type}}</span></wcs-list-item-property> &lt;!&ndash;TODO : Replace the type by the translated / "humanized" one&ndash;&gt;
             <wcs-list-item-property><span class="ft-w-400">{{item.systeme}}</span></wcs-list-item-property>
           </wcs-list-item-properties>
           <div slot="actions">
 
-            <!--Bouton mode hors-ligne : fichier Principal / Docmat local en utilisant "url_main_file"-->
-            <wcs-button mode="clear" size="s" target="_blank"
-                        *ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
+            &lt;!&ndash;Bouton mode hors-ligne : fichier Principal / Docmat local en utilisant "url_main_file"&ndash;&gt;
+            <wcs-button mode="clear" size="s" target="_blank">
+                        &lt;!&ndash;*ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
                         [href]="item.url_main_file"
-                        [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">
+                        [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
               Ouvrir en local 📥
             </wcs-button>
-            <!--Bouton mode hors-ligne : fichier Auxiliaire local en utilisant "url_aux_file"-->
-            <wcs-button mode="clear" size="s" target="_blank"
-                        *ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
+            &lt;!&ndash;Bouton mode hors-ligne : fichier Auxiliaire local en utilisant "url_aux_file"&ndash;&gt;
+            <wcs-button mode="clear" size="s" target="_blank">
+                        &lt;!&ndash;*ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
                         [href]="item.url_aux_file"
-                        [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">
+                        [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
               Ouvrir Aux en local 📥
             </wcs-button>
 
             <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
-            <!--TODO : Reste à styliser le texte aucun fichiers dispo...-->
+            &lt;!&ndash;TODO : Reste à styliser le texte aucun fichiers dispo...&ndash;&gt;
 
-            <!--Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"-->
-            <wcs-button mode="clear" size="s" target="_blank"
-                        *ngIf="!generalService.offlineMode"
+            &lt;!&ndash;Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"&ndash;&gt;
+            <wcs-button mode="clear" size="s" target="_blank">
+                        &lt;!&ndash;*ngIf="!generalService.offlineMode"
                         [href]="item.url_main"
-                        [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">
+                        [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
               Ouvrir sur DocMat 🔗
             </wcs-button>
-            <!--Bouton mode en ligne : fichier en ligne Auxiliaire en utilisant "url_aux"-->
-            <wcs-button mode="clear" size="s" target="_blank"
-                        *ngIf="!generalService.offlineMode"
+            &lt;!&ndash;Bouton mode en ligne : fichier en ligne Auxiliaire en utilisant "url_aux"&ndash;&gt;
+            <wcs-button mode="clear" size="s" target="_blank">
+                        &lt;!&ndash;*ngIf="!generalService.offlineMode"
                         [href]="item.url_aux"
-                        [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">
-              Ouvrir Aux sur DocMat 🔗
+                        [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
+            Ouvrir Aux sur DocMat 🔗
             </wcs-button>
 
           </div>
-        </wcs-list-item>
+        </wcs-list-item>-->
 
     </wcs-card-body>
   </wcs-card>

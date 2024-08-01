@@ -81,7 +81,7 @@ export class ModulesFormationService {
         break;
       }
       default: {
-        data = data.filter((item) => this.systeme.includes(item.systeme))
+        //data = data.filter((item) => this.systeme.includes(item.systeme)) TODO : See if it bugs, I removed this line because system is possibly undefined now...
       }
     }
     if (this.search_value != "") {} // TODO : Add the filtering by text

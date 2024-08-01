@@ -1,0 +1,22 @@
+.div-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+.div-content {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1.5em;
+
+}
+.badge-status-edition {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.3em;
+}
+.docEditPage {
+  gap: 2em;
+}

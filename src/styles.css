@@ -1,3 +1,4 @@
+/*WCS Styling rules*/
 body {
   height: 100vh;
   margin: 0;
@@ -44,11 +45,13 @@ hr {
   padding: 0;
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
 }
 .link:hover {
    color: #0074af;
  }
 
+/*Include SNCF fonts*/
 @font-face {
   font-family: Avenir;
   src: url("~src/assets/fonts/avenir-lighter.woff");
@@ -88,29 +91,95 @@ hr {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialicons/v139/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+  src: url('assets/fonts/icons/MaterialSymbolsOutlined-VariableFont_FILL,GRAD,opsz,wght.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Material Icons Outlined';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialiconsoutlined/v108/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUce.woff2) format('woff2');
+  src: url('assets/fonts/icons/MaterialSymbolsOutlined-VariableFont_FILL,GRAD,opsz,wght.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Material Icons Two Tone';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialiconstwotone/v111/hESh6WRmNCxEqUmNyh3JDeGxjVVyMg4tHGctNCu0.woff2) format('woff2');
+  src: url('assets/fonts/icons/MaterialSymbolsOutlined-VariableFont_FILL,GRAD,opsz,wght.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Material Icons Round';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialiconsround/v107/LDItaoyNOAY6Uewc665JcIzCKsKc_M9flwmP.woff2) format('woff2');
+  src: url('assets/fonts/icons/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Material Icons Sharp';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialiconssharp/v108/oPWQ_lt5nv4pWNJpghLP75WiFR4kLh3kvmvR.woff2) format('woff2');
+  src: url('assets/fonts/icons/MaterialSymbolsSharp-VariableFont_FILL,GRAD,opsz,wght.ttf') format('truetype');
+}
+
+/*User defined styles*/
+.card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
+.card-content {
+  display: flex;
+  flex-flow: column nowrap;
+  align-content: start;
+  gap: 1em
+}
+
+h2 {
+  margin: 0.3em 0;
+}
+.flex-row {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1em;
+}
+.flex-column {
+  display: flex;
+  flex-flow: column wrap;
+  gap: 1em;
+}
+.flex-align-center {
+  align-items: center;
+}
+.flex-justify-center {
+  justify-content: center;
+}
+
+/*Form styling*/
+.form-grid-container {
+ display: flex;
+  flex-flow: column;
+  align-content: start;
+  text-align: start;
+}
+.add-grid-container {
+  gap: 0.8em;
+  margin-top: 1em;
+  align-items: flex-end;
+}
+.select-add-grid {
+  flex-grow: 1;
+}
+
+/*Modals specific styles*/
+.columnForm {
+  display: flex;
+  flex-flow: column wrap;
+  gap: 1em;
+}
+.rowForm {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1em;
+
+}
+wcs-form-field {
+  text-align: start;
 }

@@ -12,7 +12,6 @@ export class ModulesFormationPageComponent {
 
   constructor(
     public generalService: GeneralService,
-    public enginService: EnginService,
     public modulesFormationService: ModulesFormationService
   ) { }
 

@@ -1,5 +1,5 @@
 <!--Modal default engin-->
-<wcs-modal [show]="generalService.showDefaultEnginModal">
+<wcs-modal [show]="generalService.showModal == 'defaultEnginModal'">
   <div slot="header">Choix de l'engin par défaut</div>
   <div class="modal-content">
     <wcs-select #enginSelect [value]="enginService.actual_engin.engin" size="m">
@@ -17,7 +17,7 @@
 </wcs-modal>
 
 <!--Modal rajout engin-->
-<wcs-modal [show]="generalService.showEnginsFavorisModal" size="l">
+<wcs-modal [show]="generalService.showModal == 'enginsFavoris'" size="l">
   <div slot="header">Choix des engins favoris</div>
   <div class="modal-content" id="engins-fav-modal-content">
 
@@ -57,7 +57,7 @@
 </wcs-modal>
 
 <!--Modal choix Technicentre + Rajout engin-->
-<wcs-modal [show]="generalService.showTechnicentreEnginModal" size="m">
+<wcs-modal [show]="generalService.showModal == 'technicentreEnginModal'" size="m">
   <div slot="header">Choix du Technicentre et des engins</div>
   <div class="modal-content">
 
@@ -79,7 +79,7 @@
 </wcs-modal>
 
 <!--Modal d'Authentification pour page d'administration-->
-<wcs-modal [show]="generalService.showAuthConnectModal" size="m">
+<wcs-modal [show]="generalService.showModal == 'authConnect'" size="m">
   <div slot="header">Connexion à l'API</div>
   <div class="modal-content">
 
@@ -87,7 +87,7 @@
     <div class="modal-line-element">
       <wcs-label>Utilisateur</wcs-label>
       <wcs-input #auth_user id="auth-user-input" icon="person" type=""
-                 [value]="administrationService.auth_user"
+                 [value]="administrationService.auth_username"
                  (keyup.enter)="administrationService.authentificateUser(auth_user.value, auth_password.value)">
       </wcs-input>
     </div>
@@ -122,3 +122,36 @@
     <wcs-mat-icon icon="close" id="button-close-card" (click)="generalService.showOfflineCard = false"></wcs-mat-icon>
   </wcs-card-body>
 </wcs-card>
+
+<!--Modal de modification d'un utilisateur-->
+<wcs-modal [show]="generalService.showModal == 'userEdit'" size="m">
+  <div slot="header">
+    @if (administrationService.user_selectedUser) {
+      Modification utilisateur
+    } @else {
+      Création d'un utilisateur
+    }
+  </div>
+  <div class="modal-content">
+    <form [formGroup]="administrationService.userModalForm" (ngSubmit)="administrationService.editUser()">
+      <formly-form [form]="administrationService.userModalForm" [fields]="administrationService.userModalFormFields"
+                   [model]="administrationService.userModalFormModel"></formly-form>
+    </form>
+  </div>
+
+  <div slot="actions" class="slot-action">
+    <wcs-button mode="stroked" (click)="generalService.toggleModal('userEdit', false)">Annuler</wcs-button>
+    @if (administrationService.user_selectedUser) {
+      <wcs-button class="wcs-danger" (click)="administrationService.deleteUser(administrationService.user_selectedUser)">
+        Supprimer
+      </wcs-button>
+      <wcs-button class="wcs-primary" type="submit" (click)="administrationService.editUser()">
+        Editer
+      </wcs-button>
+    } @else {
+      <wcs-button class="wcs-primary" type="submit" (click)="administrationService.createUser()">
+        Créer
+      </wcs-button>
+    }
+  </div>
+</wcs-modal>

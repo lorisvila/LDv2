@@ -3,6 +3,7 @@ import {EnginService} from "../../services/engin.service";
 import {SearchService} from "../../services/search.service";
 import {Router} from "@angular/router";
 import {GeneralService} from "../../services/general.service";
+import {FilterType} from "../../app.types";
 
 @Component({
   selector: 'app-search-page',
@@ -21,6 +22,14 @@ export class SearchPageComponent {
     if (!searchService.searchedObjects) {
       this.router.navigate([""])
     }
+  }
+
+  getKeys(obj: any): Array<string> {
+    return Object.keys(obj);
+  }
+
+  returnFilterObject(objects: any, key: string): FilterType {
+    return objects[key]
   }
 
 }

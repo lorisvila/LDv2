@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --watch src -e js,ts,json --exec \"ts-node src/server.ts\"",
     "build": "tsup src/server.ts --format cjs --clean",
-    "start": "node dist/index.js"
+    "start": "node dist/server.js",
+    "run": "npm run build && sudo systemctl restart API-LDv2.service"
   },
   "keywords": [],
   "author": "",
@@ -17,14 +18,20 @@
     "@types/node": "^20.11.9",
     "nodemon": "^3.0.3",
     "ts-node": "^10.9.2",
+    "ts-postgres": "^2.0.4",
     "tsconfig-paths": "^4.2.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "postgres": "^3.4.4"
   }
 }

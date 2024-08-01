@@ -1,19 +1,21 @@
 <div class="page-content">
   <h1>Bienvenue sur le LD Interactif v2</h1>
 
-  <ng-container *ngFor="let engin of dataService.engins">
+  @for (engin of dataService.engins; track engin.engin) {
     <!--Image de l'engin-->
     <img id="trainImage" *ngIf="enginService.actual_engin.engin == engin.engin && !trainImageHideAfterBadImport"
-         [src]="'assets/images/' + engin.url_image_engin"
+         [src]="'assets/images/' + engin.engin + '.png'"
          (load)="trainImageLoaded = true" (error)="handleMissingImage($event)">
-  </ng-container>
-  <div id="blankEngin" *ngIf="!trainImageLoaded"> <!--*ngIf="!trainImageLoaded"-->
-    <div class="trainWindow"></div>
-    <div class="trainWindow"></div>
-    <div class="trainWindow"></div>
-    <div class="trainWindow"></div>
-    <div class="trainWindow"></div>
-  </div>
+  }
+  @if (!trainImageLoaded) {
+    <div id="blankEngin">
+      <div class="trainWindow"></div>
+      <div class="trainWindow"></div>
+      <div class="trainWindow"></div>
+      <div class="trainWindow"></div>
+      <div class="trainWindow"></div>
+    </div>
+  }
 
   <div id="pageContainer">
 
@@ -52,24 +54,25 @@
     <wcs-card mode="flat" class="card" id="favEnginsCard">
       <h3>Engins Favoris</h3>
       <div id="favEnginContainer">
-        <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins" *ngIf="enginService.favoriteEngins.length > 0; else elseNoFavEngin">
-          <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
-          <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
-          <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
-        </wcs-grid>
-        <ng-template #elseNoFavEngin>
+        @if (enginService.favoriteEngins.length > 0) {
+          <wcs-grid rowIdPath="engin_numero" [data]="enginService.favoriteEngins">
+            <wcs-grid-column name="Engin" path="engin"></wcs-grid-column>
+            <wcs-grid-column name="Type" path="engin_type"></wcs-grid-column>
+            <wcs-grid-column name="N°" path="engin_numero"></wcs-grid-column>
+          </wcs-grid>
+        } @else {
           <p style="text-align: center">Vous n'avez pas d'engins favoris</p>
-        </ng-template>
+        }
       </div>
       <div id="buttonsEditContainer">
         <wcs-button id="button-edit-tech" (click)="generalService.toggleModal('enginsFavoris', true)">Editer Engins Favoris</wcs-button>
         <wcs-button id="button-edit-engins-fav" (click)="generalService.toggleModal('technicentreEnginModal', true)">Editer Technicentre</wcs-button>
       </div>
       <br>
-      <ng-container *ngIf="generalService.actualTechnicentre">
+      @if (generalService.actualTechnicentre) {
         <h3>Technicentre sélectionné :</h3>
         <i>{{generalService.actualTechnicentre.technicentre_formatted}}</i>
-      </ng-container>
+      }
     </wcs-card>
 
     <!--Card dernières Infos-->
@@ -77,35 +80,24 @@
       <h3>Infos</h3>
       <!--List of all the news-->
       <div id="newsContainer">
-        <div *ngFor="let news of dataService.homePageNews"
-             class="newsItem">
-          <h4>{{news.title}}</h4>
-          <h5 *ngIf="news.subtitle">{{news.subtitle}}</h5>
-          <span>{{news.article_content}}</span>
-          <div class="buttons-url-list" *ngIf="news.urls">
-            <wcs-button *ngFor="let url of news.urls" [href]="url.url" target="_blank">{{url.title}}</wcs-button>
+        @for (news of dataService.homePageNews; track news.title) {
+          <div class="newsItem">
+            <h4>{{news.title}}</h4>
+            @if (news.subtitle) {
+              <h5>{{news.subtitle}}</h5>
+            }
+            <span>{{news.article_content}}</span>
+            @if (news.urls) {
+              <div class="buttons-url-list">
+                @for (url of news.urls; track url.title) {
+                  <wcs-button [href]="url.url" target="_blank">{{url.title}}</wcs-button>
+                }
+              </div>
+            }
           </div>
-        </div>
+        }
       </div>
     </wcs-card>
 
   </div>
 </div>
-
-
-<!--Card Versions-->
-<!--
-<wcs-card mode="flat" class="card" id="versionsCard">
-  <h3>Mise à jour</h3>
-  <div id="versionsContainer">
-    <div class="versionItem">
-      Mise à jour <b>Application</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_applicatif_string}}</wcs-badge>
-    </div>
-    <div class="versionItem">
-      Mise à jour données <b>AGC</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_AGC_string}}</wcs-badge>
-    </div>
-    <div class="versionItem">
-      Mise à jour données <b>TER 2N NG</b> : <wcs-badge class="wcs-info">{{generalService.date_maj_data_TER2NNG_string}}</wcs-badge>
-    </div>
-  </div>
-</wcs-card>-->

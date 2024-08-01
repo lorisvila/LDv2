@@ -11,7 +11,7 @@ import {Router} from "@angular/router";
 export class SearchService {
 
   searchDB: undefined | Promise<Orama<any>> = undefined; // I put any in the DB type because it is already checked in the import method
-  searchedObjects: any = undefined;
+  searchedObjects: OramaItemDataType[] | undefined = undefined;
   searchValue: string  | undefined = undefined;
 
   $finishedLoadingDataFromCache: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -53,23 +53,12 @@ export class SearchService {
       schema: {
         id: 'string',
         page: 'string',
-        des: 'string',
+        name: 'string',
         engin: 'string',
         engin_type: 'string[]',
         ref_main: 'string',
-        url_main: 'string',
-        ref_aux: 'string',
-        url_aux: 'string',
-        url_main_file: 'string',
-        url_aux_file: 'string',
-        systeme: {
-          filter: "string",
-          filter_formatted: "string"
-        },
-        type: {
-          filter: "string",
-          filter_formatted: "string"
-        }
+        meta: this.dataService.filterTypes.reduce((acc, { type }) => ({ ...acc, [type]: { filter: "string", filter_formatted: "string" } }), {}),
+        tags: 'string[]'
       },
       components: {
         tokenizer: {stemming: true, language: "english"} // TODO : Add the french stemmer
@@ -78,7 +67,7 @@ export class SearchService {
   }
 
   async updateItemDB(data?: ItemDataType[]): Promise<Orama<any>> {
-    let allData: any[]
+    let allData: ItemDataType[]
 
     // Filter only actual engin
     if (data) {
@@ -88,31 +77,15 @@ export class SearchService {
     }
 
     // Convert the id of the item to a string because Orama doesn't like it as a number..., DONT ASK WHY !!!
-    allData.forEach((item: any) => item.id = item.id.toString())
+    allData.forEach((item: any) => item.id = item.id.toString()) // Force the type to any to prevent type error "int -> string"
 
-    // Add the human formatted filter to the object systeme and type to be able to search it
-    allData.forEach((objectItem) => {
-      objectItem.systeme
-        ? objectItem.systeme = {
-          filter: objectItem.systeme,
-          filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.systeme)?.filter_formatted}
-        : objectItem.systeme = {
-          filter: "",
-          filter_formatted: ""
-        };
-      objectItem.type
-        ? objectItem.type = {
-          filter: objectItem.type,
-          filter_formatted: this.dataService.filters.find((filterItem) => filterItem.filter == objectItem.type)?.filter_formatted}
-        : objectItem.type = {
-          filter: "",
-          filter_formatted: ""
-        };
-      for (let key of Object.keys(objectItem)) {
-        if (objectItem[key] === null) {
-          objectItem[key] = ''
-        }
-      };
+    // Convert the filters to a dict like object for orama -> It cannot process array of objects
+    allData.forEach((item: ItemDataType) => {
+      let newMeta: { [Name: string]: { filter: string, filter_formatted: string } } = {}
+      item.meta?.forEach((filter) => {
+        newMeta[filter.type] = {filter: filter.filter, filter_formatted: filter.filter_formatted}
+      })
+      item.meta = (newMeta as any)
     })
 
     let db: Promise<Orama<any>> = this.createSearchDB()
@@ -124,12 +97,13 @@ export class SearchService {
     return await db;
   }
 
-  async searchInDB(db: Orama<any>, searchValue?: string, filters?: {}): Promise<Results<any>> {
+  async searchInDB(db: Orama<any>, searchValue?: string, filters?: PageFilters): Promise<Results<any>> {
     let searchParams: any = {}
     if (searchValue) {searchParams.term = searchValue}
     if (filters) {searchParams.where = filters}
-    searchParams.limit = 1200
+    searchParams.limit = 10000
     let data = await search(await db, searchParams);
+    console.log("Searched", data, searchParams)
     return data
   }
 
@@ -150,18 +124,17 @@ export class SearchService {
     if (variableName == "reset") { // If I want to reset the search
       filterObject = {page: page}
     } else if (["enginNum_value", "search_value", "fav_engin"].includes(variableName)) { // Do nothing if it is a search, engin num or fav_engin
-    } else if (["systeme", "type"].includes(variableName)) { // If the filter is systeme or type --> nest it into the filter parameter
+    } else if (this.dataService.filterTypes.find(type => type.type == variableName)) { // If the filter is systeme or type --> nest it into the filter parameter
       if (value !== "") {
-        (filterObject as any)[variableName + ".filter"] = value
+        (filterObject as any)["meta." + variableName + ".filter"] = value
       } else { // And delete it if unselected
-        delete (filterObject as any)[variableName + ".filter"]
+        delete (filterObject as any)["meta." + variableName + ".filter"]
       }
     } else if (value === "") { // Delete the property from the filter if it is unselected
       delete (filterObject as any)[variableName]
     } else { // If any of the other options are completed (normally not used...)
       (filterObject as any)[variableName] = value
     }
-    filterObject.engin = this.actualEngin.engin
   }
 
   async searchIntoWebSite(search: string | number | null | undefined) {
@@ -170,8 +143,8 @@ export class SearchService {
     let data: any = undefined
 
     if (typeof search == "string" && this.searchDB) {
-      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actualEngin.engin})
       this.searchValue = search
+      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actualEngin.engin})
     } else {
       this.notif.error("Erreur lors de la recherche", "Aïe...")
       console.error("Erreur lors de la recherche... car soit search value n'est pas string ou la DB n'existe pas encore")
@@ -183,6 +156,7 @@ export class SearchService {
 
     if (data) {
       this.searchedObjects = this.purifyObjectIntoOramaItemDataType(data)
+      console.log(this.searchedObjects)
     } else {
       this.notif.error("Erreur lors de l'affichage des données de recherche...", "Aïe...")
       console.error("Erreur lors de l'affichage des donneés de recherche...")

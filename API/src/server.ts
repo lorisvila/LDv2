@@ -7,6 +7,9 @@ import {AuthController} from '~~/src/ressources/auth.controller'
 import {DataManagerController} from "~/ressources/dataManager.controller";
 import {AuthModule} from "~/modules/auth.module";
 import {DataModule} from "~/modules/data.module";
+import {API_Error} from "~/types/errors";
+import * as console from "node:console";
+import cookieParser from "cookie-parser";
 
 
 const CONFIG_FILE_PATH: string = "./config.json"
@@ -19,15 +22,17 @@ export class App {
   AuthController: AuthController
   DataController: DataController
   DataManagerController: DataManagerController
+
+
   AuthModule: AuthModule
   DataModule: DataModule
-  httpServerRunning: boolean = false
 
 
   constructor() {
     this.app.use(express.json())
     let tmp_config: ConfigType | undefined = this.getConfig()
     if (!tmp_config) {
+      console.error("No config found, quitting the app")
       process.exit(2)
     }
     this.config = tmp_config
@@ -39,6 +44,7 @@ export class App {
     this.DataModule = new DataModule(this)
 
     this.app.use(cors())
+    this.app.use(cookieParser())
 
     this.app.use(this.logRequest)
     this.app.use(this.DataController.mainEndpoint, this.DataController.router)
@@ -50,13 +56,8 @@ export class App {
       this.sendResponse(res, {}, {code: 404, message: `Endpoint '${endpoint}' not found...`})
     })
 
-    this.DataModule.$dataReady.on('finished', () => {
-      if (!this.httpServerRunning) { // The event may be called multiple time so do not try to launch another instance when it is called again
-        this.httpServerRunning = true
-        console.log(`Serving server on ${this.config.webserver.host}:${this.config.webserver.port}`)
-        this.app.listen(this.config.webserver.port, this.config.webserver.host)
-      }
-    })
+    console.log(`Serving server on ${this.config.webserver.host}:${this.config.webserver.port}`)
+    this.app.listen(this.config.webserver.port, this.config.webserver.host)
   }
 
   logRequest(req: Request, res: Response, next: NextFunction) {
@@ -67,18 +68,29 @@ export class App {
     next()
   }
 
-  sendResponse(res: Response, data: any, status: {code: number, message?: string}, token?: string) {
+  sendResponse(res: Response, data: any, params?: {code?: number, message?: string, token?: string}) {
     let responseObject: ResponseType = {
       date: new Date().getTime(),
       data: data,
-      status: status,
+      status: {
+        code: params?.code ? params.code : 200,
+        message: params?.message ? params.message : undefined
+      },
     }
-    if (token) {
-      responseObject.token = token
-      res.cookie(this.config.auth.cookieName, token)
+    if (params?.token) {
+      responseObject.token = params.token
+      res.cookie(this.config.auth.cookieName, params.token)
     }
-    res.status(responseObject.status.code )
+    res.status(responseObject.status.code)
     res.json(responseObject)
+  }
+
+  handleError(res: Response, error: unknown) {
+    if (error instanceof API_Error) {
+      this.sendResponse(res, error.cause, {code: error.code, message: error.message})
+    } else {
+      throw error
+    }
   }
 
   getConfig(): ConfigType | undefined {

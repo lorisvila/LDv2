@@ -10,6 +10,7 @@ import {
 import {CommunicationService} from "./communication.service";
 import {ToastrService} from "ngx-toastr";
 import {SearchService} from "./search.service";
+import {AppError} from "../app.errors";
 
 @Injectable({
   providedIn: 'root'
@@ -39,16 +40,12 @@ export class GeneralService {
   $enginServiceInitialized: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   //Variables des versions et dates de mise à jour
-  app_version: string = "V 2.2.0";
+  app_version: string = "V 2.2.1";
   app_build: string = "dev";
 
-  date_maj_applicatif: Date = new Date("04/08/2024"); // /!\ Format de date US /!\
-  date_maj_data_AGC: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
-  date_maj_data_TER2NNG: Date = new Date("11/04/2023"); // /!\ Format de date US /!\
+  date_maj_applicatif: Date = new Date(2024, 7, 26);
 
   date_maj_applicatif_string: string = this.date_maj_applicatif.toLocaleDateString('fr-FR');
-  date_maj_data_AGC_string: string = this.date_maj_data_AGC.toLocaleDateString('fr-FR');
-  date_maj_data_TER2NNG_string: string = this.date_maj_data_TER2NNG.toLocaleDateString('fr-FR');
 
   // URL des sites
   URLDsMat = "https://dsmat.sncf.fr/"
@@ -62,6 +59,8 @@ export class GeneralService {
   showEnginsFavorisModal: boolean = false;
   showAuthConnectModal: boolean = false;
 
+  showModal: string = ''
+
   // Variables pour les cards
   showOfflineCard: boolean = false;
 
@@ -72,31 +71,9 @@ export class GeneralService {
   //Variables pour l'affectation Technicentre
   actualTechnicentre: TechnicentreType | null = null
 
-  // Message / popup info connect to DsMat and DocMat
-  connectMessageStatus: boolean = true;
-  hideConnectMessage() {this.connectMessageStatus = false}
-
   // Function to toggle modals of the app
   toggleModal(modalTitle: string, state: boolean = false) {
-    console.log("Modal " + modalTitle + " to state " + state)
-    switch (modalTitle) {
-      case "defaultEnginModal": {
-        this.showDefaultEnginModal = state;
-        break;
-      }
-      case "technicentreEnginModal": {
-        this.showTechnicentreEnginModal = state;
-        break;
-      }
-      case "enginsFavoris": {
-        this.showEnginsFavorisModal = state;
-        break;
-      }
-      case "authConnect": {
-        this.showAuthConnectModal = state;
-        break;
-      }
-    }
+    this.showModal = state ? modalTitle : ''
   }
 
   // Function to toggle the network status state
@@ -153,11 +130,8 @@ export class GeneralService {
   // Forcer à rafraîchir les données depuis API
   forceUpdateData() {
     let localStorageRecoveredData: LocalStorageDataType = this.communicationService.getDataFromStorage(this.communicationService.appLocalStorageVarName)
-    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_refreshData, {token: this.communicationService.API_token}).subscribe((response) => {
-      this.importDataFromAPI().subscribe((data: API_ResponseType) => {
-        console.log(data)
-        this.writeCacheToLocalStorage(localStorageRecoveredData, data)
-      })
+    this.communicationService.requestToAPI("GET", this.communicationService.API_Endpoint_refreshData, {token: this.communicationService.API_token}).subscribe((response) => {
+      this.importDataFromAPI().subscribe((data: API_ResponseType) => {})
     })
   }
 
@@ -167,16 +141,10 @@ export class GeneralService {
     let returnValue: EventEmitter<API_ResponseType> = new EventEmitter<API_ResponseType>()
     this.communicationService.requestToAPI("GET", endpoint).subscribe(
       (response) => {
-        let responseObject = (response as API_ResponseType)
-        // Si erreur dans la requête
-        if (responseObject.status.code != 200) {
-          this.notif.warning(responseObject.status.message, "",{
-            closeButton: false,
-            disableTimeOut: true
-          })
-        }
+        let check = this.communicationService.handleResponse(response)
         // Si la réponse contient des données
-        else if (responseObject.status.code == 200) {
+        if (check) {
+          let responseObject = response as API_ResponseType
           this.notif.success("Données mise à jour depuis le serveur", "C'est bon !")
           this.writeDataToVariables(responseObject.data)
           returnValue.emit(responseObject)
@@ -186,22 +154,30 @@ export class GeneralService {
           this.notif.error("La réponse fournie par le serveur est corrompue... Utilisation des données locales")
         }
         this.searchService.$finishedLoadingDataFromCache.emit(true)
+        throw new AppError('NO_DATA_FROM_API')
       },
 
       (error) => {
-        this.notif.warning("Les données locales vont être utilisées, la base de donnée n'a pas pu être contactée", "", {
-          closeButton: false,
-          disableTimeOut: true
-        })
+        this.communicationService.handleErrorResponse(error)
         this.searchService.$finishedLoadingDataFromCache.emit(true)
+        throw new AppError('NO_DATA_FROM_API')
       })
     return returnValue
   }
+
   writeDataToVariables(cacheData: CachedDataTableType[]) {
     cacheData.forEach((tableObject: CachedDataTableType) => {
+      if (!tableObject.tableName || !tableObject.tableData) {
+        this.notif.warning("Une donnée reçue de l'API est corrompue...")
+        return
+      }
       switch (tableObject.tableName) {
         case "documents": {
           this.dataService.allItemsData = tableObject.tableData
+          break
+        }
+        case "filter_types": {
+          this.dataService.filterTypes = tableObject.tableData
           break
         }
         case "news": {

@@ -12,11 +12,7 @@ import {SearchService} from "./search.service";
 export class EnginService {
 
   $actual_engin: EventEmitter<AppEnginType> = new EventEmitter<AppEnginType>();
-
   actual_engin: AppEnginType = this.dataService.engins[0];
-
-  types_engin: {[Name: string]: string[]} = {}; // Be able in ng for loops to use the correct engin to get their engins types
-  actual_types_engin: string[] = [];
 
   favoriteEngins: EnginType[] = []
 
@@ -40,7 +36,6 @@ export class EnginService {
       this.favoriteEngins = favEngins
     })
     // Populate the "types_engin" variable
-    this.dataService.engins.forEach((item) => this.types_engin[item.engin] = item.types_engin)
     this.changeActualEngin(this.actual_engin)
 
     this.generalService.$enginServiceInitialized.emit(true)
@@ -61,7 +56,6 @@ export class EnginService {
   changeActualEngin(engin: AppEnginType){
     this.actual_engin = engin
     this.searchService.$actualEngin.emit(engin)
-    this.actual_types_engin = this.types_engin[this.actual_engin.engin]
     this.$actual_engin.emit(engin)
     this.combineEnginsTechFav()
   }

@@ -1,91 +1,66 @@
 //------------------------------
-// New type to implement into the Postgres Database
-export type NewItemDataType = {
-  id: number,
-  page: string,
-  des: string,
-  engin: string,
-  engin_type: string[],
-  meta: MetaLD | MetaDocFct | MetaModuleForm,
-  ref_aux?: string, // Paramètres optionnels
-  url_aux?: string,
-  url_main_file?: string,
-  url_aux_file?: string,
-}
-export type MetaLD = {
-  systeme: string,
-  type: string
-}
-export type MetaDocFct = {
-  systeme: string,
-  sous_systeme: string,
-  fonction: string,
-  type: string
-}
-export type MetaModuleForm = {
-  full_name: string,
-  short_name: string,
-  systeme: string
-}
-
-//------------------------------
-
 // Type for data in LD Dict
 export type ItemDataType = {
   page?: string,
   id: number,
-  des: string,
+  name?: string, // Modify the optionnal parameter
   engin: string,
   engin_type: string[],
   ref_main: string,
-  url_main: string,
-  systeme: string
-  type?: string,
-  ref_aux?: string, // Paramètres optionnels
-  url_aux?: string,
-  url_main_file?: string,
-  url_aux_file?: string,
+  links?: LinkType[] // NEW TO IMPLEMENT
+  meta?: FilterType[] // NEW TO IMPLEMENT
+  tags?: string[] // NEW TO IMPLEMENT
+
+  des?: string, // OLD
+  url_main?: string, // OLD
+  systeme?: string // OLD
+  type?: string, // OLD
+  ref_aux?: string, // OLD
+  url_aux?: string, // OLD
+  url_main_file?: string, // OLD
+  url_aux_file?: string, // OLD
 }
 
 // Different type -> be able to change the Human name of filters without touching to the items itself (by touching to the filters object)
 export type OramaItemDataType = {
-  page?: string,
-  id: string,
-  des: string,
-  engin: string,
-  engin_type: string[],
-  ref_main: string,
-  url_main: string,
-  ref_aux?: string,
-  url_aux?: string,
-  url_main_file?: string,
-  url_aux_file?: string,
-  systeme: {
-    filter: string,
-    filter_formatted: string
-  }
-  type?: {
-    filter: string,
-    filter_formatted: string
-  },
+  id: string
+  name: string
+  engin: string
+  engin_type: string[]
+  tags: string[]
+  page?: string
+  meta: FilterType[]
+  links: LinkType[]
+  ref_main: string
 }
 
-// Type for systeme element
-export type FilterType = {
-  filter_formatted: string,
-  filter: string,
-  page: string,
-  type: string,
-  engin: string
+export type LinkType = {
+  url: string
+  name: string
+  type: string
 }
+
+// Type for system element
+export type FilterType = {
+  id?: number
+  engin: string
+  page: string
+  type: string
+  filter_formatted: string
+  filter: string
+}
+export type FilterBaseType = {
+  type: string
+  type_formatted: string
+}
+export type EditingCreatingType = 'CREATING' | 'EDITING'
 
 // Type used for the Orama search
 export type PageFilters = {
   engin?: string,
   engin_type?: string[],
   engin_num?: string,
-  systeme?: string,
-  type?: string,
+  meta?: {[Name: string]: FilterType},
   page?: string
 }
 
@@ -136,8 +111,7 @@ export type LocalStorageDataType = {
 
 export type AppEnginType = {
   engin: string,
-  types_engin: string[],
-  url_image_engin: string
+  types_engin: string[]
 }
 
 export class API_RequestType {
@@ -154,3 +128,11 @@ export type API_ResponseType = {
   }
   token?: string
 }
+
+export type UserType = {
+  username: string,
+  password: string
+  lastConnect?: number,
+  role: RoleType
+}
+export type RoleType = "admin" | "systemier"
