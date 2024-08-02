@@ -1,0 +1,54 @@
+<div class="flex-column">
+  <wcs-card mode="flat">
+    <wcs-card-body class="card-header">
+      <wcs-mat-icon icon="add"></wcs-mat-icon><h2>Ajout de filtre</h2>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <form [formGroup]="administrationService.filterAddForm">
+        <formly-form [form]="administrationService.filterAddForm" [fields]="filterAddFormFields"
+                     [model]="administrationService.filterAddFormModel"></formly-form>
+      </form>
+      <wcs-button [disabled]="!readyAddFilter">
+        <wcs-mat-icon icon="list_alt_add"></wcs-mat-icon>
+        ‎ ‎ Rajouter
+      </wcs-button>
+    </wcs-card-body>
+  </wcs-card>
+  <wcs-card mode="flat">
+
+    <wcs-card-body class="card-header">
+      <wcs-mat-icon icon="edit"></wcs-mat-icon><h2>Modification de filtre</h2>
+    </wcs-card-body>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <h4 class="card-subheader">Selection du filtre à modifier</h4>
+      <form [formGroup]="administrationService.filterEditForm">
+        <formly-form [form]="administrationService.filterEditForm" [fields]="filterEditToModifFormFields"
+                     [model]="administrationService.filterEditFormModel"></formly-form>
+      </form>
+      <wcs-button (click)="administrationService.selectFilterToModify()" [disabled]="administrationService.currentFilterSelected == undefined">
+        <wcs-mat-icon icon="upload"></wcs-mat-icon>
+        Charger
+      </wcs-button>
+      <wcs-button [disabled]="administrationService.currentFilterSelected == undefined" class="wcs-danger">
+        <wcs-mat-icon icon="delete"></wcs-mat-icon>
+        ‎ ‎ Supprimer
+      </wcs-button>
+    </wcs-card-body>
+    @if (administrationService.filterEditBackup) {
+      <wcs-divider></wcs-divider>
+      <wcs-card-body class="card-content">
+        <h4 class="card-subheader">Modification du filtre</h4>
+        <form [formGroup]="administrationService.filterEditForm">
+          <formly-form [form]="administrationService.filterEditForm" [fields]="filterEditFormFields"
+                       [model]="administrationService.filterEditFormModel"></formly-form>
+        </form>
+        <wcs-button>
+          <wcs-mat-icon icon="edit_note"></wcs-mat-icon>
+          Modifier
+        </wcs-button>
+      </wcs-card-body>
+    }
+  </wcs-card>
+</div>
