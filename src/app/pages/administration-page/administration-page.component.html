@@ -4,44 +4,45 @@
       Authentifié en tant que :
       <wcs-badge class="wcs-success">{{administrationService.auth_user?.username}} | {{administrationService.auth_user?.role}}</wcs-badge>
     </span>
-    <wcs-mat-icon icon="logout" (click)="administrationService.disconnectUser()" class="button" size="l"></wcs-mat-icon>
+    <wcs-mat-icon icon="logout" (click)="administrationService.disconnectUser()" class="icon-button" size="l"></wcs-mat-icon>
   } @else {
-    <wcs-badge class="wcs-danger button" (click)="generalService.toggleModal('authConnect', true)">Pas authentifié</wcs-badge>
+    <wcs-badge class="wcs-danger icon-button" (click)="generalService.toggleModal('authConnect', true)">Pas authentifié</wcs-badge>
   }
 </app-action-bar>
 
 @if (administrationService.auth_status) {
   <wcs-tabs align="center" gutter="true" [selectedKey]="selectedPageFromUrl" (tabChange)="changeUrlToTab($event)" #AdministrationTabs>
 
-    <!--Tab modification data-->
-    <wcs-tab header="Utilisateurs" itemKey="users">
-      <app-users-element></app-users-element>
+    <!--Tab ajout document-->
+    <wcs-tab header="Ajout document" itemKey="ajout">
+      <app-mod-element></app-mod-element>
     </wcs-tab>
 
-    <!--Tab modification data-->
-    <wcs-tab header="Modification" itemKey="modif">
+    <!--Tab modification document-->
+    <wcs-tab header="Modification document" itemKey="modif">
       @if (this.administrationService.editingCreatingDocument == "EDITING") {
         <app-mod-element></app-mod-element>
       } @else {
         <wcs-card mode="flat">
           <wcs-card-body>
-            <h2>Veuillez sélectionner un document</h2>
+            <h2><wcs-mat-icon icon="priority_high"></wcs-mat-icon> Veuillez sélectionner un document</h2>
           </wcs-card-body>
         </wcs-card>
       }
     </wcs-tab>
 
-    <!--Tab ajout data-->
-    <wcs-tab header="Ajout" itemKey="ajout">
-      <app-mod-element></app-mod-element>
-    </wcs-tab>
-
-    <!--Tab export data-->
-    <wcs-tab header="Données" itemKey="donees">
-    </wcs-tab>
-
     <!--Tab gestion Filtres-->
-    <wcs-tab header="Gestion filtres" itemKey="filtres">
+    <wcs-tab header="Filtres / Catégories" itemKey="filtres">
+      <app-filter-element></app-filter-element>
+    </wcs-tab>
+
+    <!--Tab gestion engins & Technicentres-->
+    <wcs-tab header="Engins & Technicentres" itemKey="engin&technicentre">
+    </wcs-tab>
+
+    <!--Tab modification user-->
+    <wcs-tab header="Utilisateurs" itemKey="users">
+      <app-users-element></app-users-element>
     </wcs-tab>
 
   </wcs-tabs>

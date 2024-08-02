@@ -6,7 +6,7 @@ import {Client, connect, DatabaseError, ResultRecord} from "ts-postgres";
 import {API_Error} from "~/types/errors";
 import * as process from "node:process";
 import _ from "lodash";
-import * as repl from "node:repl";
+
 
 export class DataModule {
 
@@ -39,6 +39,9 @@ export class DataModule {
 
   }
 
+  // ########################################
+  // Connection to DB section
+
   async connectToServer() {
     console.log("Connecting to DB")
     try {
@@ -60,6 +63,9 @@ export class DataModule {
       process.exit(2)
     }
   }
+
+  // ########################################
+  // Getting tables from DB
 
   async getAllTables() {
     let allTableFetched = true
@@ -114,6 +120,9 @@ export class DataModule {
       return UP_TO_DATE
     }
   }
+
+  // ########################################
+  // DB entries management (adding / replacing / deleting entries)
 
   async createEntry(newObject: any, tableName: TableName): Promise<void> {
 

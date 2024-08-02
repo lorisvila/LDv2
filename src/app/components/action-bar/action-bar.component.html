@@ -4,7 +4,10 @@
   <div slot="actions" class="actions-div">
     <ng-content></ng-content>
     @if (homeButton) {
-      <wcs-mat-icon icon="home" slot="actions" id="homeButton" size="l" (click)="router.navigateByUrl('/')"></wcs-mat-icon>
+      <wcs-mat-icon icon="home" class="icon-button" size="l" (click)="router.navigateByUrl('/')"></wcs-mat-icon>
+    }
+    @if (refreshButton) {
+      <wcs-mat-icon icon="refresh" class="icon-button" size="l" (click)="generalService.forceUpdateData()"></wcs-mat-icon>
     }
   </div>
 </wcs-action-bar>

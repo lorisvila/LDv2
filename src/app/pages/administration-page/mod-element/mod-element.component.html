@@ -1,9 +1,9 @@
 <div class="div-header">
   <wcs-mat-icon icon="edit_note"></wcs-mat-icon>
   @if (administrationService.editingCreatingDocument == "EDITING") {
-    <h2>Modififcation de documents</h2>
+    <h2>Modififcation de document</h2>
   } @else if (administrationService.editingCreatingDocument == "CREATING") {
-    <h2>Création de documents</h2>
+    <h2>Création de document</h2>
   }
   @if (formUnchanged) {
     <wcs-badge class="badge-status-edition wcs-success">Original<wcs-mat-icon icon="draft"></wcs-mat-icon></wcs-badge>
@@ -57,7 +57,10 @@
           <formly-form [form]="documentEditFormFilters" [fields]="documentEditFormFilterFields"
                        [model]="documentEditFormFiltersModel"></formly-form>
         </form>
-        <wcs-button (click)="addFilter()" [disabled]="!readyAddFilter">Rajouter</wcs-button>
+        <wcs-button (click)="addFilter()" [disabled]="!readyAddFilter">
+          <wcs-mat-icon icon="playlist_add"></wcs-mat-icon>
+          ‎ ‎ Rajouter
+        </wcs-button>
       </div>
     </wcs-card-body>
   </wcs-card>
@@ -91,7 +94,10 @@
           <formly-form [form]="documentEditFormTags" [fields]="documentEditFormTagsFields"
                        [model]="documentEditFormTagsModel"></formly-form>
         </form>
-        <wcs-button (click)="addTag()" [disabled]="!readyAddTag">Rajouter</wcs-button>
+        <wcs-button (click)="addTag()" [disabled]="!readyAddTag">
+          <wcs-mat-icon icon="playlist_add"></wcs-mat-icon>
+          ‎ ‎ Rajouter
+        </wcs-button>
       </div>
     </wcs-card-body>
   </wcs-card>
@@ -127,19 +133,40 @@
           <formly-form [form]="documentEditFormLinks" [fields]="documentEditFormLinksFields"
                        [model]="documentEditFormLinksModel"></formly-form>
         </form>
-        <wcs-button (click)="addUrl()" [disabled]="!readyAddUrl">Rajouter</wcs-button>
+        <wcs-button (click)="addUrl()" [disabled]="!readyAddUrl">
+          <wcs-mat-icon icon="playlist_add"></wcs-mat-icon>
+          ‎ ‎ Rajouter
+        </wcs-button>
       </div>
     </wcs-card-body>
   </wcs-card>
 
   @if (administrationService.editingCreatingDocument == "EDITING") {
-    <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendModifiedDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
-      Envoyer la modification
+    <wcs-button [disabled]="(!readyForUpdateDoc || administrationService.documentEditForm.disabled)" (click)="administrationService.sendModifiedDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
+      <wcs-mat-icon icon="edit_document"></wcs-mat-icon>
+      ‎ ‎ Envoyer la modification
     </wcs-button>
-    <wcs-button class="wcs-danger" (click)="administrationService.sendDeleteDocument(forms)">Supprimer le document</wcs-button>
+    <wcs-button class="wcs-danger" [disabled]="administrationService.documentEditForm.disabled" (click)="showModalConfirmDelete = true" [loading]="administrationService.documentEditForm.disabled">
+      <wcs-mat-icon icon="delete"></wcs-mat-icon>
+      ‎ ‎ Supprimer le document
+    </wcs-button>
   } @else if (administrationService.editingCreatingDocument == "CREATING") {
     <wcs-button [disabled]="!readyForUpdateDoc" (click)="administrationService.sendCreateDocument(forms)" [loading]="administrationService.documentEditForm.disabled">
-      Créer le document
+      <wcs-mat-icon icon="note_add"></wcs-mat-icon>
+      ‎ ‎ Créer le document
     </wcs-button>
   }
 </div>
+
+<wcs-modal [show]="showModalConfirmDelete">
+  <div slot="header">Êtes-vous sûr de vouloir supprimer ce document ?</div>
+  <div slot="actions" class="flex-row">
+    <wcs-button (click)="showModalConfirmDelete = false">
+      Annuler
+    </wcs-button>
+    <wcs-button class="wcs-danger" (click)="administrationService.sendDeleteDocument(forms)" (click)="showModalConfirmDelete = false">
+      <wcs-mat-icon icon="delete"></wcs-mat-icon>
+      ‎ ‎ Oui
+    </wcs-button>
+  </div>
+</wcs-modal>

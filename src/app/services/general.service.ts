@@ -109,9 +109,7 @@ export class GeneralService {
       let timeElapsedSinceLastCache = (new Date().getTime() - new Date(localStorageRecoveredData.lastCacheDate).getTime())/1000/60
       // CACHE - Si date de cache > au délai ou pas de cache dans l'objet dans le localStorage
       if (timeElapsedSinceLastCache > this.dataService.refreshDelayMinutes || !localStorageRecoveredData.cachedData) { // Cache data because too old or not here
-        this.importDataFromAPI().subscribe((data: API_ResponseType) => {
-          this.writeCacheToLocalStorage(localStorageRecoveredData, data)
-        })
+        this.importDataFromAPI()
       }
       // CACHE - Sinon écrire directement le cache dans dataService
       else {
@@ -120,18 +118,16 @@ export class GeneralService {
     }
     // Si pas de JSON dans le localStorage, contacter API et le mettre dans cache
     else {
-      this.importDataFromAPI().subscribe((data: API_ResponseType) => {
-        this.writeCacheToLocalStorage(localStorageRecoveredData, data) // LocalStorageRecoveredData is at null here
-      })
+      this.importDataFromAPI()
     }
     this.searchService.$finishedLoadingDataFromCache.emit(true)
   }
 
   // Forcer à rafraîchir les données depuis API
   forceUpdateData() {
-    let localStorageRecoveredData: LocalStorageDataType = this.communicationService.getDataFromStorage(this.communicationService.appLocalStorageVarName)
     this.communicationService.requestToAPI("GET", this.communicationService.API_Endpoint_refreshData, {token: this.communicationService.API_token}).subscribe((response) => {
-      this.importDataFromAPI().subscribe((data: API_ResponseType) => {})
+      console.log('Sent')
+      this.importDataFromAPI()
     })
   }
 
@@ -147,14 +143,15 @@ export class GeneralService {
           let responseObject = response as API_ResponseType
           this.notif.success("Données mise à jour depuis le serveur", "C'est bon !")
           this.writeDataToVariables(responseObject.data)
+          this.writeCacheToLocalStorage(this.communicationService.getDataFromStorage('app'), responseObject)
           returnValue.emit(responseObject)
         }
         // Si les données sont corrompues
         else {
           this.notif.error("La réponse fournie par le serveur est corrompue... Utilisation des données locales")
+          throw new AppError('NO_DATA_FROM_API')
         }
         this.searchService.$finishedLoadingDataFromCache.emit(true)
-        throw new AppError('NO_DATA_FROM_API')
       },
 
       (error) => {

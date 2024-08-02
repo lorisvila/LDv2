@@ -1,6 +1,6 @@
 import cors from 'cors';
 import fs from 'fs';
-import express, {Express, NextFunction, Request, Response} from 'express';
+import express, {Express, NextFunction, Request, Response, Router} from 'express';
 import {ConfigType, ResponseType} from "~/types/types";
 import {DataController} from '~~/src/ressources/data.controller'
 import {AuthController} from '~~/src/ressources/auth.controller'
@@ -18,6 +18,7 @@ const CONFIG_FILE_PATH: string = "./config.json"
 export class App {
 
   app: Express = express()
+  mainRouter: Router = Router();
   config: ConfigType
   AuthController: AuthController
   DataController: DataController
@@ -47,9 +48,12 @@ export class App {
     this.app.use(cookieParser())
 
     this.app.use(this.logRequest)
-    this.app.use(this.DataController.mainEndpoint, this.DataController.router)
-    this.app.use(this.AuthController.mainEndpoint, this.AuthController.router)
-    this.app.use(this.DataManagerController.mainEndpoint, this.DataManagerController.router)
+
+    this.app.use('/v1', this.mainRouter)
+
+    this.mainRouter.use(this.DataController.mainEndpoint, this.DataController.router)
+    this.mainRouter.use(this.AuthController.mainEndpoint, this.AuthController.router)
+    this.mainRouter.use(this.DataManagerController.mainEndpoint, this.DataManagerController.router)
 
     this.app.use((req, res, next) => {
       let endpoint = req.url

@@ -9,11 +9,8 @@ import {API_RequestType, API_ResponseType} from "../app.types";
 export class CommunicationService {
 
   //API_url: URL =  new URL("http://10.0.0.100:8081/");
-  API_url: URL =  new URL("http://localhost:8081/");
-
-  API_Section_Data: string = "/data";
-  API_Section_DataManage: string = "/dataManage";
-  API_Section_Auth: string = "/auth";
+  API_Url: URL =  new URL("http://localhost:8081/");
+  API_Version: string = '/v1'
 
   // Name of localStorage variables
   appLocalStorageVarName: string = "app";
@@ -22,19 +19,30 @@ export class CommunicationService {
   favEnginLocalStorageVarName: string = "enginFav";
   technicentreLocalStorageVarName: string = "technicentre";
 
+  // Main Sections of API
+
+  API_Section_Data: string = this.API_Version + "/data";
+  API_Section_DataManage: string = this.API_Version + "/dataManage";
+  API_Section_Auth: string = this.API_Version + "/auth";
+
   //API endpoints
-  API_Endpoint_allTables: URL = new URL( this.API_Section_Data + "/getAllTables", this.API_url)
-  API_Endpoint_refreshData: URL = new URL( this.API_Section_Data + "/refresh", this.API_url)
-  API_Endpoint_singleTable: URL = new URL(this.API_Section_Data + "/table", this.API_url)
-  API_Endpoint_authConnect: URL = new URL(this.API_Section_Auth + "/connect", this.API_url)
-  API_Endpoint_checkToken: URL = new URL(this.API_Section_Auth + "/checkToken", this.API_url)
-  API_Endpoint_GetUsers: URL = new URL(this.API_Section_Auth + "/users", this.API_url)
-  API_Endpoint_CreateUser: URL = new URL(this.API_Section_Auth + "/createUser", this.API_url)
-  API_Endpoint_DeleteUser: URL = new URL(this.API_Section_Auth + "/deleteUser", this.API_url)
-  API_Endpoint_EditUser: URL = new URL(this.API_Section_Auth + "/editUser", this.API_url)
-  API_Endpoint_EditDocument: URL = new URL(this.API_Section_DataManage + "/editDocument", this.API_url)
-  API_Endpoint_CreateDocument: URL = new URL(this.API_Section_DataManage + "/createDocument", this.API_url)
-  API_Endpoint_DeleteDocument: URL = new URL(this.API_Section_DataManage + "/deleteDocument", this.API_url)
+  API_Endpoint_allTables: URL = new URL(this.API_Section_Data + "/getAllTables", this.API_Url)
+  API_Endpoint_refreshData: URL = new URL(this.API_Section_Data + "/refresh", this.API_Url)
+  API_Endpoint_singleTable: URL = new URL(this.API_Section_Data + "/table", this.API_Url)
+
+  API_Endpoint_authConnect: URL = new URL(this.API_Section_Auth + "/connect", this.API_Url)
+  API_Endpoint_checkToken: URL = new URL(this.API_Section_Auth + "/checkToken", this.API_Url)
+  API_Endpoint_GetUsers: URL = new URL(this.API_Section_Auth + "/users", this.API_Url)
+  API_Endpoint_CreateUser: URL = new URL(this.API_Section_Auth + "/createUser", this.API_Url)
+  API_Endpoint_DeleteUser: URL = new URL(this.API_Section_Auth + "/deleteUser", this.API_Url)
+  API_Endpoint_EditUser: URL = new URL(this.API_Section_Auth + "/editUser", this.API_Url)
+
+  API_Endpoint_CreateDocument: URL = new URL(this.API_Section_DataManage + "/createDocument", this.API_Url)
+  API_Endpoint_EditDocument: URL = new URL(this.API_Section_DataManage + "/editDocument", this.API_Url)
+  API_Endpoint_DeleteDocument: URL = new URL(this.API_Section_DataManage + "/deleteDocument", this.API_Url)
+  API_Endpoint_CreateFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
+  API_Endpoint_EditFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
+  API_Endpoint_DeleteFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
 
   // API Token
   API_token: string | undefined = undefined
@@ -47,17 +55,17 @@ export class CommunicationService {
   }
 
   // Main function to retrieve data from localStorage
-  getDataFromStorage(key: string): null | any {
+  getDataFromStorage(key: string): undefined | any {
     let resultsString = localStorage.getItem(key)
     if (resultsString !== null) { // If the key exists in the localStorage
       try {
         return JSON.parse(resultsString);
       } catch {
         this.notif.error("Erreur dans la lecture de JSON")
-        return null
+        return undefined
       }
     } else {
-      return null;
+      return undefined;
     }
   }
 

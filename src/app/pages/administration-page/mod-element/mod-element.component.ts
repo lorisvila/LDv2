@@ -32,8 +32,9 @@ export class ModElementComponent {
   ) {
   }
 
-  // Forms
+  showModalConfirmDelete: boolean = false;
 
+  // Forms
   documentEditFormFilters = new UntypedFormGroup({});
   documentEditFormFiltersModel = {};
   documentEditFormTags = new UntypedFormGroup({});
@@ -170,7 +171,7 @@ export class ModElementComponent {
               let mainModel = this.administrationService.documentEditFormModel
               let values = this.dataService.filters.filter(filter => filter.page == mainModel.page && filter.type == field.model.filter_type && filter.engin == mainModel.engin).map(({ filter, filter_formatted }) => ({ value: filter, label: filter_formatted }))
               if (!values || values.length < 1) {
-                return [{value: '', label: 'Aucune options', disabled: true}];
+                return [{value: '', label: "Pas assez de paramètres :", disabled: true},{value: '', label: "Sélectionnez Page & Engin", disabled: true}];
               }
               return values
             },

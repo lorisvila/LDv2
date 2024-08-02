@@ -27,6 +27,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {ActionBarComponent} from "./components/action-bar/action-bar.component";
 import {ModElementComponent} from "./pages/administration-page/mod-element/mod-element.component";
 import {UsersElementComponent} from "./pages/administration-page/users-element/users-element.component";
+import {FilterElementComponent} from "./pages/administration-page/filter-element/filter-element.component";
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
@@ -46,27 +47,28 @@ import {UsersElementComponent} from "./pages/administration-page/users-element/u
     StillInDevPageComponent,
     NotFoundPageComponent
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        WcsAngularModule,
-        appRoutingModule,
-        BrowserAnimationsModule,
-        ToastrModule.forRoot({
-            timeOut: 7000,
-            positionClass: 'toast-bottom-right',
-            preventDuplicates: true,
-            progressBar: true,
-            maxOpened: 4,
-        }),
-        ActionBarComponent,
-        ModElementComponent,
-        BrowserModule,
-        ReactiveFormsModule,
-        FormlyModule.forRoot(),
-        UsersElementComponent,
-        WcsFormlyModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    WcsAngularModule,
+    appRoutingModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 7000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      progressBar: true,
+      maxOpened: 4,
+    }),
+    ActionBarComponent,
+    ModElementComponent,
+    BrowserModule,
+    ReactiveFormsModule,
+    FormlyModule.forRoot(),
+    UsersElementComponent,
+    WcsFormlyModule,
+    FilterElementComponent
+  ],
   providers: [
     CookieService
   ]

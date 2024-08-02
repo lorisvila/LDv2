@@ -2,7 +2,7 @@
 #title-engin-field {
   font-size: 0.8em;
 }
-#homeButton {
+.icon-button {
   cursor: pointer;
   user-select: none;
 }

@@ -9,6 +9,7 @@ import {EnginService} from "./engin.service";
 import {Router} from "@angular/router";
 import {FormlyFieldConfig, FormlyFormOptions} from "@ngx-formly/core";
 import {UntypedFormGroup} from "@angular/forms";
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -241,7 +242,7 @@ export class AdministrationService {
     )
   }
 
-  // ################################### Document Edit ###################################
+  // ################################### Document Edit & Create ###################################
 
   editingCreatingDocument: EditingCreatingType = 'CREATING';
 
@@ -292,6 +293,7 @@ export class AdministrationService {
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_EditDocument, {oldDocument: this.documentEditBackup, newDocument: this.documentEditFormModel}).subscribe(
       (response) => {
         this.handleResponseDocument(response, forms, 'Le document a été modifié avec succès')
+        this.generalService.forceUpdateData()
       },
       (error) => {
         this.handleErrorResponseDocument(error, forms)
@@ -306,6 +308,7 @@ export class AdministrationService {
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_CreateDocument, {document: this.documentEditFormModel}).subscribe(
       (response) => {
         this.handleResponseDocument(response, forms, 'Le document a été crée avec succès')
+        this.generalService.forceUpdateData()
       },
       (error) => {
         this.handleErrorResponseDocument(error, forms)
@@ -320,7 +323,8 @@ export class AdministrationService {
     console.log(this.documentEditBackup)
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteDocument, {document: this.documentEditBackup}).subscribe(
       (response) => {
-        this.handleResponseDocument(response, forms, 'Le document a été modifié avec succès')
+        this.handleResponseDocument(response, forms, 'Le document a été supprimé avec succès')
+        this.generalService.forceUpdateData()
       },
       (error) => {
         this.handleErrorResponseDocument(error, forms)
@@ -345,6 +349,51 @@ export class AdministrationService {
     forms.forEach(form => {
       form.enable()
     })
+  }
+
+  // ################################### Filter manage ###################################
+
+  filterAddForm = new UntypedFormGroup({});
+  filterAddFormModel: FilterType = {
+    type: '',
+    filter: '',
+    filter_formatted: '',
+    page: '',
+    engin: ''
+  }
+  filterEditForm = new UntypedFormGroup({});
+  filterEditFormModel: FilterType = {
+    type: '',
+    filter: '',
+    filter_formatted: '',
+    page: '',
+    engin: ''
+  }
+  filterEditBackup: FilterType | undefined
+
+  public get currentFilterSelected() {
+    let model = this.filterEditFormModel as any
+    return this.dataService.filters.find((filter) => (filter.filter == model.filter_to_modif && filter.type == model.type_to_modif && filter.page == model.page_to_modif && filter.engin == model.engin_to_modif))
+  }
+
+  sendCreateFilter() {
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteDocument, {filter: this.filterAddFormModel}).subscribe(
+      (response) => {
+        const check = this.communicationService.handleResponse(response)
+        if (check) {
+          this.notif.success('Le filtre a bien été crée')
+        }
+      }
+    )
+  }
+
+  selectFilterToModify() {
+    if (!this.currentFilterSelected) {
+      this.notif.error('Veuillez remplir tous les champs...')
+    }
+    this.filterEditBackup = JSON.parse(JSON.stringify(this.currentFilterSelected)) // Make sure that there is a deep copy for each...
+    console.log(this.filterEditFormModel)
+    _.merge(this.filterEditFormModel, JSON.parse(JSON.stringify(this.currentFilterSelected)))
   }
 
 }
