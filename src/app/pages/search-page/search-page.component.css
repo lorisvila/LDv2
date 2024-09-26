@@ -34,11 +34,11 @@ h4 {
 }
 
 /*Grid styling*/
-.grid-filter-div {
+.description-meta-fields {
   display: flex;
   flex-flow: column nowrap;
   gap: 0.2em;
 }
-.grid-filter-div > * {
+.description-meta-fields > * {
   text-align: start;
 }

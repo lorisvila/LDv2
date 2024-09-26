@@ -1,7 +1,7 @@
 {
   "name": "ldV2angular",
   "version": "0.0.0",
-  "main": "electron/app.js",
+  "main": "main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

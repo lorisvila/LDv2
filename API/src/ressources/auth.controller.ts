@@ -58,7 +58,7 @@ export class AuthController {
         this.App.AuthModule.checkRole('admin', user)
 
         if (!reqObject.data.user) {
-          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requêtes sont manquantes...', {code: 401})
+          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requêtes sont manquantes...', {code: 422})
         }
         let userToCreateObject = reqObject.data.user as UserType
 
@@ -76,7 +76,7 @@ export class AuthController {
         this.App.AuthModule.checkRole('admin', user)
 
         if (!reqObject.data.user) {
-          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requêtes sont manquantes...', {code: 401})
+          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requêtes sont manquantes...', {code: 422})
         }
         let userToDeleteObject = reqObject.data.user as UserType
 
@@ -94,7 +94,7 @@ export class AuthController {
         this.App.AuthModule.checkRole('admin', user)
 
         if (!reqObject.data.oldUser || !reqObject.data.newUser) {
-          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requête sont manquantes...', {code: 401})
+          throw new API_Error('REQUEST_VALUES_MISSING', 'Des valeurs dans votre requête sont manquantes...', {code: 422})
         }
 
         let oldUserToEditObject = reqObject.data.oldUser as UserType

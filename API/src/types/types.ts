@@ -1,5 +1,4 @@
 // App Types
-import {ItemDataType} from "../../../src/app/app.types";
 
 export type UserType = {
   username: string,
@@ -46,6 +45,9 @@ export type DBconfigType = {
 export type TableParams = {
   tableName: TableName
   keys: string[]
+  checkKeys: string[]
+  idKey: string
+  idAutoIncrement: boolean
 }
 export type TableName = string
 

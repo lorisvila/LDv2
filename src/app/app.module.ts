@@ -28,6 +28,8 @@ import {ActionBarComponent} from "./components/action-bar/action-bar.component";
 import {ModElementComponent} from "./pages/administration-page/mod-element/mod-element.component";
 import {UsersElementComponent} from "./pages/administration-page/users-element/users-element.component";
 import {FilterElementComponent} from "./pages/administration-page/filter-element/filter-element.component";
+import {EnginTechElementComponent} from "./pages/administration-page/engin-tech-element/engin-tech-element.component";
+
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
@@ -67,7 +69,8 @@ import {FilterElementComponent} from "./pages/administration-page/filter-element
     FormlyModule.forRoot(),
     UsersElementComponent,
     WcsFormlyModule,
-    FilterElementComponent
+    FilterElementComponent,
+    EnginTechElementComponent
   ],
   providers: [
     CookieService

@@ -9,7 +9,7 @@
         <formly-form [form]="administrationService.filterAddForm" [fields]="filterAddFormFields"
                      [model]="administrationService.filterAddFormModel"></formly-form>
       </form>
-      <wcs-button [disabled]="!readyAddFilter">
+      <wcs-button [disabled]="!readyAddFilter" (click)="administrationService.sendCreateFilter()">
         <wcs-mat-icon icon="list_alt_add"></wcs-mat-icon>
         ‎ ‎ Rajouter
       </wcs-button>
@@ -29,13 +29,14 @@
       </form>
       <wcs-button (click)="administrationService.selectFilterToModify()" [disabled]="administrationService.currentFilterSelected == undefined">
         <wcs-mat-icon icon="upload"></wcs-mat-icon>
-        Charger
+        ‎‎ Charger
       </wcs-button>
-      <wcs-button [disabled]="administrationService.currentFilterSelected == undefined" class="wcs-danger">
+      <wcs-button [disabled]="administrationService.currentFilterSelected == undefined" class="wcs-danger" (click)="showModalConfirmDelete = true">
         <wcs-mat-icon icon="delete"></wcs-mat-icon>
         ‎ ‎ Supprimer
       </wcs-button>
     </wcs-card-body>
+
     @if (administrationService.filterEditBackup) {
       <wcs-divider></wcs-divider>
       <wcs-card-body class="card-content">
@@ -44,7 +45,7 @@
           <formly-form [form]="administrationService.filterEditForm" [fields]="filterEditFormFields"
                        [model]="administrationService.filterEditFormModel"></formly-form>
         </form>
-        <wcs-button>
+        <wcs-button [disabled]="!readyEditFilter" (click)="administrationService.sendEditFilter()">
           <wcs-mat-icon icon="edit_note"></wcs-mat-icon>
           Modifier
         </wcs-button>
@@ -52,3 +53,17 @@
     }
   </wcs-card>
 </div>
+
+<wcs-modal [show]="showModalConfirmDelete">
+  <div slot="header">Êtes-vous sûr de vouloir supprimer ce document ?</div>
+  <div slot="actions" class="flex-row flex-align-center flex-justify-center">
+    <wcs-button (click)="showModalConfirmDelete = false">
+      Annuler
+    </wcs-button>
+    <wcs-button class="wcs-danger" (click)="administrationService.sendDeleteFilter()" (click)="showModalConfirmDelete = false">
+      <wcs-mat-icon icon="delete"></wcs-mat-icon>
+      ‎ ‎ Oui
+    </wcs-button>
+  </div>
+</wcs-modal>
+

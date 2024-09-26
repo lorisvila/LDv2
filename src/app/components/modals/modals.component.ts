@@ -82,9 +82,9 @@ export class ModalsComponent {
   }
 
   deleteFavEngins() {
-    for (let engin of this.selectionFavEngin) {
+    this.selectionFavEngin.forEach((engin) => {
       this.enginService.deleteFavEngin(engin)
-    }
+    })
   }
 
 }

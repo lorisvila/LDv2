@@ -2,30 +2,16 @@
 
 <div class="page-content">
   <wcs-card>
-    <wcs-card-body>
-      <div class="form-line">
-        <div class="form-element">
-          <wcs-label>Code défaut<span class="required-star">*</span></wcs-label>
-          <wcs-input></wcs-input>
-        </div>
-        <div class="form-element">
-          <wcs-label>Calculateur</wcs-label>
-          <wcs-select>
-            <wcs-select-option value="">Tous</wcs-select-option>
-            <wcs-select-option value="LON">LON - SIE</wcs-select-option>
-            <wcs-select-option value="MVB">MVB - ODBS</wcs-select-option>
-          </wcs-select>
-        </div>
-      </div>
+    <wcs-card-body class="card-header">
+      <wcs-mat-icon icon="crisis_alert"></wcs-mat-icon>
+      <h2>Recherche du code défaut</h2>
     </wcs-card-body>
-  </wcs-card>
-  <wcs-card>
-    <wcs-card-body>
-      <div class="form-line">
-        <div class="form-element">
-
-        </div>
-      </div>
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <form [formGroup]="codesDefService.searchBarForm" class="formclass">
+        <formly-form [form]="codesDefService.searchBarForm" [fields]="searchBarFormFields"
+                     [model]="codesDefService.searchBarFormModel"></formly-form>
+      </form>
     </wcs-card-body>
   </wcs-card>
 </div>

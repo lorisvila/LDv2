@@ -2,105 +2,93 @@
 
 <div class="page-content">
 
-  <!--Card pour les filtres-->
-  <wcs-card mode="raised" id="filters-card" class="bottom-card">
-    <wcs-card-body id="filters-card-body">
-
-      <!--Input de recherche-->
-      <div id="string-search-field">
-        <wcs-label>Recherche</wcs-label>
-        <wcs-input #inputSearch placeholder="ex: Afficheur latéral ..."
-                   [value]="docFctService.search_value"
-                   (wcsChange)="docFctService.changeValueFilter('search_value', inputSearch.value)">
-        </wcs-input>
-      </div>
-
-      <!--Bouton tout afficher-->
-      <wcs-button class="wcs-primary" mode="stroked" shape="" size="s"
-                  (click)="docFctService.changeValueFilter('systeme', '')">
-        Tout afficher
-      </wcs-button>
-
-      <!--Grid de recherche-->
-      <!--TODO : Rajouter le fait de montrer le nombre de docs par système (si possible)-->
-      <wcs-grid selection-config="single"
-                [data]="docFctService.systemes"
-                [selectedItems]="docFctService.systemesSelectedGridValues"
-                (wcsGridSelectionChange)="docFctService.changeValueFilter('systeme', $event)">
-        <wcs-grid-column name="Système" path="filter_formatted"></wcs-grid-column>
-      </wcs-grid>
-
+  <wcs-card>
+    <wcs-card-body class="card-header header-clickable" (click)="hideFonctions = !hideFonctions">
+      <wcs-mat-icon icon="filter_list"></wcs-mat-icon>
+      <h2 style="flex-grow: 1">Fonction</h2>
+      <wcs-button shape="square" class="wcs-secondary"><wcs-mat-icon [icon]="hideFonctions ? 'unfold_more' : 'unfold_less'"></wcs-mat-icon></wcs-button>
     </wcs-card-body>
+    @if (!hideFonctions) {
+      <wcs-divider @fadeInOut></wcs-divider>
+      <wcs-card-body class="card-content" @fadeInOut>
+        <form [formGroup]="docFctService.filterForm" class="formclass">
+          <formly-form [form]="docFctService.filterForm" [fields]="searchFormFields"
+                       [model]="docFctService.filterFormModel"></formly-form>
+        </form>
+      </wcs-card-body>
+      <wcs-divider @fadeInOut></wcs-divider>
+      <wcs-card-body class="fonctions-grid" @fadeInOut>
+        @for (fonction of docFctService.allFonctions; track fonction.id) {
+          <div class="fonction-button" (click)="selectFunction(fonction)">
+            <span>{{fonction.filter_formatted}}</span>
+            <span class="nb-correspondance">0</span>
+          </div>
+        }
+      </wcs-card-body>
+    }
   </wcs-card>
 
-  <!--Card pour les documents-->
-  <wcs-card mode="raised" id="documents-card" class="bottom-card">
-    <wcs-card-body id="documents-card-body" class="card-body"
-                   [ngStyle]="{'justify-content': docFctService.filteredDocFctData ? 'center': 'flex-start'}">
-
-        <!--Spinner loading in case of online-->
-        <wcs-spinner class="wcs-primary" mode="border" *ngIf="docFctService.loading"></wcs-spinner>
-
-        <!--Span no categories selected-->
-        <span *ngIf="docFctService.filteredDocFctData?.length == 0 && docFctService.systeme == '' && !docFctService.loading"
-              class="document-textbox">
-          Veuillez sélectionner une catégorie pour voir les documents associés
-        </span>
-
-        <!--Span no doc in categorie-->
-        <span *ngIf="docFctService.filteredDocFctData?.length == 0 && docFctService.systeme != '' && !docFctService.loading"
-              class="document-textbox">
-          Cette catégorie ne contient aucun documents
-        </span>
-
-        <!--List item of results-->
-        <!--<wcs-list-item *ngFor="let item of docFctService.filteredDocFctData">
-          <wcs-mat-icon slot="icon" icon="description"></wcs-mat-icon>
-          <div slot="title"><span class="ft-w-500">{{item.des}}</span></div>
-          <wcs-list-item-properties>
-            <wcs-list-item-property><span class="ft-w-400">{{item.ref_main}}</span></wcs-list-item-property>
-            <wcs-list-item-property><span class="ft-w-400">{{item.type}}</span></wcs-list-item-property> &lt;!&ndash;TODO : Replace the type by the translated / "humanized" one&ndash;&gt;
-            <wcs-list-item-property><span class="ft-w-400">{{item.systeme}}</span></wcs-list-item-property>
-          </wcs-list-item-properties>
-          <div slot="actions">
-
-            &lt;!&ndash;Bouton mode hors-ligne : fichier Principal / Docmat local en utilisant "url_main_file"&ndash;&gt;
-            <wcs-button mode="clear" size="s" target="_blank">
-                        &lt;!&ndash;*ngIf="generalService.offlineMode && item.url_main_file != '' && item.url_main_file != undefined"
-                        [href]="item.url_main_file"
-                        [class]="item.url_main_file == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
-              Ouvrir en local 📥
-            </wcs-button>
-            &lt;!&ndash;Bouton mode hors-ligne : fichier Auxiliaire local en utilisant "url_aux_file"&ndash;&gt;
-            <wcs-button mode="clear" size="s" target="_blank">
-                        &lt;!&ndash;*ngIf="generalService.offlineMode && item.url_aux_file != '' && item.url_aux_file != undefined"
-                        [href]="item.url_aux_file"
-                        [class]="item.url_aux_file == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
-              Ouvrir Aux en local 📥
-            </wcs-button>
-
-            <span *ngIf="generalService.offlineMode && item.url_main_file == undefined && item.url_aux_file == undefined">Aucun fichiers</span>
-            &lt;!&ndash;TODO : Reste à styliser le texte aucun fichiers dispo...&ndash;&gt;
-
-            &lt;!&ndash;Bouton mode en ligne : fichier en ligne Principal / DsMat en utilisant "url_main"&ndash;&gt;
-            <wcs-button mode="clear" size="s" target="_blank">
-                        &lt;!&ndash;*ngIf="!generalService.offlineMode"
-                        [href]="item.url_main"
-                        [class]="item.url_main == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
-              Ouvrir sur DocMat 🔗
-            </wcs-button>
-            &lt;!&ndash;Bouton mode en ligne : fichier en ligne Auxiliaire en utilisant "url_aux"&ndash;&gt;
-            <wcs-button mode="clear" size="s" target="_blank">
-                        &lt;!&ndash;*ngIf="!generalService.offlineMode"
-                        [href]="item.url_aux"
-                        [class]="item.url_aux == '' ? 'wcs-danger' : 'wcs-primary'">&ndash;&gt;
-            Ouvrir Aux sur DocMat 🔗
-            </wcs-button>
-
-          </div>
-        </wcs-list-item>-->
-
+  <wcs-card>
+    <wcs-card-body class="card-header header-clickable" (click)="hideCategories = !hideCategories">
+      <wcs-mat-icon icon="category_search"></wcs-mat-icon>
+      <h2>Catégories</h2>
+      @if (docFctService.currentFonctionSelected) {
+        <wcs-badge class="wcs-success">{{docFctService.currentFonctionSelected.filter_formatted}}</wcs-badge>
+      }
+      <div style="flex-grow: 1"></div>
+      <wcs-button shape="square" class="wcs-secondary"><wcs-mat-icon [icon]="hideCategories ? 'unfold_more' : 'unfold_less'"></wcs-mat-icon></wcs-button>
     </wcs-card-body>
+    @if (!hideCategories) {
+      <wcs-divider @fadeInOut></wcs-divider>
+      <wcs-card-body @fadeInOut class="card-category">
+        <wcs-card class="card-category-left" mode="flat">
+          <wcs-card-body class="card-content">
+            <form [formGroup]="docFctService.filterForm" class="formclass">
+              <formly-form [form]="docFctService.filterForm" [fields]="categoryFormFields"
+                           [model]="docFctService.filterFormModel"></formly-form>
+            </form>
+            @if (this.docFctService.allCategoriesFromFonction.length == 0) {
+              <wcs-badge class="wcs-danger">Pas de catégories</wcs-badge>
+            }
+          </wcs-card-body>
+        </wcs-card>
+        <wcs-card mode="flat" class="card-category-right">
+          <wcs-card-body class="card-content documents-card">
+            @for (document of docFctService.filteredDocFctData; track document.id) {
+              <wcs-list-item>
+                <div slot="title">{{document.name}}</div>
+                <div slot="actions">
+                  @for (link of document.links; track link.name) {
+                    <wcs-button mode="clear" size="s" target="_blank"
+                                [href]="link.url"
+                                class="wcs-primary">
+                      🔗 {{link.type}} - {{link.name}}
+                    </wcs-button>
+                  }
+                </div>
+                <wcs-list-item-properties>
+                  <wcs-list-item-property>{{document.ref_main}}</wcs-list-item-property>
+                  @for (tag of document.tags; track tag) {
+                    <wcs-list-item-property>{{tag}}</wcs-list-item-property>
+                  }
+                </wcs-list-item-properties>
+                <div slot="description" class="flex-row flex-align-center">
+                  <wcs-button shape="round" (click)="administrationService.selectDocFromId(document.id)" class="wcs-warning"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+                  <div class="description-meta-fields">
+                    @for (filter of getKeys(document.meta); track filter) {
+                      <wcs-badge class="wcs-light"><b>{{filter}}</b> : {{returnFilterObject(document.meta, filter).filter_formatted}}</wcs-badge>
+                    }
+                  </div>
+                </div>
+              </wcs-list-item>
+            }
+            @if (!docFctService.filteredDocFctData || docFctService.filteredDocFctData.length == 0) {
+              <wcs-badge class="wcs-danger">Pas de documents</wcs-badge>
+            }
+          </wcs-card-body>
+        </wcs-card>
+      </wcs-card-body>
+    }
   </wcs-card>
 
 </div>

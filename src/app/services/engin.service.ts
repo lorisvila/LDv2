@@ -16,8 +16,6 @@ export class EnginService {
 
   favoriteEngins: EnginType[] = []
 
-  combinedTechFavEngins: {engins_fav: EnginType[], engins_technicentre: EnginType[]} = {engins_fav: [], engins_technicentre: []}
-
   constructor(
     public generalService: GeneralService,
     public communicationSerice: CommunicationService,
@@ -26,9 +24,6 @@ export class EnginService {
     public searchService: SearchService
   ) {
     // Subscribe to event EventEmitters from other services
-    this.generalService.$updateTechnicentre.subscribe((technicentre) => {
-      this.combineEnginsTechFav()
-    })
     this.generalService.$updateEngin.subscribe((engin) => {
       this.changeActualEngin(engin)
     })
@@ -40,8 +35,6 @@ export class EnginService {
 
     this.generalService.$enginServiceInitialized.emit(true)
 
-    // Set the combined Technicentre and Favorites engins
-    this.combineEnginsTechFav()
     // Listen to a change in Technicentre to update the combined Fav Engin + Tech list
   }
 
@@ -57,7 +50,6 @@ export class EnginService {
     this.actual_engin = engin
     this.searchService.$actualEngin.emit(engin)
     this.$actual_engin.emit(engin)
-    this.combineEnginsTechFav()
   }
 
   // Change the default engin in the localStorage
@@ -92,10 +84,8 @@ export class EnginService {
     }
 
     // Si l'engin est valide alors l'ajouter
-    this.favoriteEngins.push(engin)
-    location.reload()
+    this.favoriteEngins = [...this.favoriteEngins, engin];
     this.communicationSerice.updateDataToStorage(this.communicationSerice.favEnginLocalStorageVarName, this.favoriteEngins)
-    this.notif.success("L'engin " + engin.engin + " " + engin.engin_type + " " + engin.engin_numero + " a bien été ajouté !", "C'est bon !")
   }
 
   // Remove a Favorite Engin from the localStorage
@@ -115,31 +105,30 @@ export class EnginService {
     }
 
     // Si l'engin est valide alors supprimer
-    this.favoriteEngins.splice(this.favoriteEngins.indexOf(engin), 1)
+    this.favoriteEngins = this.favoriteEngins.filter((item) => !(item.engin_numero == engin.engin_numero && item.engin_type == engin.engin_type && item.engin == engin.engin))
     this.communicationSerice.updateDataToStorage(this.communicationSerice.favEnginLocalStorageVarName, this.favoriteEngins)
-    location.reload()
-    this.notif.success("L'engin " + engin.engin + " " + engin.engin_type + " " + engin.engin_numero + " a bien été supprimé !", "C'est bon !")
   }
 
   // Combine the engins from Technicentre and FavEngin
-  combineEnginsTechFav() {
-    this.combinedTechFavEngins = {engins_fav: [], engins_technicentre: []}
-    for (let engin of this.favoriteEngins) {
-      if (this.combinedTechFavEngins.engins_fav.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
-          this.combinedTechFavEngins.engins_technicentre.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
+  public get combinedEnginsTechFav() {
+    let combinedTechFavEngins: {engins_fav: EnginType[], engins_technicentre: EnginType[]} = {engins_fav: [], engins_technicentre: []}
+    this.favoriteEngins.forEach(engin => {
+      if (combinedTechFavEngins.engins_fav.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
+          combinedTechFavEngins.engins_technicentre.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
           engin.engin == this.actual_engin.engin) {
-        this.combinedTechFavEngins.engins_fav.push(engin)
+        combinedTechFavEngins.engins_fav = combinedTechFavEngins.engins_fav ? [...combinedTechFavEngins.engins_fav, engin] : [engin]
       }
-    }
+    })
     if (this.generalService.actualTechnicentre?.engins) {
-      for (let engin of this.generalService.actualTechnicentre?.engins) {
-        if (this.combinedTechFavEngins.engins_fav.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
-            this.combinedTechFavEngins.engins_technicentre.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
+      this.generalService.actualTechnicentre?.engins.forEach(engin => {
+        if (combinedTechFavEngins.engins_fav.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
+            combinedTechFavEngins.engins_technicentre.filter((item) => item.engin_numero == engin.engin_numero).length == 0 &&
             engin.engin == this.actual_engin.engin) {
-          this.combinedTechFavEngins.engins_technicentre.push(engin)
+          combinedTechFavEngins.engins_technicentre = combinedTechFavEngins.engins_technicentre ? [...combinedTechFavEngins.engins_technicentre, engin] : [engin]
         }
-      }
+      })
     }
+    return combinedTechFavEngins
   }
 
 }

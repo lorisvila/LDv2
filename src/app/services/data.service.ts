@@ -25,6 +25,12 @@ export class DataService {
 
   filterTypes: FilterBaseType[] = []
 
+  doc_fields_to_remove: string[] = [ // TODO : Temporary, still need to implement the N° engin table for document search
+    "recherche",
+    "fav_engin",
+    "engin_numero"
+  ]
+
   // Data for admin Panel
   webPages: PageType[] = [{
       title: "ld",

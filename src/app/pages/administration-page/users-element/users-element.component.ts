@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {WcsAngularModule} from "wcs-angular";
 import {AdministrationService} from "../../../services/administration.service";
 import {DatePipe, formatDate, NgIf} from "@angular/common";
+import {WcsGridRowData} from "wcs-core/dist/types/components/grid/grid-interface";
+import {GeneralService} from "../../../services/general.service";
 
 @Component({
   selector: 'app-users-element',
@@ -17,7 +19,17 @@ import {DatePipe, formatDate, NgIf} from "@angular/common";
 export class UsersElementComponent {
 
   constructor(
-    public administrationService: AdministrationService
+    public administrationService: AdministrationService,
+    public generalService: GeneralService,
   ) {
   }
+
+  dateFormatter(createElement: any, _: any, rowData: WcsGridRowData) {
+    return createElement('span', {}, "Dernière connexion : " + new Intl.DateTimeFormat('fr-FR', {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      timeZone: 'Europe/Paris',
+    }).format(rowData.data.lastConnect));
+  }
+
 }

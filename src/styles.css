@@ -131,10 +131,14 @@ hr {
   align-content: start;
   gap: 1em
 }
-
 h2 {
   margin: 0.3em 0;
 }
+.bold {
+  font-weight: bold;
+}
+
+/*Flex styling boostrap like classes*/
 .flex-row {
   display: flex;
   flex-flow: row wrap;
@@ -147,8 +151,14 @@ h2 {
 }
 .flex-align-center {
   align-items: center;
+  align-content: center;
+}
+.flex-align-end {
+  align-items: end;
+  align-content: end;
 }
 .flex-justify-center {
+  justify-items: center;
   justify-content: center;
 }
 

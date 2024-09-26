@@ -11,7 +11,7 @@
 </app-action-bar>
 
 @if (administrationService.auth_status) {
-  <wcs-tabs align="center" gutter="true" [selectedKey]="selectedPageFromUrl" (tabChange)="changeUrlToTab($event)" #AdministrationTabs>
+  <wcs-tabs align="center" gutter="true" [selectedKey]="selectedPageFromUrl" (tabChange)="changeUrlToTab($event)">
 
     <!--Tab ajout document-->
     <wcs-tab header="Ajout document" itemKey="ajout">
@@ -24,8 +24,9 @@
         <app-mod-element></app-mod-element>
       } @else {
         <wcs-card mode="flat">
-          <wcs-card-body>
-            <h2><wcs-mat-icon icon="priority_high"></wcs-mat-icon> Veuillez sélectionner un document</h2>
+          <wcs-card-body class="card-content flex-align-center">
+            <wcs-mat-icon icon="railway_alert"></wcs-mat-icon>
+            <h2>Veuillez sélectionner un document</h2>
           </wcs-card-body>
         </wcs-card>
       }
@@ -38,6 +39,7 @@
 
     <!--Tab gestion engins & Technicentres-->
     <wcs-tab header="Engins & Technicentres" itemKey="engin&technicentre">
+      <app-engin-tech-element></app-engin-tech-element>
     </wcs-tab>
 
     <!--Tab modification user-->

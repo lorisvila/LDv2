@@ -5,6 +5,8 @@ import {WcsAngularModule} from "wcs-angular";
 import {FormlyFieldConfig, FormlyModule} from "@ngx-formly/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {DataService} from "../../../services/data.service";
+import * as _ from "lodash";
+import {FilterType} from "../../../app.types";
 
 @Component({
   selector: 'app-filter-element',
@@ -26,6 +28,9 @@ export class FilterElementComponent {
     public dataService: DataService,
   ) {
   }
+
+  // Modals
+  showModalConfirmDelete: boolean = false
 
   // Forms
   filterAddFormFields: FormlyFieldConfig[] = [
@@ -300,6 +305,17 @@ export class FilterElementComponent {
   // Getters
   public get readyAddFilter() {
     return this.administrationService.filterAddForm.status == 'VALID'
+  }
+  public get readyEditFilter() {
+    let backup = this.administrationService.filterEditBackup;
+    let model = this.administrationService.filterEditFormModel;
+    let check: boolean = false;
+    ['engin', 'page', 'filter', 'filter_formatted', 'type'].forEach((key) => {
+      if (backup && model && backup[key as keyof FilterType] !== model[key as keyof FilterType]) {
+        check = true
+      }
+    })
+    return check
   }
 
 }

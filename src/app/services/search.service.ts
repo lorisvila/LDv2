@@ -1,6 +1,6 @@
 import {insertMultiple, create, search, Orama, Results, Result} from "@orama/orama";
 import {EventEmitter, Injectable} from '@angular/core';
-import {AppEnginType, EnginType, ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
+import {AppEnginType, ItemDataType, OramaItemDataType, PageFilters} from "../app.types";
 import {DataService} from "./data.service";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
@@ -39,7 +39,7 @@ export class SearchService {
       this.actualEngin = engin
       if (this.finishedLoadingDataFromCache && this.searchDB) {
         this.searchDB = this.updateItemDB()
-        if (!router.url.startsWith("/recherche")) {return;}
+        if (!router.url.startsWith("/recherche")) {return;} // If the user is not in the search page : skip
         if (this.searchedObjects) {
           this.searchIntoWebSite(this.searchValue)
         }
@@ -49,7 +49,7 @@ export class SearchService {
   }
 
   async createSearchDB(): Promise<Orama<any>> {
-    return await create({
+    let format = await create({
       schema: {
         id: 'string',
         page: 'string',
@@ -64,6 +64,7 @@ export class SearchService {
         tokenizer: {stemming: true, language: "english"} // TODO : Add the french stemmer
       }
     })
+    return format
   }
 
   async updateItemDB(data?: ItemDataType[]): Promise<Orama<any>> {
@@ -97,11 +98,11 @@ export class SearchService {
     return await db;
   }
 
-  async searchInDB(db: Orama<any>, searchValue?: string, filters?: PageFilters): Promise<Results<any>> {
+  async searchInDB(db: Orama<any>, filters?: PageFilters, searchValue?: string): Promise<Results<any>> {
     let searchParams: any = {}
     if (searchValue) {searchParams.term = searchValue}
     if (filters) {searchParams.where = filters}
-    searchParams.limit = 10000
+    searchParams.limit = 10000 // TODO : Implement this limit from the API --> Prevent a number doc size limit by the frontend
     let data = await search(await db, searchParams);
     console.log("Searched", data, searchParams)
     return data
@@ -119,6 +120,8 @@ export class SearchService {
     }
   }
 
+
+  // TODO : Remove this function
   prepareFilterObject(variableName: string, value: string, filterObject: PageFilters, page: string) {
     // Handle the different cases for preparing the filter object for Orama search
     if (variableName == "reset") { // If I want to reset the search
@@ -144,7 +147,7 @@ export class SearchService {
 
     if (typeof search == "string" && this.searchDB) {
       this.searchValue = search
-      data = await this.searchInDB(await this.searchDB, search, {"engin": this.actualEngin.engin})
+      data = await this.searchInDB(await this.searchDB, {"engin": this.actualEngin.engin}, search)
     } else {
       this.notif.error("Erreur lors de la recherche", "Aïe...")
       console.error("Erreur lors de la recherche... car soit search value n'est pas string ou la DB n'existe pas encore")
@@ -156,7 +159,6 @@ export class SearchService {
 
     if (data) {
       this.searchedObjects = this.purifyObjectIntoOramaItemDataType(data)
-      console.log(this.searchedObjects)
     } else {
       this.notif.error("Erreur lors de l'affichage des données de recherche...", "Aïe...")
       console.error("Erreur lors de l'affichage des donneés de recherche...")
@@ -164,11 +166,31 @@ export class SearchService {
 
   }
 
-  async searchDataForPage(filters: PageFilters, searchValue: string) {
+  purifyFilters(filters: any) {
+    let searchValue = undefined
+    if (filters.hasOwnProperty("recherche")) {
+      searchValue = filters.recherche
+      delete filters.recherche
+    }
+    if (filters.meta) {
+      Object.keys(filters.meta).forEach(key => {
+        filters['meta.' + key + '.filter'] = filters.meta[key]
+      })
+      delete filters.meta
+    }
+    Object.keys(filters).forEach((filter: any) => {
+      (this.dataService.doc_fields_to_remove.includes(filter) || filters[filter] == '') ? delete filters[filter] : undefined
+    })
+    return {filters, searchValue}
+  }
+
+  async searchDataForPage(ngxFormObjectFilters: any) {
     if (this.searchDB) {
-      return await this.searchInDB(await this.searchDB, searchValue, filters)
+      let {filters, searchValue} = this.purifyFilters(ngxFormObjectFilters)
+      return await this.searchInDB(await this.searchDB, filters, searchValue)
     } else {
-      return undefined;
+      this.notif.error("La base de donnée de recherche n'a pas été initialisée...")
+      return
     }
   }
 

@@ -6,6 +6,7 @@ import {Client, connect, DatabaseError, ResultRecord} from "ts-postgres";
 import {API_Error} from "~/types/errors";
 import * as process from "node:process";
 import _ from "lodash";
+import {EnginType, TechnicentreType} from "../../../src/app/app.types";
 
 
 export class DataModule {
@@ -91,6 +92,19 @@ export class DataModule {
       let query = await this.dbClient.query(`SELECT * FROM ${tableName}`)
       let jsonData: ResultRecord = [...query]
       let tableObject: TableObjectType = {tableName: tableName, tableData: jsonData, tableLastRefresh: new Date().getTime()}
+      if (jsonData) {
+        this.allTables.set(tableName, jsonData)
+      }
+      switch (tableName) {
+        case "technicentres": {
+          this.populateTechnicentreEnginsObjects()
+          break;
+        }
+        case "engins_technicentre": {
+          this.populateTechnicentreEnginsObjects()
+          break;
+        }
+      }
       return tableObject
     } catch (error) {
       if (error instanceof DatabaseError || error instanceof TypeError) {
@@ -106,7 +120,6 @@ export class DataModule {
     this.DBconfig.tables.forEach((table: string, id: number, arr) => {
       this.getTable(table).then((result) => {
         if (id+1 == arr.length) { this.dbEvent.emit('refreshed') } // Send that all tables has been refreshed if last
-        if (result) { this.allTables.set(table, result) }
       }).catch((error) => {}) // TODO : Make something when there is a error...
     })
   }
@@ -122,16 +135,35 @@ export class DataModule {
   }
 
   // ########################################
+  // Specific functions for tables
+
+  populateTechnicentreEnginsObjects() {
+    if (!(this.allTables.has('engins_technicentre') && this.allTables.has('technicentres'))) {
+      return
+    }
+    let technicentres = this.allTables.get('technicentres') as any[]
+    let engins_technicentre = this.allTables.get('engins_technicentre') as any[]
+
+    technicentres.forEach(technicentre => technicentre.engins = undefined)
+
+    engins_technicentre.forEach(engin => {
+      let technicentre = technicentres.find(technicentre => technicentre.technicentre == engin.technicentre)
+      technicentre.engins = technicentre.engins ? [...technicentre.engins, engin] : [engin]
+    })
+    this.allTables.set('technicentres', technicentres)
+  }
+
+  // ########################################
   // DB entries management (adding / replacing / deleting entries)
 
   async createEntry(newObject: any, tableName: TableName): Promise<void> {
 
-    let [keysString, valuesString] = this.getKeysAndValuesFormatted(tableName, newObject)
+    let {keysString, valuesString, checkKeysString} = this.getAndCheckKeysAndValues(tableName, newObject)
 
     let checkQuery = `
         SELECT EXISTS(
             SELECT FROM "${tableName}"
-            WHERE (engin = '${newObject.engin}' AND (name = '${newObject.name}' OR ref_main = '${newObject.ref_main}'))
+            WHERE ${checkKeysString}
         )
     `
     let checkValue
@@ -159,17 +191,14 @@ export class DataModule {
 
   }
 
-  async modifyEntry(oldObject: any, newObject: any, tableName: TableName, objectIdKey: string): Promise<void> {
+  async editEntry(oldObject: any, newObject: any, tableName: TableName): Promise<void> {
 
-    let [keysString, valuesString] = this.getKeysAndValuesFormatted(tableName, newObject, oldObject)
-    if (!oldObject[objectIdKey]) {
-      throw new API_Error('API_INTERN_ERROR', "ID de l'objet à modifier non trouvé dans votre requête...")
-    }
+    let {keysString, valuesString, checkKeysString, tableObject} = this.getAndCheckKeysAndValues(tableName, newObject, oldObject)
 
     let checkQuery = `
         SELECT EXISTS(
             SELECT FROM "${tableName}"
-            WHERE (${objectIdKey} = '${oldObject[objectIdKey]}')
+            WHERE ${checkKeysString}
         )
     `
     let checkValue
@@ -187,7 +216,7 @@ export class DataModule {
     let replaceQuery = `
       UPDATE "${tableName}"
       SET (${keysString}) = (${valuesString})
-      WHERE (${objectIdKey} = ${oldObject[objectIdKey]})
+      WHERE ("${tableObject.idKey}" = '${oldObject[tableObject.idKey]}')
     `
 
     try {
@@ -198,16 +227,14 @@ export class DataModule {
 
   }
 
-  async deleteEntry(object: any, tableName: TableName, objectIdKey: string): Promise<void> {
+  async deleteEntry(object: any, tableName: TableName): Promise<void> {
 
-    if (!object[objectIdKey]) {
-      throw new API_Error('API_INTERN_ERROR', "ID de l'objet à modifier non trouvé dans votre requête...")
-    }
+    let {keysString, valuesString, checkKeysString, tableObject} = this.getAndCheckKeysAndValues(tableName, object)
 
     let checkQuery = `
         SELECT EXISTS(
             SELECT FROM "${tableName}"
-            WHERE (${objectIdKey} = '${object[objectIdKey]}')
+            WHERE (${checkKeysString})
         )
     `
     let checkValue
@@ -224,7 +251,7 @@ export class DataModule {
 
     let deleteQuery = `
       DELETE FROM "${tableName}"
-      WHERE (${objectIdKey} = ${object[objectIdKey]})
+      WHERE ("${tableObject.idKey}" = '${object[tableObject.idKey]}')
     `
 
     try {
@@ -235,18 +262,35 @@ export class DataModule {
 
   }
 
-  getKeysAndValuesFormatted(tableName: string, newObject: any, otherObject?: any) {
-    let keys = this.App.config.data.tablesNecessaryKeys.find(table => table.tableName == tableName)?.keys
+  getAndCheckKeysAndValues(tableName: string, newObject: any, oldObject?: any) {
+    let tableObject = this.App.config.data.tablesNecessaryKeys.find(table => table.tableName == tableName)
+    if (!tableObject) { // Vérifier si la configuration de la table se trouve bien dans le fichier de config
+      throw new API_Error('API_INTERN_ERROR', "La configuration de la table à modifier n'a pas été trouvéé...")
+    }
+    let keys = tableObject.keys
     if (!keys) {
       throw new API_Error('API_INTERN_ERROR', `La config pour insérer un objet dans la table ${tableName} n'a pas été trouvée...`)
     }
     if (!_.every(keys, _.partial(_.has, newObject))) {
-      throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 401})
+      throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 422})
     }
-    if (otherObject) {
-      if (!_.every(keys, _.partial(_.has, otherObject))) {
-        throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 401})
+    let checkKeysString = ''
+    if (oldObject) {
+      if (!_.every(tableObject.checkKeys, _.partial(_.has, oldObject))) { // Vérifier si toutes les clés utilisées pour vérifier via l'ancien objet sont présentes
+        throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés pour vérifier votre objet de référence est / sont manquantes dans votre requête...', {code: 422})
       }
+      if (!oldObject[tableObject.idKey]) { // Vérifier la clé correspondant à la colonne de l'id primaire de la table est présente dans l'objet
+        throw new API_Error('REQUEST_VALUES_MISSING', `Il manque l'id (${tableObject.idKey}) dans l'objet de référence`)
+      }
+      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${oldObject[key]}'`)).join(' AND ') // Création du string pour le check de l'objet avec un WHERE
+    } else {
+      if (!_.every(tableObject.checkKeys, _.partial(_.has, newObject))) {
+        throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés pour vérifier votre objet est / sont manquantes dans votre requête...', {code: 422})
+      }
+      if (!newObject[tableObject.idKey] && !tableObject.idAutoIncrement) {
+        throw new API_Error('REQUEST_VALUES_MISSING', `Il manque l'id (${tableObject.idKey}) dans le nouvel objet `)
+      }
+      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${newObject[key]}'`)).join(' AND ')
     }
 
     let values: string[] = []
@@ -261,11 +305,12 @@ export class DataModule {
     let keysString = '"' + keys.join("\", \"") + '"'
     let valuesString = "'" + values.join("', '") + "'"
 
-    return [keysString, valuesString]
+    return {keysString, valuesString, checkKeysString, tableObject}
   }
 
   catchDataBaseErrror(error: any, queryString: string) {
     if (error instanceof DatabaseError) {
+      console.error(error)
       throw new API_Error('DATABASE_ERROR', `Erreur base de donnée : ${error.detail} | Requête : ${queryString}`, {code: 400})
     } else {
       console.error(error)

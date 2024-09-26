@@ -1,5 +1,12 @@
 import {Injectable} from '@angular/core';
-import {API_ResponseType, EditingCreatingType, FilterType, ItemDataType, UserType} from "../app.types";
+import {
+  API_ResponseType,
+  EditingCreatingType, EnginType,
+  FilterType,
+  ItemDataType,
+  TechnicentreType,
+  UserType
+} from "../app.types";
 import {DataService} from "./data.service";
 import {CommunicationService} from "./communication.service";
 import {GeneralService} from "./general.service";
@@ -108,7 +115,7 @@ export class AdministrationService {
   users: UserType[] = []
   user_selectedUser: UserType | undefined = undefined
 
-  userModalForm = new UntypedFormGroup({});
+  userModalForm: UntypedFormGroup = new UntypedFormGroup({});
   userModalFormModel = {
     username: '',
     password: '',
@@ -246,7 +253,7 @@ export class AdministrationService {
 
   editingCreatingDocument: EditingCreatingType = 'CREATING';
 
-  documentEditForm = new UntypedFormGroup({});
+  documentEditForm: UntypedFormGroup = new UntypedFormGroup({});
   emptyModel: ItemDataType = {
     id: 0,
     name: '',
@@ -293,10 +300,9 @@ export class AdministrationService {
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_EditDocument, {oldDocument: this.documentEditBackup, newDocument: this.documentEditFormModel}).subscribe(
       (response) => {
         this.handleResponseDocument(response, forms, 'Le document a été modifié avec succès')
-        this.generalService.forceUpdateData()
       },
       (error) => {
-        this.handleErrorResponseDocument(error, forms)
+        this.handleDocumentErrorResponse(error, forms)
       }
     )
   }
@@ -308,10 +314,9 @@ export class AdministrationService {
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_CreateDocument, {document: this.documentEditFormModel}).subscribe(
       (response) => {
         this.handleResponseDocument(response, forms, 'Le document a été crée avec succès')
-        this.generalService.forceUpdateData()
       },
       (error) => {
-        this.handleErrorResponseDocument(error, forms)
+        this.handleDocumentErrorResponse(error, forms)
       }
     )
   }
@@ -324,26 +329,23 @@ export class AdministrationService {
     this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteDocument, {document: this.documentEditBackup}).subscribe(
       (response) => {
         this.handleResponseDocument(response, forms, 'Le document a été supprimé avec succès')
-        this.generalService.forceUpdateData()
       },
       (error) => {
-        this.handleErrorResponseDocument(error, forms)
+        this.handleDocumentErrorResponse(error, forms)
       }
     )
   }
 
   handleResponseDocument(response: Object, forms: UntypedFormGroup[], successMessage: string) {
-    const check = this.communicationService.handleResponse(response)
-    if (check) {
-      this.notif.success(successMessage)
-    }
+    this.communicationService.handleResponse(response, successMessage)
+    this.generalService.forceUpdateData()
     forms.forEach(form => {
       form.enable()
     })
     this.resetFieldsEditDoc()
   }
 
-  handleErrorResponseDocument(error: any, forms: UntypedFormGroup[]) {
+  handleDocumentErrorResponse(error: any, forms: UntypedFormGroup[]) {
     this.communicationService.handleErrorResponse(error)
     this.documentEditForm.enable()
     forms.forEach(form => {
@@ -353,7 +355,7 @@ export class AdministrationService {
 
   // ################################### Filter manage ###################################
 
-  filterAddForm = new UntypedFormGroup({});
+  filterAddForm: UntypedFormGroup = new UntypedFormGroup({});
   filterAddFormModel: FilterType = {
     type: '',
     filter: '',
@@ -361,7 +363,7 @@ export class AdministrationService {
     page: '',
     engin: ''
   }
-  filterEditForm = new UntypedFormGroup({});
+  filterEditForm: UntypedFormGroup = new UntypedFormGroup({});
   filterEditFormModel: FilterType = {
     type: '',
     filter: '',
@@ -376,24 +378,122 @@ export class AdministrationService {
     return this.dataService.filters.find((filter) => (filter.filter == model.filter_to_modif && filter.type == model.type_to_modif && filter.page == model.page_to_modif && filter.engin == model.engin_to_modif))
   }
 
-  sendCreateFilter() {
-    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteDocument, {filter: this.filterAddFormModel}).subscribe(
-      (response) => {
-        const check = this.communicationService.handleResponse(response)
-        if (check) {
-          this.notif.success('Le filtre a bien été crée')
-        }
-      }
-    )
-  }
-
   selectFilterToModify() {
     if (!this.currentFilterSelected) {
       this.notif.error('Veuillez remplir tous les champs...')
     }
     this.filterEditBackup = JSON.parse(JSON.stringify(this.currentFilterSelected)) // Make sure that there is a deep copy for each...
-    console.log(this.filterEditFormModel)
-    _.merge(this.filterEditFormModel, JSON.parse(JSON.stringify(this.currentFilterSelected)))
+    this.filterEditFormModel = _.merge(JSON.parse(JSON.stringify(this.filterEditFormModel)), JSON.parse(JSON.stringify(this.currentFilterSelected)))
+  }
+
+  sendEditFilter() {
+    this.filterEditForm.disable()
+    this.communicationService.requestToAPI('POST', this.communicationService.API_Endpoint_EditFilter, {oldFilter: this.filterEditBackup, newFilter: this.filterEditFormModel}).subscribe(
+      (response) => {
+        this.filterEditForm.enable()
+        this.communicationService.handleResponse(response, 'Le filtre a bien été modifié')
+        this.filterEditBackup = undefined
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.filterEditForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  sendCreateFilter() {
+    this.filterAddForm.disable()
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_CreateFilter, {filter: this.filterAddFormModel}).subscribe(
+      (response) => {
+        this.filterAddForm.enable()
+        this.communicationService.handleResponse(response, 'Le filtre a bien été crée')
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.filterAddForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  sendDeleteFilter() {
+    this.filterEditForm.disable()
+    this.communicationService.requestToAPI('POST', this.communicationService.API_Endpoint_DeleteFilter, {filter: this.currentFilterSelected}).subscribe(
+      (response) => {
+        this.filterEditForm.enable()
+        this.communicationService.handleResponse(response, 'Le filtre a bien été supprimé')
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.filterEditForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  // ################################### Engins & Technicentres manage ###################################
+  enginTechAddForm: UntypedFormGroup = new UntypedFormGroup({});
+  enginTechAddFormModel: any = {}
+
+  technicentreAddForm: UntypedFormGroup = new UntypedFormGroup({});
+  technicentreAddFormModel: any = {}
+
+  sendAddEnginTechnicentre() {
+    this.enginTechAddForm.disable()
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_CreateEnginTechnicentre, {engin: this.enginTechAddFormModel}).subscribe(
+      (response) => {
+        this.enginTechAddForm.enable()
+        this.communicationService.handleResponse(response, "L'engin a bien été ajouté")
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.enginTechAddForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  sendDeleteEnginTechnicentre(engin: EnginType) {
+    this.enginTechAddForm.disable()
+    this.communicationService.requestToAPI("POST", this.communicationService.API_Endpoint_DeleteEnginTechnicentre, {engin: engin}).subscribe(
+      (response) => {
+        this.enginTechAddForm.enable()
+        this.communicationService.handleResponse(response, "L'engin a bien été ajouté")
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.enginTechAddForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  sendAddTechnicentre() {
+    this.technicentreAddForm.disable()
+    this.communicationService.requestToAPI('POST', this.communicationService.API_Endpoint_CreateTechnicentre, {technicentre: this.technicentreAddFormModel}).subscribe(
+      (response) => {
+        this.technicentreAddForm.enable()
+        this.communicationService.handleResponse(response)
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.technicentreAddForm.enable()
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
+  }
+
+  sendDeleteTechnicentre(technicentre: TechnicentreType) {
+    this.communicationService.requestToAPI('POST', this.communicationService.API_Endpoint_DeleteTechnicentre, {technicentre: technicentre}).subscribe(
+      (response) => {
+        this.communicationService.handleResponse(response)
+        this.generalService.forceUpdateData()
+      },
+      (error) => {
+        this.communicationService.handleErrorResponse(error)
+      }
+    )
   }
 
 }

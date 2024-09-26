@@ -8,8 +8,8 @@ import {API_RequestType, API_ResponseType} from "../app.types";
 })
 export class CommunicationService {
 
-  //API_url: URL =  new URL("http://10.0.0.100:8081/");
-  API_Url: URL =  new URL("http://localhost:8081/");
+  API_Url: URL =  new URL("http://ldv2.cic.sncf.fr:3000/");
+  /*API_Url: URL =  new URL("http://localhost:8081/");*/
   API_Version: string = '/v1'
 
   // Name of localStorage variables
@@ -41,8 +41,12 @@ export class CommunicationService {
   API_Endpoint_EditDocument: URL = new URL(this.API_Section_DataManage + "/editDocument", this.API_Url)
   API_Endpoint_DeleteDocument: URL = new URL(this.API_Section_DataManage + "/deleteDocument", this.API_Url)
   API_Endpoint_CreateFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
-  API_Endpoint_EditFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
-  API_Endpoint_DeleteFilter: URL = new URL(this.API_Section_DataManage + "/createFilter", this.API_Url)
+  API_Endpoint_EditFilter: URL = new URL(this.API_Section_DataManage + "/editFilter", this.API_Url)
+  API_Endpoint_DeleteFilter: URL = new URL(this.API_Section_DataManage + "/deleteFilter", this.API_Url)
+  API_Endpoint_CreateEnginTechnicentre: URL = new URL(this.API_Section_DataManage + "/createEnginTechnicentre", this.API_Url)
+  API_Endpoint_DeleteEnginTechnicentre: URL = new URL(this.API_Section_DataManage + "/deleteEnginTechnicentre", this.API_Url)
+  API_Endpoint_CreateTechnicentre: URL = new URL(this.API_Section_DataManage + "/createTechnicentre", this.API_Url)
+  API_Endpoint_DeleteTechnicentre: URL = new URL(this.API_Section_DataManage + "/deleteTechnicentre", this.API_Url)
 
   // API Token
   API_token: string | undefined = undefined
@@ -93,9 +97,10 @@ export class CommunicationService {
     return this.http.request(method, endpoint.href, {responseType: 'json', body: requestObjectBody, headers: headers})
   }
 
-  handleResponse(response: any): API_ResponseType | undefined {
+  handleResponse(response: any, successMessage?: string): API_ResponseType | undefined {
     let responseObject = (response as API_ResponseType)
     if (responseObject.status.code === 200) {
+      successMessage ? this.notif.success(successMessage) : undefined
       return responseObject
     } else {
       this.notif.error(responseObject.status.message)

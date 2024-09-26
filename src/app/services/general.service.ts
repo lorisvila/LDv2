@@ -40,12 +40,18 @@ export class GeneralService {
   $enginServiceInitialized: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   //Variables des versions et dates de mise à jour
-  app_version: string = "V 2.2.1";
+  app_version: string = "V 2.2.5";
   app_build: string = "dev";
 
-  date_maj_applicatif: Date = new Date(2024, 7, 26);
+  date_maj_applicatif: Date = new Date(2024, 9, 25);
 
   date_maj_applicatif_string: string = this.date_maj_applicatif.toLocaleDateString('fr-FR');
+
+  dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+    dateStyle: 'full',
+    timeStyle: 'long',
+    timeZone: 'Europe/Paris',
+  })
 
   // URL des sites
   URLDsMat = "https://dsmat.sncf.fr/"
@@ -126,7 +132,6 @@ export class GeneralService {
   // Forcer à rafraîchir les données depuis API
   forceUpdateData() {
     this.communicationService.requestToAPI("GET", this.communicationService.API_Endpoint_refreshData, {token: this.communicationService.API_token}).subscribe((response) => {
-      console.log('Sent')
       this.importDataFromAPI()
     })
   }

@@ -1,0 +1,17 @@
+[Unit]
+Description=API du Livret de Dépannages V2
+After=network-online.target
+
+[Service]
+Type=simple
+
+User=loris
+WorkingDirectory=/home/loris/LDv2/API
+ExecStart=npm run start
+Restart=on-failure
+
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=300
+
+[Install]
+WantedBy=multi-user.target

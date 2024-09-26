@@ -30,13 +30,13 @@ export class AuthModule {
   checkUserPassword(req: Request, res: Response): UserType {
     let reqObject: RequestType = req.body as RequestType
     if (!reqObject || !reqObject.data.username || !reqObject.data.password) {
-      throw new API_Error('BAD_REQUEST', 'Il manque des éléments dans ta requête...', {code: 401})
+      throw new API_Error('BAD_REQUEST', 'Il manque des éléments dans ta requête...', {code: 422})
     }
     let username = reqObject.data.username
     let password = reqObject.data.password
     let userFind: UserType | undefined = this.Users.get(username)
     if (!userFind) {
-      throw new API_Error('BAD_CREDENTIALS', "L'utilisateur n'a pas été trouvé...", {code: 401})
+      throw new API_Error('BAD_CREDENTIALS', "L'utilisateur n'a pas été trouvé...", {code: 404})
     }
     let match = bcrypt.compareSync(password, userFind.password)
     if (!match) {

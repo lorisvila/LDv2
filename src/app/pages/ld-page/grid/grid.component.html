@@ -5,41 +5,47 @@
   <wcs-grid-column name="Type engin" id="enginType" customCells="true" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref" width="10vw"></wcs-grid-column>
   <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
-  <wcs-grid-column *ngIf="administrationService.auth_status" name="Edit" id="edit" custom-cells="true"></wcs-grid-column>
+  <wcs-grid-column *ngIf="administrationService.auth_status" name="Edit" id="edit" custom-cells="true" width="2em"></wcs-grid-column>
 
-  <!--Cases personalisés pour la colonne "Type Engin"-->
-  <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
-    <!--Affichage de "Tous" si tous les types sont concernés-->
-    <span *ngIf="item.engin_type.length == enginService.actual_engin.types_engin.length; else elseBlock">
-      Tous les {{enginService.actual_engin.engin}}
-    </span>
-    <!--Affichage des types concernés si pas tous les types-->
-    <ng-template #elseBlock>
-      {{item.engin_type.join(" ; ")}}
-    </ng-template>
-
-  </wcs-grid-custom-cell>
-
-  <!--Cases personalisés pour la colonne "Ouvrir"-->
-  <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
-  <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
-
-    <wcs-button mode="clear" size="s" target="_blank"
-                *ngFor="let link of item.links"
-                [href]="link.url"
-                class="wcs-primary">
-      🔗 {{link.type}} - {{link.name}}
-    </wcs-button>
-
-  </wcs-grid-custom-cell>
-
-
-  <!--Bouton editer en tant que systémier / admin-->
-  <ng-container *ngIf="administrationService.auth_status">
-    <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id" *ngFor="let item of ldService.filteredLDdata">
-    <wcs-button shape="round" (click)="administrationService.selectDocFromId(item.id)"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+  @for (item of ldService.filteredLDdata; track item.id) {
+    <!--Cases personalisés pour la colonne "Type Engin"-->
+    <wcs-grid-custom-cell column-Id="enginType" [rowId]="item.id">
+      @if (item.engin_type.length == enginService.actual_engin.types_engin.length) {
+        <!--Affichage de "Tous" si tous les types sont concernés-->
+        <span>
+        Tous les {{enginService.actual_engin.engin}}
+      </span>
+      } @else {
+        <!--Affichage des types concernés si pas tous les types-->
+        <span>
+        {{item.engin_type.join(" ; ")}}
+      </span>
+      }
     </wcs-grid-custom-cell>
-  </ng-container>
+  }
+
+  @for (item of ldService.filteredLDdata; track item.id) {
+    <!--Cases personalisés pour la colonne "Ouvrir"-->
+      <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
+    <wcs-grid-custom-cell column-Id="url" [rowId]="item.id">
+      @for (link of item.links; track link.name) {
+          <wcs-button mode="clear" size="s" target="_blank"
+                      [href]="link.url"
+                      class="wcs-primary">
+            🔗 {{link.type}} - {{link.name}}
+          </wcs-button>
+      }
+    </wcs-grid-custom-cell>
+  }
+
+  @for (item of ldService.filteredLDdata; track item.id) {
+    <!--Bouton editer en tant que systémier / admin-->
+    <ng-container *ngIf="administrationService.auth_status">
+      <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id">
+        <wcs-button shape="round" (click)="administrationService.selectDocFromId(item.id)" class="wcs-warning"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+      </wcs-grid-custom-cell>
+    </ng-container>
+  }
 
   <!--Pagination element at the bottom of the grid-->
   <wcs-grid-pagination id="grid-pagination" [pageSize]="ldService.pageSize" [availablePageSizes]="ldService.availablePageSizes"></wcs-grid-pagination>

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {EnginService} from "./engin.service";
 import {GeneralService} from "./general.service";
-import {EnginType, ItemDataType, FilterType, PageFilters, OramaItemDataType} from "../app.types";
+import {OramaItemDataType} from "../app.types";
 import {DataService} from "./data.service";
 import {SearchService} from "./search.service";
-import {Results} from "@orama/orama";
 import {ToastrService} from "ngx-toastr";
 import {AdministrationService} from "./administration.service";
+import {UntypedFormGroup} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +29,7 @@ export class LdService {
     })
     // Subscribe to a change in the actual engin selected
     this.enginService.$actual_engin.subscribe((value) => {
+      this.filterForm.reset()
       this.updateFilteredData()
     })
     // Subscribe to search DB initialized
@@ -39,16 +40,18 @@ export class LdService {
   };
 
   // Filters as a string
-  engin_type: string = "";
+  engin_type: string = ""; // TODO : Remove those variables because they are not used anymore, however I am not sure, check it pls ;)
   search_value: string = "";
   enginNum_value: string = "";
   systeme: string = "";
   type: string = "";
   fav_engin: string = ""
 
-  // Filters results as Objects
-  favEnginObject: EnginType | undefined = undefined;
-  filtersPage: PageFilters = {page: "ld"};
+  // NGX-Formly forms for the ld page
+  filterForm: UntypedFormGroup = new UntypedFormGroup({})
+  filterFormModel: any = {
+    page: "ld"
+  }
 
   // Grid values
   loading: boolean = false;
@@ -58,61 +61,19 @@ export class LdService {
   // Data for grid
   filteredLDdata: OramaItemDataType[] = [];
 
-  // Function executed when a event is triggered on a filter element (the element call it in the DOM)
-  changeValueFilter(variableName: string, value: any) {
-    switch (variableName) {
-      case "reset": {
-        this.engin_type = "";
-        this.search_value = "";
-        this.enginNum_value = "";
-        this.systeme = "";
-        this.type = "";
-        this.fav_engin = "";
-        break;
-      }
-      case "fav_engin": {
-        let num_engin = value.split("_")[1]
-        this.fav_engin = value;
-        if (value.split("_")[0] === "fav") { // If user select a favorite engin from his list
-          this.favEnginObject = this.enginService.combinedTechFavEngins.engins_fav.find((item) =>
-            item.engin_numero == num_engin)
-        } else if (value.split("_")[0] === "technicentre") { // If user select a favorite engin from the technicentre list
-          this.favEnginObject = this.enginService.combinedTechFavEngins.engins_technicentre.find((item) =>
-            item.engin_numero == num_engin)
-        } else { // If he unselect favorite engin
-          this.enginNum_value = ""
-          this.engin_type = ""
-          return;
-        }
-        if (!this.favEnginObject?.engin_numero) {
-          return;
-        }
-        this.enginNum_value = this.favEnginObject.engin_numero.toString()
-        this.engin_type = this.favEnginObject.engin_type
-        break;
-      }
-      default: { // TODO : See if there is here a vulnerabilty
-        (this as any)[variableName] = value
-      }
-    }
-
-    if (variableName == "fav_engin") { // If there is a fav engin, handle it before preparing the filter
-      this.filtersPage.engin_type = [this.engin_type]
-    }
-
-    this.searchService.prepareFilterObject(variableName, value, this.filtersPage, "ld")
-
-    this.updateFilteredData()
-  }
-
   async updateFilteredData() {
-    let results = await this.searchService.searchDataForPage(this.filtersPage, this.search_value)
+    let results = await this.searchService.searchDataForPage(JSON.parse(JSON.stringify(this.filterFormModel)))
     if (results == undefined) {
       this.notif.error("Une erreur est survenue dans la recherche...", "Aïe...")
       return;
     }
     let results_purified: OramaItemDataType[] = this.searchService.purifyObjectIntoOramaItemDataType(results)
     this.filteredLDdata = results_purified
+  }
+
+  async resetFilters() {
+    this.filterForm.reset()
+    await this.updateFilteredData()
   }
 
 }

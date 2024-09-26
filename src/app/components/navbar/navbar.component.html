@@ -5,7 +5,9 @@
     <h1 (click)="router.navigate([''])">LD Interactif v2</h1>
     <!--Select permettant de choisir l'engin-->
     <wcs-select #enginSelect [value]="enginService.actual_engin.engin" size="m" id="enginSelect" (wcsChange)="changeEngin(enginSelect.value)" >
-      <wcs-select-option *ngFor="let engin of dataService.engins" [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+      @for (engin of dataService.engins; track engin.engin) {
+        <wcs-select-option [value]="engin.engin">{{engin.engin}}</wcs-select-option>
+      }
     </wcs-select>
     <wcs-tooltip for="enginSelect" position="right">
       Si vous souhaitez sélectionner un engin par défaut, veuillez vous rendre dans les paramètres
