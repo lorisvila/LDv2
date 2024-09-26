@@ -1,0 +1,83 @@
+<div class="flex-column">
+  <wcs-card mode="flat">
+    <wcs-card-body class="card-header">
+      <wcs-mat-icon icon="train"></wcs-mat-icon>
+      <h2>Gestion des engins en technicentre</h2>
+    </wcs-card-body>
+
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <form [formGroup]="administrationService.enginTechAddForm">
+        <formly-form [form]="administrationService.enginTechAddForm" [fields]="enginTechAddFormFields"
+                     [model]="administrationService.enginTechAddFormModel"></formly-form>
+      </form>
+
+      @if (enginsTechnicentre) {
+        <wcs-grid [data]="enginsTechnicentre" rowIdPath="engin_numero">
+          <wcs-grid-column name="Engin" path="engin" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Type" path="engin_type" sort=""></wcs-grid-column>
+          <wcs-grid-column name="N°" path="engin_numero" sort=""></wcs-grid-column>
+          <wcs-grid-column name="Supprimer" customCells="" id="technicentreEnginDeleteCell" width="4em"></wcs-grid-column>
+
+          @for (engin of enginsTechnicentre; track engin.engin_numero) {
+            <wcs-grid-custom-cell column-Id="technicentreEnginDeleteCell" [rowId]="engin.engin_numero" class="flex-row flex-justify-center flex-align-center">
+              <wcs-button class="wcs-danger" mode="stroked" shape="round" (click)="administrationService.sendDeleteEnginTechnicentre(engin)" size="s">
+                <wcs-mat-icon icon="delete"></wcs-mat-icon>
+              </wcs-button>
+            </wcs-grid-custom-cell>
+          }
+        </wcs-grid>
+
+        <div class="flex-row flex-align-end">
+          <form [formGroup]="administrationService.enginTechAddForm">
+            <formly-form [form]="administrationService.enginTechAddForm" [fields]="enginTech2AddFormFields"
+                         [model]="administrationService.enginTechAddFormModel"></formly-form>
+          </form>
+          <wcs-button [disabled]="!readyAddEnginTechnicentre" (click)="administrationService.sendAddEnginTechnicentre()">
+            <wcs-mat-icon icon="add_circle"></wcs-mat-icon>
+            ‎ ‎ Rajouter
+          </wcs-button>
+        </div>
+      }
+
+    </wcs-card-body>
+  </wcs-card>
+
+  <wcs-card mode="flat">
+    <wcs-card-body class="card-header">
+      <wcs-mat-icon icon="source_environment"></wcs-mat-icon>
+      <h2>Gestion des technicentres</h2>
+    </wcs-card-body>
+
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <wcs-grid [data]="dataService.technicentres" rowIdPath="technicentre">
+        <wcs-grid-column name="Technicentre" path="technicentre_formatted" sort=""></wcs-grid-column>
+        <wcs-grid-column name="Technicentre abgrégé" path="technicentre" sort=""></wcs-grid-column>
+        <wcs-grid-column name="Supprimer" customCells="" id="technicentreDeleteCell" width="4em"></wcs-grid-column>
+
+        @for (technicentre of dataService.technicentres; track technicentre.technicentre) {
+          <wcs-grid-custom-cell column-Id="technicentreDeleteCell" [rowId]="technicentre.technicentre" class="flex-row flex-justify-center flex-align-center">
+            <wcs-button class="wcs-danger" mode="stroked" shape="round" (click)="administrationService.sendDeleteTechnicentre(technicentre)" size="s">
+              <wcs-mat-icon icon="delete"></wcs-mat-icon>
+            </wcs-button>
+          </wcs-grid-custom-cell>
+        }
+      </wcs-grid>
+    </wcs-card-body>
+
+    <wcs-divider></wcs-divider>
+    <wcs-card-body class="card-content">
+      <form [formGroup]="administrationService.technicentreAddForm">
+        <formly-form [form]="administrationService.technicentreAddForm" [fields]="technicentreAddFormFields"
+                     [model]="administrationService.technicentreAddFormModel"></formly-form>
+      </form>
+    </wcs-card-body>
+
+    <wcs-button [disabled]="!readyAddTechnicentre" (click)="administrationService.sendAddTechnicentre()">
+      <wcs-mat-icon icon="add_business"></wcs-mat-icon>
+      ‎ ‎ Ajouter
+    </wcs-button>
+  </wcs-card>
+
+</div>
