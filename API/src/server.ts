@@ -10,6 +10,8 @@ import {DataModule} from "~/modules/data.module";
 import {API_Error} from "~/types/errors";
 import * as console from "node:console";
 import cookieParser from "cookie-parser";
+import {Logger} from "pino";
+import {AppLogger} from "~/appLogger";
 
 
 const CONFIG_FILE_PATH: string = "./config.json"
@@ -28,6 +30,8 @@ export class App {
   AuthModule: AuthModule
   DataModule: DataModule
 
+  AppLogger: AppLogger
+  logger: Logger
 
   constructor() {
     this.app.use(express.json())
@@ -37,6 +41,9 @@ export class App {
       process.exit(2)
     }
     this.config = tmp_config
+    this.AppLogger = new AppLogger(this.config)
+    this.logger = this.AppLogger.getLogger()
+
     this.AuthController = new AuthController(this)
     this.DataController = new DataController(this)
     this.DataManagerController = new DataManagerController(this)
@@ -47,7 +54,7 @@ export class App {
     this.app.use(cors())
     this.app.use(cookieParser())
 
-    this.app.use(this.logRequest)
+    this.app.use(this.logRequest(this))
 
     this.app.use('/v1', this.mainRouter)
 
@@ -60,16 +67,18 @@ export class App {
       this.sendResponse(res, {}, {code: 404, message: `Endpoint '${endpoint}' not found...`})
     })
 
-    console.log(`Serving server on ${this.config.webserver.host}:${this.config.webserver.port}`)
+    this.logger.info(`Serving server on ${this.config.webserver.host}:${this.config.webserver.port}`)
     this.app.listen(this.config.webserver.port, this.config.webserver.host)
   }
 
-  logRequest(req: Request, res: Response, next: NextFunction) {
-    let ip = req.ip
-    let endpoint = req.url
-    let date = new Date().toUTCString()
-    console.log(`${date} | ${ip} | ${endpoint}`)
-    next()
+  logRequest = (mainClass: App) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+      let ip = req.ip
+      let endpoint = req.url
+      let date = new Date().toUTCString()
+      mainClass.logger.debug(`${date} | ${ip} | ${endpoint}`)
+      next()
+    }
   }
 
   sendResponse(res: Response, data: any, params?: {code?: number, message?: string, token?: string}) {
@@ -98,11 +107,18 @@ export class App {
   }
 
   getConfig(): ConfigType | undefined {
+    let config = undefined
     try {
-      let config = fs.readFileSync(CONFIG_FILE_PATH, 'utf-8')
+      config = fs.readFileSync(CONFIG_FILE_PATH, 'utf-8')
+    } catch {
+      console.error('Error while trying to read the config file')
+      return undefined
+    }
+    try {
       let configJSON = JSON.parse(config)
       return configJSON as ConfigType
-    } catch {
+    } catch (e) {
+      console.error('Error while trying to interpret the config file')
       return undefined
     }
   }

@@ -29,6 +29,12 @@ export type ConfigType = {
       host: string
   },
 
+  logging: {
+    GLOBAL_LOG_LEVEL: string
+    FILE_LOG_LEVEL: string
+    CONSOLE_LOG_LEVEL: string
+  }
+
   roles: {[role: string]: number}
   users: UserType[]
 }

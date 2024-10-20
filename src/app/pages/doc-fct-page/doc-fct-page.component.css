@@ -77,7 +77,7 @@ h4 {
 
 .card-category-left {
   width: fit-content;
-  min-width: 10em;
+  min-width: 20em;
   max-width: 22em;
   height: fit-content;
   position: sticky;

@@ -4,7 +4,7 @@
       Authentifié en tant que :
       <wcs-badge class="wcs-success">{{administrationService.auth_user?.username}} | {{administrationService.auth_user?.role}}</wcs-badge>
     </span>
-    <wcs-mat-icon icon="logout" (click)="administrationService.disconnectUser()" class="icon-button" size="l"></wcs-mat-icon>
+    <wcs-mat-icon icon="logout" (click)="administrationService.disconnectUser()" class="icon-button text-wcs-orange" size="l"></wcs-mat-icon>
   } @else {
     <wcs-badge class="wcs-danger icon-button" (click)="generalService.toggleModal('authConnect', true)">Pas authentifié</wcs-badge>
   }

@@ -6,24 +6,7 @@
   gap: var(--wcs-margin-l);
 }
 
-/*Cards common elements*/
-.ft-w-400 {
-  font-weight: 400;
-}
-.ft-w-500 {
+.default-card-section-title {
+  margin: 0.2em 0;
   font-weight: 500;
-}
-.required-star {
-  color: var(--wcs-red);
-}
-
-/*Cards filtres*/
-.form-line {
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  flex-wrap: wrap;
-}
-wcs-select, wcs-input {
-  min-width: 15em;
 }

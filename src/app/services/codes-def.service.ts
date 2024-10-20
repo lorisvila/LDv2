@@ -11,7 +11,7 @@ export class CodesDefService {
   // NGX-Formly forms for the DocFct page
   searchBarForm: UntypedFormGroup = new UntypedFormGroup({})
   searchBarFormModel: any = {
-    page: "docFct"
+    page: "codesDef"
   }
 
 }

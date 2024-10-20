@@ -3,6 +3,17 @@
 <div class="page-content">
 
   <wcs-card>
+    <wcs-card-body class="flex-row flex-align-end">
+      <form [formGroup]="docFctService.filterForm" class="formclass">
+        <formly-form [form]="docFctService.filterForm" [fields]="searchFormFields"
+                     [model]="docFctService.filterFormModel"></formly-form>
+      </form>
+      <!--Bouton pour reinitialiser / supprimer les filtres-->
+      <wcs-button class="wcs-warning" mode="clear" size="m" (click)="docFctService.resetFilters()"><wcs-mat-icon icon="cancel"></wcs-mat-icon>‎‎ Supprimer les filtres</wcs-button>
+    </wcs-card-body>
+  </wcs-card>
+
+  <wcs-card>
     <wcs-card-body class="card-header header-clickable" (click)="hideFonctions = !hideFonctions">
       <wcs-mat-icon icon="filter_list"></wcs-mat-icon>
       <h2 style="flex-grow: 1">Fonction</h2>
@@ -10,19 +21,15 @@
     </wcs-card-body>
     @if (!hideFonctions) {
       <wcs-divider @fadeInOut></wcs-divider>
-      <wcs-card-body class="card-content" @fadeInOut>
-        <form [formGroup]="docFctService.filterForm" class="formclass">
-          <formly-form [form]="docFctService.filterForm" [fields]="searchFormFields"
-                       [model]="docFctService.filterFormModel"></formly-form>
-        </form>
-      </wcs-card-body>
-      <wcs-divider @fadeInOut></wcs-divider>
       <wcs-card-body class="fonctions-grid" @fadeInOut>
         @for (fonction of docFctService.allFonctions; track fonction.id) {
           <div class="fonction-button" (click)="selectFunction(fonction)">
             <span>{{fonction.filter_formatted}}</span>
-            <span class="nb-correspondance">0</span>
+            <span class="nb-correspondance">{{getNumberOfMatchFunction(fonction)}}</span>
           </div>
+        }
+        @if (docFctService.allFonctions.length == 0) {
+          <wcs-badge class="wcs-danger">Pas de fonctions</wcs-badge>
         }
       </wcs-card-body>
     }
@@ -35,12 +42,14 @@
       @if (docFctService.currentFonctionSelected) {
         <wcs-badge class="wcs-success">{{docFctService.currentFonctionSelected.filter_formatted}}</wcs-badge>
       }
-      <div style="flex-grow: 1"></div>
+      <div style="flex-grow: 1"></div> <!--Séparateur pour le bouton en extrémité-->
       <wcs-button shape="square" class="wcs-secondary"><wcs-mat-icon [icon]="hideCategories ? 'unfold_more' : 'unfold_less'"></wcs-mat-icon></wcs-button>
     </wcs-card-body>
+
     @if (!hideCategories) {
       <wcs-divider @fadeInOut></wcs-divider>
       <wcs-card-body @fadeInOut class="card-category">
+
         <wcs-card class="card-category-left" mode="flat">
           <wcs-card-body class="card-content">
             <form [formGroup]="docFctService.filterForm" class="formclass">
@@ -52,11 +61,15 @@
             }
           </wcs-card-body>
         </wcs-card>
+
         <wcs-card mode="flat" class="card-category-right">
           <wcs-card-body class="card-content documents-card">
+
             @for (document of docFctService.filteredDocFctData; track document.id) {
               <wcs-list-item>
+
                 <div slot="title">{{document.name}}</div>
+
                 <div slot="actions">
                   @for (link of document.links; track link.name) {
                     <wcs-button mode="clear" size="s" target="_blank"
@@ -66,18 +79,25 @@
                     </wcs-button>
                   }
                 </div>
+
                 <wcs-list-item-properties>
                   <wcs-list-item-property>{{document.ref_main}}</wcs-list-item-property>
                   @for (tag of document.tags; track tag) {
                     <wcs-list-item-property>{{tag}}</wcs-list-item-property>
                   }
                 </wcs-list-item-properties>
+
                 <div slot="description" class="flex-row flex-align-center">
-                  <wcs-button shape="round" (click)="administrationService.selectDocFromId(document.id)" class="wcs-warning"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+
+                  @if (this.administrationService.auth_status) {
+                    <wcs-button shape="round" (click)="administrationService.selectDocFromId(document.id)" class="wcs-warning"><wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+                  }
+
                   <div class="description-meta-fields">
                     @for (filter of getKeys(document.meta); track filter) {
                       <wcs-badge class="wcs-light"><b>{{filter}}</b> : {{returnFilterObject(document.meta, filter).filter_formatted}}</wcs-badge>
                     }
+
                   </div>
                 </div>
               </wcs-list-item>

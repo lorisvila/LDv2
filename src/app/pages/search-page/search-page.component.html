@@ -26,6 +26,9 @@
           <wcs-grid-column name="Filtres" id="filters" customCells="true" width="10vw"></wcs-grid-column>
           <wcs-grid-column name="Reference" path="ref_main" sort="" id="column-ref"></wcs-grid-column>
           <wcs-grid-column name="Ouvrir" id="url" custom-cells="true" width="10vw"></wcs-grid-column>
+          @if (administrationService.auth_status) {
+            <wcs-grid-column name="Id & Edit" id="edit" custom-cells="true" width="2em"></wcs-grid-column>
+          }
 
           <!--Cases personalisés pour la colonne "Type Engin"-->
           @for (item of searchService.searchedObjects; track item.id) {
@@ -52,16 +55,27 @@
 
           <!--Cases personalisés pour la colonne "Ouvrir"-->
           <!--Avec des boutons pour ouvrir docs selon les liens de l'item et si on est en hors ligne ou non-->
-          <wcs-grid-custom-cell column-Id="url" [rowId]="item.id" *ngFor="let item of searchService.searchedObjects">
+          @for (item of searchService.searchedObjects; track item.id) {
+            <wcs-grid-custom-cell column-Id="url" [rowId]="item.id">
 
-            <wcs-button mode="clear" size="s" target="_blank"
-                        *ngFor="let link of item.links"
-                        [href]="link.url"
-                        class="wcs-primary">
-              🔗 {{link.type}} - {{link.name}}
-            </wcs-button>
+              <wcs-button mode="clear" size="s" target="_blank"
+                          *ngFor="let link of item.links"
+                          [href]="link.url"
+                          class="wcs-primary">
+                🔗 {{link.type}} - {{link.name}}
+              </wcs-button>
 
-          </wcs-grid-custom-cell>
+            </wcs-grid-custom-cell>
+          }
+
+          @if (administrationService.auth_status) {
+            @for (item of searchService.searchedObjects; track item.id) {
+              <!--Bouton editer en tant que systémier / admin-->
+              <wcs-grid-custom-cell column-Id="edit" [rowId]="item.id">
+                <wcs-button shape="" (click)="administrationService.selectDocFromId(item.id)" class="wcs-warning">{{item.id}}<wcs-mat-icon icon="edit"></wcs-mat-icon></wcs-button>
+              </wcs-grid-custom-cell>
+            }
+          }
 
           <!--Pagination element at the bottom of the grid-->
           <wcs-grid-pagination id="grid-pagination" [pageSize]="20" [availablePageSizes]="[20, 40, 60]"></wcs-grid-pagination>

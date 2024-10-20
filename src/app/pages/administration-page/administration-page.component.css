@@ -19,10 +19,6 @@
 }
 
 /*Title*/
-#homeButton {
-  cursor: pointer;
-  user-select: none;
-}
 wcs-tabs {
   user-select: none;
 }
@@ -30,9 +26,7 @@ wcs-tab {
   user-select: text;
   padding: 1em;
 }
-.icon-button {
-  cursor: pointer;
-}
+
 
 /*Cards common elements*/
 .ft-w-400 {

@@ -5,6 +5,7 @@ import {VerifyErrors} from "jsonwebtoken";
 import {API_Error} from "~/types/errors";
 import * as jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import {Logger} from "pino";
 
 export class AuthModule {
 
@@ -12,9 +13,12 @@ export class AuthModule {
   App: App
   Users: Map<string, UserType> = new Map()
 
+  logger: Logger
+
   constructor(mainClass: App) {
     this.App = mainClass
-    this.MAIN_TOKEN = mainClass.config.auth.mainToken
+    this.MAIN_TOKEN = this.App.config.auth.mainToken
+    this.logger = this.App.AppLogger.createChildLogger(this.constructor.name)
 
     // Create a HashMap of users
     this.App.config.users.forEach((user) => {
@@ -23,7 +27,9 @@ export class AuthModule {
   }
 
   createUserToken(username: string): string {
-    let userToken = jwt.sign({username: username}, this.MAIN_TOKEN, {expiresIn: "5d"})
+    let expireDate: string = "5d"
+    let userToken = jwt.sign({username: username}, this.MAIN_TOKEN, {expiresIn: expireDate})
+    this.logger.debug(`Creating a token for ${username}, expires in ${expireDate}`)
     return userToken
   }
 
@@ -36,10 +42,12 @@ export class AuthModule {
     let password = reqObject.data.password
     let userFind: UserType | undefined = this.Users.get(username)
     if (!userFind) {
+      this.logger.warn(`Attempt to log in with unknown username ${username}`)
       throw new API_Error('BAD_CREDENTIALS', "L'utilisateur n'a pas été trouvé...", {code: 404})
     }
     let match = bcrypt.compareSync(password, userFind.password)
     if (!match) {
+      this.logger.warn(`Attempt to log in with username ${username} with wrong password`)
       throw new API_Error('BAD_CREDENTIALS', "Mauvais mot de passe !", {code: 401})
     }
     return userFind
@@ -65,6 +73,7 @@ export class AuthModule {
       // Si pas d'erreur au dessus, jwt valide
       let user = this.Users.get(username)
       if (!user) {
+        this.logger.warn('User tried to log in with a token related with a unknown user...')
         throw new API_Error('BAD_CREDENTIALS', 'Utilisateur non trouvé dans la base de donnée')
       }
       return user
@@ -72,8 +81,10 @@ export class AuthModule {
     } catch (err) {
       let errObject: VerifyErrors = (err as VerifyErrors)
       if (errObject?.name == "TokenExpiredError") {
+        this.logger.debug('User tried to log in with an expired token')
         throw new API_Error('EXPIRED_TOKEN', "Ton token a expiré", {code: 401})
       } else {
+        this.logger.debug('User tried to log in with an invalid token')
         throw new API_Error('INVALID_TOKEN', "Ton token est invalide", {code: 401})
       }
     }
@@ -94,6 +105,7 @@ export class AuthModule {
       // Si pas d'erreur au dessus, jwt valide
       let user = this.Users.get(username)
       if (!user) {
+        this.logger.warn('User tried to log in with a token related with a unknown user...')
         throw new API_Error('BAD_CREDENTIALS', 'Utilisateur non trouvé dans la base de donnée')
       }
       return user
@@ -101,8 +113,10 @@ export class AuthModule {
     } catch (err) {
       let errObject: VerifyErrors = (err as VerifyErrors)
       if (errObject?.name == "TokenExpiredError") {
+        this.logger.debug('User tried to log in with an expired token')
         throw new API_Error('EXPIRED_TOKEN', "Ton token a expiré", {code: 401})
       } else {
+        this.logger.debug('User tried to log in with an invalid token')
         throw new API_Error('INVALID_TOKEN', "Ton token est invalide", {code: 401})
       }
     }
@@ -122,12 +136,14 @@ export class AuthModule {
       role: role
     }
     this.writeUser(username, userObject)
+    this.logger.info(`User ${username} created successfully !`)
   }
 
   checkRole(wantedRole: RoleType, user: UserType): void {
     let wantedRoleWeight = this.App.config.roles[wantedRole]
     let userRoleWeight = this.App.config.roles[user.role]
     if (userRoleWeight < wantedRoleWeight) {
+      this.logger.warn("User wanted to do a unauthorized request due to it's permissions level")
       throw new API_Error('USER_ROLE_INSUFFICIENT', "Vous n'avez pas le droit d'accéder à cette ressource", {code: 403})
     }
   }

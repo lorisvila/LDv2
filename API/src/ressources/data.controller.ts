@@ -2,7 +2,6 @@ import {NextFunction, Request, Response, Router} from "express";
 import {App} from "~/server";
 import {NOT_TO_DATE, UP_TO_DATE} from "~/types/types";
 import {API_Error} from "~/types/errors";
-import * as console from "node:console";
 export class DataController {
 
   App: App

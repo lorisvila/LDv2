@@ -115,4 +115,14 @@ export class DocFctPageComponent {
     })
   }
 
+  getNumberOfMatchFunction(fonction_filter: FilterType) {
+    return this.docFctService.filteredDocFctData?.filter((doc) => {
+      if (doc.meta?.hasOwnProperty('fonction'))  {
+        return doc.meta["fonction" as any].filter as string == fonction_filter.filter
+      } else {
+        return false
+      }
+    }).length
+  }
+
 }

@@ -68,7 +68,6 @@ export class DataService {
     {
       engin: "NAT",
       types_engin: ["7C", "8C"]
-
     },
     {
       engin: "Regiolis",
@@ -105,9 +104,8 @@ export class DataService {
   homePageNews: NewsType[] = [
     {
       title: "Mise en ligne !",
-      subtitle: "Le LD v2 vient d'être lancé",
-      article_content: "Le LD Interactif v2 vient d'arriver en ligne :), il reste toujours en cours de développement mais est désormais utilisable",
-      date: new Date(2023, 12, 23)
+      article_content: "Le LDv2 est désormais en place. Toutefois, la base de données des documents n’a pas encore été complétée, ainsi les documents actuellement disponibles ne sont que provisoires.",
+      date: new Date(2024, 9, 27)
     },
     {
       title: "En cours de développement",

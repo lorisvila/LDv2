@@ -33,6 +33,12 @@ h4 {
   text-align: left;
 }
 
+.grid-filter-div {
+  display: flex;
+  flex-flow: column;
+  gap: 0.2em;
+}
+
 /*Grid styling*/
 .description-meta-fields {
   display: flex;

@@ -57,7 +57,7 @@ export class SearchService {
         engin: 'string',
         engin_type: 'string[]',
         ref_main: 'string',
-        meta: this.dataService.filterTypes.reduce((acc, { type }) => ({ ...acc, [type]: { filter: "string", filter_formatted: "string" } }), {}),
+        meta: this.dataService.filterTypes.reduce((acc, { type }) => ({ ...acc, [type]: { filter: "string", filter_formatted: "string"} }), {}),
         tags: 'string[]'
       },
       components: {

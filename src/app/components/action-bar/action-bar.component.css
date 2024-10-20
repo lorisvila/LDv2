@@ -2,10 +2,6 @@
 #title-engin-field {
   font-size: 0.8em;
 }
-.icon-button {
-  cursor: pointer;
-  user-select: none;
-}
 .actions-div {
   display: flex;
   flex-flow: row wrap;

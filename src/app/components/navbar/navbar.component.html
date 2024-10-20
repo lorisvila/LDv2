@@ -68,6 +68,9 @@
 
       <wcs-dropdown-header>Admin</wcs-dropdown-header>
       <wcs-dropdown-item (wcsDropdownItemClick)="router.navigateByUrl('/administration')">Panel d'admninistration</wcs-dropdown-item>
+      @if (admininstrationService.auth_status) {
+        <wcs-dropdown-item (wcsDropdownItemClick)="admininstrationService.disconnectUser()"><span class="bold text-wcs-orange">Se déconnecter</span></wcs-dropdown-item>
+      }
 
     </wcs-dropdown>
   </div>

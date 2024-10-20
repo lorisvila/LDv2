@@ -1,7 +1,6 @@
 import {Router} from "express";
 import {App} from "~/server";
 import {AuthUsername, RequestType, UserType} from "~/types/types";
-import * as console from "node:console";
 import {API_Error} from "~/types/errors";
 
 export class AuthController {

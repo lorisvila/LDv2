@@ -40,7 +40,7 @@ export class GeneralService {
   $enginServiceInitialized: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   //Variables des versions et dates de mise à jour
-  app_version: string = "V 2.2.5";
+  app_version: string = "V0"; //TODO : Setup a versionning
   app_build: string = "dev";
 
   date_maj_applicatif: Date = new Date(2024, 9, 25);

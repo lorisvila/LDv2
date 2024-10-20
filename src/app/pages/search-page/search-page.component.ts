@@ -4,6 +4,7 @@ import {SearchService} from "../../services/search.service";
 import {Router} from "@angular/router";
 import {GeneralService} from "../../services/general.service";
 import {FilterType} from "../../app.types";
+import {AdministrationService} from "../../services/administration.service";
 
 @Component({
   selector: 'app-search-page',
@@ -16,6 +17,7 @@ export class SearchPageComponent {
     public generalService: GeneralService,
     public enginService: EnginService,
     public searchService: SearchService,
+    public administrationService: AdministrationService,
     public router: Router
   ) {
     // Redirect user if no search...

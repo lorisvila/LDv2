@@ -15,7 +15,7 @@ const routes: Routes = [
   {path: '', component: HomePageComponent},
   {path: 'livretDepannage', component: LDPageComponent},
   {path: 'documentationParFonction', component: DocFctPageComponent},
-  {path: 'modulesDeFormation', component: ModulesFormationPageComponent},
+  {path: 'modulesDeFormation', component: StillInDevPageComponent},
   {path: 'localisationDesOrganes', component: StillInDevPageComponent},
   {path: 'codesDefauts', component: CodesDefPageComponent},
   {path: 'administration', component: AdministrationPageComponent},

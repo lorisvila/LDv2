@@ -1,11 +1,10 @@
-import {Injectable, IterableDiffers} from '@angular/core';
-import {ItemDataType, FilterType, PageFilters, OramaItemDataType} from "../app.types";
+import {Injectable} from '@angular/core';
+import {FilterType, OramaItemDataType} from "../app.types";
 import {GeneralService} from "./general.service";
 import {EnginService} from "./engin.service";
 import {DataService} from "./data.service";
 import {SearchService} from "./search.service";
 import {ToastrService} from "ngx-toastr";
-import {Results} from "@orama/orama";
 import {UntypedFormGroup} from "@angular/forms";
 
 @Injectable({
@@ -49,9 +48,10 @@ export class DocFctService {
 
   // NGX-Formly forms for the DocFct page
   filterForm: UntypedFormGroup = new UntypedFormGroup({})
-  filterFormModel: any = {
+  emptyFilterFormModel: any = {
     page: "docFct"
   }
+  filterFormModel: any = JSON.parse(JSON.stringify(this.emptyFilterFormModel));
 
   currentFonctionSelected: FilterType | undefined = undefined
   allCategoriesFromFonction: FilterType[] = []
@@ -68,13 +68,17 @@ export class DocFctService {
   }
 
   get allFonctions() {
-    return this.dataService.filters.filter((filter) => filter.type == 'fonction')
+    return this.dataService.filters.filter((filter) => filter.type == 'fonction' && filter.engin == this.enginService.actual_engin.engin)
   }
 
   setAllCategoriesOfFonction() {
-    console.log('Hehe', this.currentFonctionSelected ? 'true' : 'false')
     const categories = this.filteredDocFctData
-      ?.filter(doc => this.currentFonctionSelected ? doc.meta['fonction' as any].filter === this.currentFonctionSelected?.filter : true)
+      ?.filter(doc => {
+        // Check if the document has both 'fonction' and 'category' keys
+        const hasFonction = doc?.meta?.hasOwnProperty('fonction');
+        const hasCategory = doc?.meta?.hasOwnProperty('category');
+        return hasFonction && hasCategory && (this.currentFonctionSelected ? doc.meta['fonction' as any].filter === this.currentFonctionSelected?.filter : true);
+      })
       .map(doc => doc.meta['category' as any]) as FilterType[];
 
     // Filter out duplicates based on the 'filter' key
@@ -83,6 +87,11 @@ export class DocFctService {
     );
     this.allCategoriesFromFonction = uniqueCategories
     this.filterFormModel = {...this.filterFormModel} // Replace the model to trigger a change in the UI
+  }
+
+  async resetFilters() {
+    this.filterFormModel = JSON.parse(JSON.stringify(this.emptyFilterFormModel))
+    await this.updateFilteredData()
   }
 
 }

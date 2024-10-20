@@ -8,8 +8,8 @@ import {API_RequestType, API_ResponseType} from "../app.types";
 })
 export class CommunicationService {
 
-  API_Url: URL =  new URL("http://ldv2.cic.sncf.fr:3000/");
-  /*API_Url: URL =  new URL("http://localhost:8081/");*/
+  /*API_Url: URL =  new URL("http://ldv2.cic.sncf.fr:3000/");*/
+  API_Url: URL =  new URL("http://localhost:8081/");
   API_Version: string = '/v1'
 
   // Name of localStorage variables

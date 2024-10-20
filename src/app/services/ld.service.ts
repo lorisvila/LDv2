@@ -49,9 +49,10 @@ export class LdService {
 
   // NGX-Formly forms for the ld page
   filterForm: UntypedFormGroup = new UntypedFormGroup({})
-  filterFormModel: any = {
+  emptyFilterFormModel: any = {
     page: "ld"
   }
+  filterFormModel: any = JSON.parse(JSON.stringify(this.emptyFilterFormModel))
 
   // Grid values
   loading: boolean = false;
@@ -72,7 +73,7 @@ export class LdService {
   }
 
   async resetFilters() {
-    this.filterForm.reset()
+    this.filterFormModel = JSON.parse(JSON.stringify(this.emptyFilterFormModel))
     await this.updateFilteredData()
   }
 

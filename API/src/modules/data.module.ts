@@ -1,12 +1,11 @@
 import {App} from "~/server";
 import {DBconfigType, NOT_TO_DATE, TableName, TableObjectType, UP_TO_DATE} from "~/types/types";
 import {EventEmitter} from 'node:events';
-import * as console from "node:console";
 import {Client, connect, DatabaseError, ResultRecord} from "ts-postgres";
 import {API_Error} from "~/types/errors";
 import * as process from "node:process";
 import _ from "lodash";
-import {EnginType, TechnicentreType} from "../../../src/app/app.types";
+import {Logger} from "pino";
 
 
 export class DataModule {
@@ -20,17 +19,20 @@ export class DataModule {
 
   allTables: Map<string, ResultRecord> = new Map<string, ResultRecord>
 
+  logger: Logger
+
   constructor(mainClass: App) {
     this.App = mainClass
-    this.DBconfig = mainClass.config.database
+    this.DBconfig = this.App.config.database
+    this.logger = this.App.AppLogger.createChildLogger(this.constructor.name)
 
     this.dbEvent.on('connected', () => {
-      console.log('Connected to DB')
+      this.logger.info('Connected to DB')
       this.cacheData()
     })
 
     this.dbEvent.on('refreshed', () => {
-      console.log('Finished refreshing')
+      this.logger.info('Finished refreshing')
       this.lastRefresh = new Date()
     })
 
@@ -44,8 +46,8 @@ export class DataModule {
   // Connection to DB section
 
   async connectToServer() {
-    console.log("Connecting to DB")
     try {
+      this.logger.info(`Connecting to DB on ${this.DBconfig.server}:${this.DBconfig.port} with user ${this.DBconfig.user} on db ${this.DBconfig.database}`)
       this.dbClient = await connect({
         host: this.DBconfig.server,
         port: this.DBconfig.port,
@@ -59,8 +61,8 @@ export class DataModule {
         this.dbEvent.emit('disconnected')
       })
     } catch (error) {
-      console.error(error)
-      console.log("Stopping the server...")
+      this.logger.error(error)
+      this.logger.warn("Stopping the server...")
       process.exit(2)
     }
   }
@@ -108,10 +110,10 @@ export class DataModule {
       return tableObject
     } catch (error) {
       if (error instanceof DatabaseError || error instanceof TypeError) {
-        console.error(`Erreur lors de la query table ${tableName} |`, error.message)
+        this.logger.error(`Erreur lors de la query table ${tableName} |`, error.message)
         throw new API_Error('TABLE_NOT_FOUND', `La table ${tableName} n'a pas été trouvée`, {code: 404})
       } else {
-        console.error(error)
+        this.logger.error(error)
       }
     }
   }
@@ -267,42 +269,54 @@ export class DataModule {
     if (!tableObject) { // Vérifier si la configuration de la table se trouve bien dans le fichier de config
       throw new API_Error('API_INTERN_ERROR', "La configuration de la table à modifier n'a pas été trouvéé...")
     }
+
     let keys = tableObject.keys
+
     if (!keys) {
       throw new API_Error('API_INTERN_ERROR', `La config pour insérer un objet dans la table ${tableName} n'a pas été trouvée...`)
     }
+
     if (!_.every(keys, _.partial(_.has, newObject))) {
       throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés de votre objet est / sont manquantes dans votre requête...', {code: 422})
     }
+
     let checkKeysString = ''
-    if (oldObject) {
+
+    if (oldObject) { // Vérification par rapport à un ancien objet dans la BDD
+
       if (!_.every(tableObject.checkKeys, _.partial(_.has, oldObject))) { // Vérifier si toutes les clés utilisées pour vérifier via l'ancien objet sont présentes
         throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés pour vérifier votre objet de référence est / sont manquantes dans votre requête...', {code: 422})
       }
+
       if (!oldObject[tableObject.idKey]) { // Vérifier la clé correspondant à la colonne de l'id primaire de la table est présente dans l'objet
         throw new API_Error('REQUEST_VALUES_MISSING', `Il manque l'id (${tableObject.idKey}) dans l'objet de référence`)
       }
-      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${oldObject[key]}'`)).join(' AND ') // Création du string pour le check de l'objet avec un WHERE
-    } else {
+
+      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${this.returnFormattedSQLstring(oldObject[key])}'`)).join(' AND ') // Création du string pour le check de l'objet avec un WHERE
+
+    } else { // Vérification en cas d'ajout d'un nouvel objet dans la BDD
+
       if (!_.every(tableObject.checkKeys, _.partial(_.has, newObject))) {
         throw new API_Error('REQUEST_VALUES_MISSING', 'Une / des clés pour vérifier votre objet est / sont manquantes dans votre requête...', {code: 422})
       }
+
       if (!newObject[tableObject.idKey] && !tableObject.idAutoIncrement) {
         throw new API_Error('REQUEST_VALUES_MISSING', `Il manque l'id (${tableObject.idKey}) dans le nouvel objet `)
       }
-      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${newObject[key]}'`)).join(' AND ')
+
+      checkKeysString = tableObject.checkKeys.map((key: string) => (`"${key}" = '${this.returnFormattedSQLstring(newObject[key])}'`)).join(' AND ')
     }
 
     let values: string[] = []
     keys.forEach((key: keyof typeof newObject) => {
       try {
-        values = [...values, typeof newObject[key] == "string" ? newObject[key] as string : JSON.stringify(newObject[key])]
+        values = [...values, typeof newObject[key] == "string" ? newObject[key].replace("'", "''") as string : JSON.stringify(newObject[key]).replace("'", "''")]
       } catch (error) {
         throw new API_Error('API_INTERN_ERROR', "Une erreur est survenue lors de la génération de l'objet...")
       }
     })
 
-    let keysString = '"' + keys.join("\", \"") + '"'
+    let keysString = '"' + keys.join('", "') + '"'
     let valuesString = "'" + values.join("', '") + "'"
 
     return {keysString, valuesString, checkKeysString, tableObject}
@@ -310,12 +324,16 @@ export class DataModule {
 
   catchDataBaseErrror(error: any, queryString: string) {
     if (error instanceof DatabaseError) {
-      console.error(error)
+      this.logger.error(error)
       throw new API_Error('DATABASE_ERROR', `Erreur base de donnée : ${error.detail} | Requête : ${queryString}`, {code: 400})
     } else {
-      console.error(error)
+      this.logger.error(error)
       throw new API_Error('API_INTERN_ERROR', 'Une erreur interne est survenue...')
     }
+  }
+
+  returnFormattedSQLstring(str: any): string | any {
+    return typeof str == "string" ? str.replace(/'/g, "''") : str;
   }
 
 }

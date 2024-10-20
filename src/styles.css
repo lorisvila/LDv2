@@ -137,6 +137,15 @@ h2 {
 .bold {
   font-weight: bold;
 }
+.text-wcs-orange {
+  color: var(--wcs-orange);
+}
+.text-wcs-red {
+  color: var(--wcs-red);
+}
+.text-wcs-blue {
+  color: var(--wcs-blue);
+}
 
 /*Flex styling boostrap like classes*/
 .flex-row {
@@ -192,4 +201,8 @@ h2 {
 }
 wcs-form-field {
   text-align: start;
+}
+.icon-button {
+  cursor: pointer;
+  user-select: none;
 }

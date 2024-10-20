@@ -187,7 +187,6 @@ export class DataManagerController {
         }
         let engin = reqObject.data.engin as any
 
-        //if ({'data2': {'test': ''}}.data && {'data2': {'test': ''}}.data.hasOwnProperty('test2')) {console.log(true)} else {console.log(false)}
         // TODO : Create a function global for all endpoints to checks if objects are included in the bodies of user requests
 
         this.App.DataModule.deleteEntry(engin, "engins_technicentre").then(() => {
