@@ -20,15 +20,15 @@
   <p align="center">
     A advanced documentary platform
     <br />
-    <a href="https://github.com/lorisvila/LDv2_Angular"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/lorisvila/LDv2"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <img src="docs/images/homePageScreenshot.png" alt="Logo" width="900">
     <br />
     <br />
-    <a href="https://github.com/lorisvila/LDv2_Angular/issues">Report Bug</a>
+    <a href="https://github.com/lorisvila/LDv2/issues">Report Bug</a>
     ·
-    <a href="https://github.com/lorisvila/LDv2_Angular/issues">Request Feature</a>
+    <a href="https://github.com/lorisvila/LDv2/issues">Request Feature</a>
   </p>
 </div>
 
@@ -118,19 +118,19 @@ This app is the property of the french SNCF company, the usage by other companie
 
 VILA Loris - loris.vila@sncf.fr
 
-Project Link: [https://github.com/lorisvila/LDv2_Angular](https://github.com/lorisvila/LDv2_Angular)
+Project Link: [https://github.com/lorisvila/LDv2](https://github.com/lorisvila/LDv2)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/lorisvila/LDv2_Angular.svg?style=for-the-badge
-[contributors-url]: https://github.com/lorisvila/LDv2_Angular/graphs/contributors
-[stars-shield]: https://img.shields.io/github/stars/lorisvila/LDv2_Angular.svg?style=for-the-badge
-[stars-url]: https://github.com/lorisvila/LDv2_Angular/stargazers
-[issues-shield]: https://img.shields.io/github/issues/lorisvila/LDv2_Angular.svg?style=for-the-badge
-[issues-url]: https://github.com/lorisvila/LDv2_Angular/issues
+[contributors-shield]: https://img.shields.io/github/contributors/lorisvila/LDv2.svg?style=for-the-badge
+[contributors-url]: https://github.com/lorisvila/LDv2/graphs/contributors
+[stars-shield]: https://img.shields.io/github/stars/lorisvila/LDv2.svg?style=for-the-badge
+[stars-url]: https://github.com/lorisvila/LDv2/stargazers
+[issues-shield]: https://img.shields.io/github/issues/lorisvila/LDv2.svg?style=for-the-badge
+[issues-url]: https://github.com/lorisvila/LDv2/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/loris-vila
 
