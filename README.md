@@ -73,11 +73,11 @@ To be able to deal with the arrival of this new generation of trains in our main
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Deploy it in a stable version to be able to beta test the app with the SNCF maintenance center staff
-- [ ] Make a stable Electron version of the app
+- [x] Deploy it in a stable version to be able to beta test the app with the SNCF maintenance center staff
+- [ ] Make a stable Neutralino version of the app
   - [ ] Add the automatic update of documents in the Electron app
   - [ ] Create a custom UI to open PDF documents in the app
-- [ ] Implement the "Code défauts" and "Location des organes" sections 
+- [ ] Implement the "Location des organes" sections
 - [ ] Make a documentation for the API & electron app
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
@@ -107,7 +107,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-This app is the property of the french SNCF company, the source code is open but the usage by other companies is strictly forbidden.
+This app is the property of the french SNCF company, the usage by other companies is strictly forbidden.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
